@@ -1,8 +1,74 @@
+"use client"
+
 import * as React from "react"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
+import { useRouter } from "next/navigation"
+import { signIn } from "next-auth/react"
 
 export default function RegisterPage() {
+  const router = useRouter();
+  const [formData, setFormData] = React.useState({
+    name: "",
+    companyName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/v1/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          companyName: formData.companyName,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Registration failed");
+      }
+
+      // Automatically sign in after successful registration
+      const signInRes = await signIn("credentials", {
+        redirect: false,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (signInRes?.error) {
+        setError("Account created, but automatic login failed.");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-[1200px] w-full bg-surface-container-lowest rounded-[20px] shadow-[0px_12px_32px_-4px_rgba(15,23,42,0.1)] border border-surface-container flex flex-col lg:flex-row overflow-hidden">
       {/* Registration Form Section */}
@@ -16,21 +82,27 @@ export default function RegisterPage() {
           <p className="font-body-md text-body-md text-on-surface-variant">Join 500+ enterprises using AI to dominate their market.</p>
         </div>
 
-        <form className="space-y-6">
+        {error && (
+          <div className="mb-4 p-3 bg-error-container/20 border border-error/30 rounded-lg text-error text-body-sm text-center">
+            {error}
+          </div>
+        )}
+
+        <form className="space-y-6" onSubmit={handleRegister}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="fullName" className="block font-label-sm text-label-sm text-on-surface-variant mb-2">Full Name</label>
-              <Input id="fullName" type="text" placeholder="Jane Doe" className="border-surface-container-highest bg-surface" />
+              <label htmlFor="name" className="block font-label-sm text-label-sm text-on-surface-variant mb-2">Full Name</label>
+              <Input id="name" type="text" placeholder="Jane Doe" required value={formData.name} onChange={handleChange} className="border-surface-container-highest bg-surface" />
             </div>
             <div>
               <label htmlFor="companyName" className="block font-label-sm text-label-sm text-on-surface-variant mb-2">Company Name</label>
-              <Input id="companyName" type="text" placeholder="Acme Corp" className="border-surface-container-highest bg-surface" />
+              <Input id="companyName" type="text" placeholder="Acme Corp" required value={formData.companyName} onChange={handleChange} className="border-surface-container-highest bg-surface" />
             </div>
           </div>
 
           <div>
             <label htmlFor="email" className="block font-label-sm text-label-sm text-on-surface-variant mb-2">Business Email</label>
-            <Input id="email" type="email" placeholder="jane@acmecorp.com" className="border-surface-container-highest bg-surface" />
+            <Input id="email" type="email" placeholder="jane@acmecorp.com" required value={formData.email} onChange={handleChange} className="border-surface-container-highest bg-surface" />
           </div>
 
           <div>
@@ -48,17 +120,17 @@ export default function RegisterPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="password" className="block font-label-sm text-label-sm text-on-surface-variant mb-2">Password</label>
-              <Input id="password" type="password" placeholder="••••••••" className="border-surface-container-highest bg-surface" />
+              <Input id="password" type="password" placeholder="••••••••" required value={formData.password} onChange={handleChange} className="border-surface-container-highest bg-surface" />
             </div>
             <div>
               <label htmlFor="confirmPassword" className="block font-label-sm text-label-sm text-on-surface-variant mb-2">Confirm Password</label>
-              <Input id="confirmPassword" type="password" placeholder="••••••••" className="border-surface-container-highest bg-surface" />
+              <Input id="confirmPassword" type="password" placeholder="••••••••" required value={formData.confirmPassword} onChange={handleChange} className="border-surface-container-highest bg-surface" />
             </div>
           </div>
 
           <div className="flex items-start gap-3 mt-4">
             <div className="flex items-center h-5">
-              <input id="terms" type="checkbox" className="w-4 h-4 rounded border-surface-container-highest text-primary focus:ring-primary" />
+              <input id="terms" type="checkbox" required className="w-4 h-4 rounded border-surface-container-highest text-primary focus:ring-primary" />
             </div>
             <label htmlFor="terms" className="font-body-sm text-body-sm text-on-surface-variant">
               I accept the <a href="#" className="text-primary hover:underline">Terms of Service</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>
@@ -66,7 +138,9 @@ export default function RegisterPage() {
           </div>
 
           <div className="mt-8 space-y-4">
-            <Button variant="primary" type="button" className="w-full">Create Account</Button>
+            <Button variant="primary" type="submit" disabled={loading} className="w-full">
+              {loading ? "Creating Account..." : "Create Account"}
+            </Button>
             
             <div className="relative flex items-center py-2">
               <div className="flex-grow border-t border-surface-container-highest"></div>
@@ -86,7 +160,7 @@ export default function RegisterPage() {
           </div>
 
           <p className="text-center font-body-sm text-body-sm text-on-surface-variant mt-6">
-            Already have an account? <a href="#" className="text-primary font-medium hover:underline">Sign in</a>
+            Already have an account? <a href="/login" className="text-primary font-medium hover:underline">Sign in</a>
           </p>
         </form>
       </div>

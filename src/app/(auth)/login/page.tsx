@@ -3,9 +3,40 @@
 import * as React from "react"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = React.useState(false);
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (res?.error) {
+        setError("Invalid email or password");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      setError("An error occurred during login");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="w-full max-w-[440px] mx-auto">
@@ -17,8 +48,14 @@ export default function LoginPage() {
           <p className="text-body-sm font-body-sm text-on-surface-variant mt-2">Sign in to access your enterprise analytics.</p>
         </div>
 
+        {error && (
+          <div className="mb-4 p-3 bg-error-container/20 border border-error/30 rounded-lg text-error text-body-sm text-center">
+            {error}
+          </div>
+        )}
+
         {/* Form */}
-        <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-6" onSubmit={handleLogin}>
           {/* Email Field */}
           <div>
             <label className="block text-label-md font-label-md text-on-surface mb-2" htmlFor="email">Email Address</label>
@@ -29,6 +66,8 @@ export default function LoginPage() {
                 type="email" 
                 placeholder="name@company.com" 
                 required 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="pl-10 py-[10px] h-auto rounded-lg text-body-md"
               />
             </div>
@@ -44,6 +83,8 @@ export default function LoginPage() {
                 type={showPassword ? "text" : "password"} 
                 placeholder="••••••••" 
                 required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="pl-10 pr-10 py-[10px] h-auto rounded-lg text-body-md"
               />
               <button 
@@ -68,8 +109,8 @@ export default function LoginPage() {
           </div>
 
           {/* Primary Action */}
-          <Button variant="primary" type="submit" className="w-full h-10 shadow-sm">
-            Sign In
+          <Button variant="primary" type="submit" disabled={loading} className="w-full h-10 shadow-sm">
+            {loading ? "Signing In..." : "Sign In"}
           </Button>
         </form>
 
@@ -89,19 +130,13 @@ export default function LoginPage() {
             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu2WafTW7NuyxA9ryJ--VZ0o6PnsmQVTDoWzTogcu2S4ovIbFizZx9VRLRA2QrVsUADSJ90o3QvaBgFPveqRnrSe2_Z_UZAIVMRnRfsmTM7wWQe_gjFCoaJ9Ty94ZLUmWycEnxDEXnELQ1l5dmEpEfcHixD8-Fwq10Rg5j4g8jkpd0eTrfDhvpJc3bTKq2-K9zgnf09vECnUvRVp7GA_bHROKMpeswafGAXbCPyCxkSWrS6FXySTTqpA" alt="Google" className="w-4 h-4" />
             Continue with Google
           </Button>
-          <Button variant="outline" type="button" className="w-full h-10 gap-2 flex items-center justify-center">
-            <svg className="w-4 h-4 text-[#0078D4]" fill="currentColor" viewBox="0 0 21 21">
-              <path d="M10 0H0v10h10V0zM21 0H11v10h10V0zM10 11H0v10h10V11zM21 11H11v10h10V11z"></path>
-            </svg>
-            Continue with Microsoft
-          </Button>
         </div>
       </div>
 
       {/* Footer */}
       <div className="text-center mt-6">
         <p className="text-body-sm font-body-sm text-on-surface-variant">
-          Don't have an account? <a href="#" className="text-primary-container hover:text-primary font-medium transition-colors">Create Account</a>
+          Don't have an account? <a href="/register" className="text-primary-container hover:text-primary font-medium transition-colors">Create Account</a>
         </p>
       </div>
     </main>
