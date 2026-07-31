@@ -13,10 +13,11 @@ model Organization {
   industry  String?
   settings  Json?
   
-  users     User[]
+  users       User[]
+  competitors Competitor[]
   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum Role {
@@ -40,3 +41,57 @@ model User {
 
   @@index([orgId])
 }
+
+model Competitor {
+  id        String   @id @default(uuid())
+  name      String
+  domain    String?
+  logoText  String
+  logoColor String
+  industry  String?
+  status    String
+  score     Int      @default(0)
+  
+  orgId     String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  products  Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orgId])
+  @@index([orgId, name])
+}
+
+model Product {
+  id           String     @id @default(uuid())
+  name         String
+  description  String?
+  
+  competitorId String
+  competitor   Competitor @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+  
+  features     Feature[]
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([competitorId])
+}
+
+model Feature {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  status      String
+  
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([productId])
+}
+
