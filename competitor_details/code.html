@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Competitor Details - CompetIQ AI</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "secondary-container": "#645efb",
+                        "surface": "#f7f9fb",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e0e3e5",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#dbe1ff",
+                        "on-tertiary-fixed": "#002113",
+                        "on-secondary-container": "#fffbff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-dim": "#d8dadc",
+                        "outline-variant": "#c3c6d7",
+                        "surface-tint": "#0053db",
+                        "on-tertiary-container": "#bdffdb",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-background": "#191c1e",
+                        "on-surface-variant": "#434655",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-container-high": "#e6e8ea",
+                        "secondary-fixed": "#e2dfff",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#4b41e1",
+                        "inverse-on-surface": "#eff1f3",
+                        "error-container": "#ffdad6",
+                        "primary": "#004ac6",
+                        "on-primary-container": "#eeefff",
+                        "background": "#f7f9fb",
+                        "tertiary-container": "#007d55",
+                        "surface-container": "#eceef0",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "primary-container": "#2563eb",
+                        "tertiary": "#006242",
+                        "on-secondary-fixed": "#0f0069",
+                        "inverse-surface": "#2d3133",
+                        "outline": "#737686",
+                        "tertiary-fixed": "#6ffbbe",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-fixed": "#00174b",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "card": "20px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "sidebar-width": "260px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "margin-page": "32px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Poppins"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #f7f9fb; }
+        .card-shadow { box-shadow: 0px 4px 20px -2px rgba(15, 23, 42, 0.05); }
+    </style>
+</head>
+<body class="font-body-md text-on-surface bg-background flex min-h-screen antialiased">
+<!-- SideNavBar -->
+<nav class="hidden md:flex bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline fixed left-0 top-0 bottom-0 w-[260px] z-40 flex-col">
+<div class="p-gutter pb-4">
+<div class="flex items-center gap-3">
+<img class="w-8 h-8 rounded-lg object-cover" data-alt="A sleek, modern corporate logo icon for an enterprise AI analytics platform, featuring abstract geometric nodes connecting in a sophisticated deep blue palette on a crisp white background. High resolution, minimalist tech aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNe6yXvPN9WrWYUFsd4RtnBU2EahSXbO_Rqn0B4PYbS_IRbV8EXUONTBObrrEZXCQBswBY7EbtvUYeSNdUC7Nxr-mN6yhvjHjwDgI1eYU0TUc_tI9evblgwD4W00JYqacccbFTGmKTt82hERKW17LAKJi1xCrgBUFPCMsKq0Ahn_dFv1_SEpeFKAuGWi0jEAr7C3439aLZaNssRNPqx3lJbOqCn0gTJslnrZKFMB1o9Q6gsi8MCWvdag"/>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary-fixed">CompetIQ AI</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Enterprise Analytics</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-4 py-4 space-y-2">
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="dashboard">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="text-primary dark:text-primary-fixed bg-secondary-fixed/10 flex items-center gap-3 px-4 py-3 border-l-4 border-primary rounded-r-lg group" href="#">
+<span class="material-symbols-outlined text-primary" data-icon="analytics" data-weight="fill">analytics</span>
+<span class="text-label-md font-label-md">Competitors</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="database">database</span>
+<span class="text-label-md font-label-md">Data Collection</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="psychology">psychology</span>
+<span class="text-label-md font-label-md">AI Intelligence</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="assessment">assessment</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="notifications">notifications</span>
+<span class="text-label-md font-label-md">Alerts</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all group" href="#">
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors" data-icon="settings">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</div>
+<div class="p-4 mt-auto">
+<button class="w-full bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md py-3 rounded-lg transition-colors shadow-sm mb-4">
+                Upgrade Plan
+            </button>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="help">help</span>
+<span class="text-label-md font-label-md">Help Center</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high transition-all" href="#">
+<span class="material-symbols-outlined text-outline" data-icon="person">person</span>
+<span class="text-label-md font-label-md">Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 md:ml-[260px] flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface/80 dark:bg-surface/80 backdrop-blur-xl bg-surface/80 dark:bg-surface/80 backdrop-blur-md shadow-sm sticky top-0 right-0 z-30 flex justify-between items-center px-gutter h-16 w-full">
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 w-64 rounded-lg border-surface-variant bg-surface focus:border-primary focus:ring-2 focus:ring-primary/10 text-body-sm font-body-sm transition-all" placeholder="Search competitors, features..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 rounded-full p-2 text-on-surface-variant transition-colors focus:ring-2 ring-primary/10">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 rounded-full p-2 text-on-surface-variant transition-colors focus:ring-2 ring-primary/10 mr-4">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a confident female executive in a modern glass office, soft natural lighting, high resolution, corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDv-_SoAMZ7U78iXt2KHVMmDif6bgC0SsAJJDJ4eQpLJxRaOSMfbjj4bZZxOtigI90E4XAgxQr-w8juCFSLK8QOSJkDjWPXab-ZbaCk8H74kayQbZcZ0Q2-8OoCT3GzakhK7zfTPwic81Eiud8Rp3yP8PcqNWJqlT6-485XcDM_eU23l-ApbVzG1RHWwIPN4cZBZEHlzjimTffrLLDzuA2vwNhZgBj0vki2cjUehz3uIPh0aDjWyA8rg"/>
+</div>
+</header>
+<!-- Canvas -->
+<main class="flex-1 p-margin-page max-w-container-max mx-auto w-full">
+<!-- Breadcrumb -->
+<div class="flex items-center gap-2 text-label-sm font-label-sm text-on-surface-variant mb-6">
+<a class="hover:text-primary transition-colors" href="#">Competitors</a>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface">Synthetix AI</span>
+</div>
+<!-- Profile Header -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-surface-container-highest mb-gutter flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div class="flex items-center gap-6">
+<div class="w-20 h-20 bg-surface rounded-xl border border-outline-variant flex items-center justify-center p-2 shadow-sm">
+<img class="w-full h-full object-contain rounded-lg" data-alt="A highly polished, futuristic 3D render of a stylized 'S' logo in vibrant neon blue and silver, representing a cutting-edge artificial intelligence company. Clean white background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBox7Zb7KgpNV0L2ebCiHdrxMlxHJWsyOwd1aQPx8OSxwpMP0aflpXXyvx65dg7ZKuxL4bf_voNWNvn7LWPyNRK13KBX9nTVOBTGpvpgBFTfHto3rMJiU1aZ4PVBLAjGFqgoW7836eTvi5mXVUIxwwX1tYBbkTWRe1EIiX-HP6D3lLJAD9kGswMjq010Ep8QyApWGvAX4LX437JViYvVhJIWDX0bkqtKx7lA2rZH_M63PCg-YlG-IQIlg"/>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-1">
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Synthetix AI</h2>
+<span class="bg-tertiary-container/10 text-tertiary text-label-sm font-label-sm px-2 py-1 rounded-full flex items-center gap-1 border border-tertiary/20">
+<span class="material-symbols-outlined text-[14px]" data-icon="monitoring">monitoring</span>
+                                Active Monitoring
+                            </span>
+</div>
+<div class="flex items-center gap-4 text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" data-icon="domain">domain</span> Enterprise AI Solutions</span>
+<a class="flex items-center gap-1 text-primary hover:underline" href="#"><span class="material-symbols-outlined text-[16px]" data-icon="language">language</span> synthetix.ai</a>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 bg-surface border border-outline-variant text-primary font-label-md text-label-md rounded-lg hover:bg-surface-variant transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="download">download</span> Report
+                    </button>
+<button class="px-4 py-2 bg-primary-container text-on-primary font-label-md text-label-md rounded-lg hover:bg-primary transition-colors flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span> Track Feature
+                    </button>
+</div>
+</div>
+<!-- Quick Stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-gutter">
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-surface-container-highest">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Product Count</span>
+<div class="bg-surface p-2 rounded-lg text-secondary">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+</div>
+</div>
+<div class="text-headline-lg font-headline-lg text-on-surface mb-1">24</div>
+<div class="text-label-sm font-label-sm text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_up">trending_up</span>
+                        +2 this quarter
+                    </div>
+</div>
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-surface-container-highest">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Sentiment Score</span>
+<div class="bg-surface p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined" data-icon="sentiment_satisfied">sentiment_satisfied</span>
+</div>
+</div>
+<div class="text-headline-lg font-headline-lg text-on-surface mb-1">8.4<span class="text-headline-sm text-outline">/10</span></div>
+<div class="text-label-sm font-label-sm text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="trending_down">trending_down</span>
+                        -0.2 this month
+                    </div>
+</div>
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-surface-container-highest">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Feature Gap</span>
+<div class="bg-surface p-2 rounded-lg text-error">
+<span class="material-symbols-outlined" data-icon="compare_arrows">compare_arrows</span>
+</div>
+</div>
+<div class="text-headline-lg font-headline-lg text-on-surface mb-1">12<span class="text-headline-sm text-outline"> missing</span></div>
+<div class="text-label-sm font-label-sm text-tertiary flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="check_circle">check_circle</span>
+                        We lead in 5 areas
+                    </div>
+</div>
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-surface-container-highest">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Pricing Index</span>
+<div class="bg-surface p-2 rounded-lg text-tertiary">
+<span class="material-symbols-outlined" data-icon="attach_money">attach_money</span>
+</div>
+</div>
+<div class="text-headline-lg font-headline-lg text-on-surface mb-1">Premium</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="info">info</span>
+                        ~15% higher than market avg
+                    </div>
+</div>
+</div>
+<!-- Bento Layout Content -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Main Tabbed Area (Span 8) -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<!-- Tabs -->
+<div class="border-b border-outline-variant flex gap-6">
+<button class="pb-3 text-primary border-b-2 border-primary font-label-md text-label-md">Overview</button>
+<button class="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Features</button>
+<button class="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Pricing</button>
+<button class="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md">Reviews</button>
+</div>
+<!-- AI Insights Overview Card -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-surface-container-highest relative overflow-hidden">
+<!-- Subtle glass effect bg -->
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+<div class="flex items-center gap-2 mb-4 relative z-10">
+<span class="material-symbols-outlined text-primary" data-icon="auto_awesome">auto_awesome</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Executive Summary</h3>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant mb-6 relative z-10 leading-relaxed">
+                            Synthetix AI continues to dominate the premium tier, heavily investing in their generative text capabilities. However, recent customer reviews indicate friction in their API onboarding process. We recommend prioritizing our "One-Click Integration" marketing to capture their dissatisfied mid-market tier.
+                        </p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+<div class="bg-surface p-4 rounded-xl border border-outline-variant">
+<h4 class="text-label-md font-label-md text-on-surface mb-2 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Strengths
+                                </h4>
+<ul class="text-body-sm font-body-sm text-on-surface-variant space-y-2">
+<li>Deep enterprise CRM integrations</li>
+<li>Advanced custom model training</li>
+</ul>
+</div>
+<div class="bg-surface p-4 rounded-xl border border-outline-variant">
+<h4 class="text-label-md font-label-md text-on-surface mb-2 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error"></span> Vulnerabilities
+                                </h4>
+<ul class="text-body-sm font-body-sm text-on-surface-variant space-y-2">
+<li>High entry price point ($4k/mo)</li>
+<li>Steep learning curve for admins</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Recent Activity Table -->
+<div class="bg-surface-container-lowest rounded-card p-0 card-shadow border border-surface-container-highest overflow-hidden">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Recent Activity</h3>
+<button class="text-primary font-label-sm text-label-sm hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface/50 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant">
+<th class="p-4 font-semibold">Date</th>
+<th class="p-4 font-semibold">Event Type</th>
+<th class="p-4 font-semibold">Description</th>
+</tr>
+</thead>
+<tbody class="text-body-sm font-body-sm text-on-surface">
+<tr class="border-b border-outline-variant hover:bg-surface/50 transition-colors">
+<td class="p-4 whitespace-nowrap">Oct 24, 2023</td>
+<td class="p-4">
+<span class="bg-primary/10 text-primary px-2 py-1 rounded-md text-label-sm inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="new_releases">new_releases</span> Feature Launch
+                                            </span>
+</td>
+<td class="p-4">Released 'Auto-Suggest v3' with multilinguistic support.</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface/50 transition-colors">
+<td class="p-4 whitespace-nowrap">Oct 12, 2023</td>
+<td class="p-4">
+<span class="bg-error/10 text-error px-2 py-1 rounded-md text-label-sm inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="price_change">price_change</span> Pricing Change
+                                            </span>
+</td>
+<td class="p-4">Increased base enterprise tier by 12%.</td>
+</tr>
+<tr class="hover:bg-surface/50 transition-colors">
+<td class="p-4 whitespace-nowrap">Sep 28, 2023</td>
+<td class="p-4">
+<span class="bg-secondary/10 text-secondary px-2 py-1 rounded-md text-label-sm inline-flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="campaign">campaign</span> Marketing
+                                            </span>
+</td>
+<td class="p-4">Launched "Future of Work" Q4 Ad Campaign.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Sidebar Panel (Span 4) -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<!-- AI Threat Analysis -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-surface-container-highest">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="warning">warning</span>
+                            Threat Level
+                        </h3>
+<!-- Gauge visualization conceptual -->
+<div class="relative h-4 bg-surface rounded-full overflow-hidden mb-2">
+<div class="absolute top-0 left-0 h-full bg-gradient-to-r from-tertiary via-secondary to-error w-3/4 rounded-full"></div>
+</div>
+<div class="flex justify-between text-label-sm font-label-sm text-on-surface-variant mb-6">
+<span>Low</span>
+<span class="text-error font-bold text-label-md">High (75%)</span>
+</div>
+<h4 class="text-label-md font-label-md text-on-surface mb-3 border-b border-outline-variant pb-2">Key Opportunities</h4>
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<div class="bg-tertiary-container/20 p-1.5 rounded-full text-tertiary mt-0.5">
+<span class="material-symbols-outlined text-[16px]" data-icon="target">target</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface">Target SMB Segment</p>
+<p class="text-[12px] text-on-surface-variant">They are ignoring businesses under 50 employees.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<div class="bg-tertiary-container/20 p-1.5 rounded-full text-tertiary mt-0.5">
+<span class="material-symbols-outlined text-[16px]" data-icon="target">target</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface">Highlight Usability</p>
+<p class="text-[12px] text-on-surface-variant">Reviewers consistently complain about UI complexity.</p>
+</div>
+</li>
+</ul>
+</div>
+<!-- Competitor Timeline Mini -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-surface-container-highest">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-4">Strategic Timeline</h3>
+<div class="relative border-l-2 border-outline-variant ml-3 space-y-6">
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-surface border-2 border-primary"></div>
+<p class="text-label-sm text-primary font-label-sm mb-1">Expected Q1 2024</p>
+<p class="text-body-sm font-body-sm text-on-surface">Mobile App Redesign Release</p>
+</div>
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-primary border-2 border-surface"></div>
+<p class="text-label-sm text-on-surface-variant font-label-sm mb-1">Sep 2023</p>
+<p class="text-body-sm font-body-sm text-on-surface">Acquired Dataflow Inc. for $45M</p>
+</div>
+<div class="relative pl-6">
+<div class="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-outline-variant border-2 border-surface"></div>
+<p class="text-label-sm text-on-surface-variant font-label-sm mb-1">Jun 2023</p>
+<p class="text-body-sm font-body-sm text-on-surface">Series C Funding ($120M)</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

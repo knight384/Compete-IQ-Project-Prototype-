@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CompetIQ AI - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "secondary-container": "#645efb",
+                        "surface": "#f7f9fb",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e0e3e5",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#dbe1ff",
+                        "on-tertiary-fixed": "#002113",
+                        "on-secondary-container": "#fffbff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-dim": "#d8dadc",
+                        "outline-variant": "#c3c6d7",
+                        "surface-tint": "#0053db",
+                        "on-tertiary-container": "#bdffdb",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-background": "#191c1e",
+                        "on-surface-variant": "#434655",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-container-high": "#e6e8ea",
+                        "secondary-fixed": "#e2dfff",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#4b41e1",
+                        "inverse-on-surface": "#eff1f3",
+                        "error-container": "#ffdad6",
+                        "primary": "#004ac6",
+                        "on-primary-container": "#eeefff",
+                        "background": "#f7f9fb",
+                        "tertiary-container": "#007d55",
+                        "surface-container": "#eceef0",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "primary-container": "#2563eb",
+                        "tertiary": "#006242",
+                        "on-secondary-fixed": "#0f0069",
+                        "inverse-surface": "#2d3133",
+                        "outline": "#737686",
+                        "tertiary-fixed": "#6ffbbe",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-fixed": "#00174b",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "sidebar-width": "260px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "margin-page": "32px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Poppins"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .subtle-pattern {
+            background-image: radial-gradient(circle at 2px 2px, rgba(115, 118, 134, 0.1) 1px, transparent 0);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center relative overflow-hidden font-body-md text-on-background subtle-pattern">
+<!-- Decorative background elements -->
+<div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+<div class="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-primary-container/5 blur-3xl"></div>
+<div class="absolute -bottom-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-secondary-container/5 blur-3xl"></div>
+</div>
+<!-- Main Login Card -->
+<main class="relative z-10 w-full max-w-[440px] mx-auto p-gutter sm:p-0">
+<div class="bg-surface-container-lowest rounded-[20px] shadow-[0px_4px_20px_-2px_rgba(15,23,42,0.05)] border border-surface-variant p-8 sm:p-10 w-full">
+<!-- Header -->
+<div class="text-center mb-8">
+<h1 class="text-headline-lg font-headline-lg text-primary mb-2">CompetIQ AI</h1>
+<h2 class="text-headline-md font-headline-md text-on-surface">Welcome Back</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-2">Sign in to access your enterprise analytics.</p>
+</div>
+<!-- Form -->
+<form class="space-y-6">
+<!-- Email Field -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-2" for="email">Email Address</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px]" data-icon="mail">mail</span>
+<input class="w-full pl-10 pr-4 py-[10px] bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md focus:outline-none focus:border-primary-container focus:ring-[3px] focus:ring-primary-container/10 transition-all placeholder:text-outline/70" id="email" placeholder="name@company.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-2" for="password">Password</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline text-[20px]" data-icon="lock">lock</span>
+<input class="w-full pl-10 pr-10 py-[10px] bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md font-body-md focus:outline-none focus:border-primary-container focus:ring-[3px] focus:ring-primary-container/10 transition-all placeholder:text-outline/70" id="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface transition-colors flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me & Forgot Password -->
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<input class="w-4 h-4 rounded border-outline-variant text-primary-container focus:ring-primary-container/20 cursor-pointer" id="remember" type="checkbox"/>
+<label class="ml-2 text-body-sm font-body-sm text-on-surface-variant cursor-pointer" for="remember">Remember Me</label>
+</div>
+<a class="text-label-sm font-label-sm text-primary-container hover:text-primary transition-colors" href="#">Forgot Password?</a>
+</div>
+<!-- Primary Action -->
+<button class="w-full h-10 bg-primary-container hover:bg-primary text-on-primary rounded-lg text-label-md font-label-md transition-colors shadow-sm flex items-center justify-center" type="submit">
+                    Sign In
+                </button>
+</form>
+<!-- Divider -->
+<div class="relative my-6">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-outline-variant/50"></div>
+</div>
+<div class="relative flex justify-center text-label-sm font-label-sm">
+<span class="px-2 bg-surface-container-lowest text-outline">OR</span>
+</div>
+</div>
+<!-- Secondary Actions -->
+<div class="space-y-4">
+<button class="w-full h-10 bg-surface-container-lowest hover:bg-surface-container-low border border-outline-variant text-on-surface rounded-lg text-label-md font-label-md transition-colors flex items-center justify-center gap-2" type="button">
+<img alt="Google" class="w-4 h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBu2WafTW7NuyxA9ryJ--VZ0o6PnsmQVTDoWzTogcu2S4ovIbFizZx9VRLRA2QrVsUADSJ90o3QvaBgFPveqRnrSe2_Z_UZAIVMRnRfsmTM7wWQe_gjFCoaJ9Ty94ZLUmWycEnxDEXnELQ1l5dmEpEfcHixD8-Fwq10Rg5j4g8jkpd0eTrfDhvpJc3bTKq2-K9zgnf09vECnUvRVp7GA_bHROKMpeswafGAXbCPyCxkSWrS6FXySTTqpA"/>
+                    Continue with Google
+                </button>
+<button class="w-full h-10 bg-surface-container-lowest hover:bg-surface-container-low border border-outline-variant text-on-surface rounded-lg text-label-md font-label-md transition-colors flex items-center justify-center gap-2" type="button">
+<svg class="w-4 h-4 text-[#0078D4]" fill="currentColor" viewbox="0 0 21 21">
+<path d="M10 0H0v10h10V0zM21 0H11v10h10V0zM10 11H0v10h10V11zM21 11H11v10h10V11z"></path>
+</svg>
+                    Continue with Microsoft
+                </button>
+</div>
+</div>
+<!-- Footer -->
+<div class="text-center mt-6">
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                Don't have an account? 
+                <a class="text-primary-container hover:text-primary font-medium transition-colors" href="#">Create Account</a>
+</p>
+</div>
+</main>
+<script>
+        // Simple password visibility toggle
+        const togglePassword = document.querySelector('button[type="button"]');
+        const passwordInput = document.getElementById('password');
+        const icon = togglePassword.querySelector('.material-symbols-outlined');
+
+        togglePassword.addEventListener('click', function (e) {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+            icon.setAttribute('data-icon', type === 'password' ? 'visibility' : 'visibility_off');
+        });
+    </script>
+</body></html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sentiment Intelligence - CompetIQ AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface": "#f7f9fb",
+                        "on-primary-container": "#eeefff",
+                        "on-secondary": "#ffffff",
+                        "outline-variant": "#c3c6d7",
+                        "inverse-primary": "#b4c5ff",
+                        "secondary-container": "#645efb",
+                        "on-error": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface-container": "#eceef0",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "surface-dim": "#d8dadc",
+                        "surface-container-low": "#f2f4f6",
+                        "secondary": "#4b41e1",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "inverse-surface": "#2d3133",
+                        "on-primary-fixed": "#00174b",
+                        "on-tertiary-fixed": "#002113",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#e2dfff",
+                        "on-surface": "#191c1e",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary": "#004ac6",
+                        "surface-container-high": "#e6e8ea",
+                        "on-background": "#191c1e",
+                        "outline": "#737686",
+                        "on-secondary-container": "#fffbff",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "on-tertiary-container": "#bdffdb",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#0053db",
+                        "on-secondary-fixed": "#0f0069",
+                        "tertiary": "#006242",
+                        "tertiary-container": "#007d55",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-variant": "#e0e3e5",
+                        "primary-fixed": "#dbe1ff",
+                        "background": "#f7f9fb",
+                        "on-surface-variant": "#434655",
+                        "tertiary-fixed": "#6ffbbe",
+                        "primary-container": "#2563eb",
+                        "error-container": "#ffdad6"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-md": "16px",
+                        "margin-page": "32px",
+                        "gutter": "24px",
+                        "stack-lg": "24px",
+                        "stack-sm": "8px",
+                        "sidebar-width": "260px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "display-lg": ["Poppins"],
+                        "body-sm": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-lg": ["Poppins"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Poppins"],
+                        "headline-md": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .card-shadow {
+            box-shadow: 0px 4px 20px -2px rgba(15, 23, 42, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen w-sidebar-width bg-surface-container-lowest border-r border-outline-variant z-40 flex flex-col h-full py-stack-lg transition-all duration-200 ease-in-out">
+<div class="px-gutter mb-stack-lg flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary font-headline-md font-bold">C</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">CompetIQ AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Intelligence Suite</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-stack-sm flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-r-full text-on-surface-variant hover:bg-surface-container-low transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-r-full text-on-surface-variant hover:bg-surface-container-low transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+                Competitors
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-r-full text-on-surface-variant hover:bg-surface-container-low transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]">dataset</span>
+                Data Collection
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-r-full text-primary font-bold border-l-4 border-primary bg-surface-container font-body-md text-body-md transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px] icon-fill">psychology</span>
+                AI Intelligence
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-r-full text-on-surface-variant hover:bg-surface-container-low transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]">assessment</span>
+                Reports
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-r-full text-on-surface-variant hover:bg-surface-container-low transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+                Alerts
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-r-full text-on-surface-variant hover:bg-surface-container-low transition-colors font-body-md text-body-md mt-auto" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-sidebar-width flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="sticky top-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm flex justify-between items-center h-16 px-margin-page w-full transition-all duration-200">
+<div class="flex-1 flex items-center">
+<h2 class="font-headline-sm text-headline-sm text-primary font-semibold">Sentiment Intelligence</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 w-64 rounded-lg border border-surface-dim bg-surface-container-lowest focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none font-body-sm text-body-sm transition-all text-on-surface" placeholder="Search sentiment data..." type="text"/>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors hover:text-primary">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors hover:text-primary">
+<span class="material-symbols-outlined text-[20px]">help</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-low transition-colors hover:text-primary">
+<span class="material-symbols-outlined text-[20px]">apps</span>
+</button>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant ml-2 shrink-0">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a business analyst in a bright, modern corporate office setting with subtle blue lighting accents, perfectly suited for an enterprise software avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8HZR7KpY6KA5jDDES45AjFHeaSqtmR5OcObolVorllBgsSkzZXGiLxXqEyhdWMe-VzYJ9fS0mX4fzvPi4TI_BLtw782WOL5qP8QIU1avk0UY3V07IjgM8_zcQScguEneP76Xr8FD4Y0h_wJZT_gy6oXHHLKk1mCSX3VO3OqX4FFP0N5OyzeygWWRGmzBYJUNf-74i4jorq6r-dD3svioMERv6R-7d0gXAa9sLK3yYPRXEoUtLbQRqWg"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="flex-1 overflow-y-auto p-margin-page">
+<div class="max-w-[1440px] mx-auto flex flex-col gap-gutter">
+<!-- KPI Row -->
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-gutter">
+<!-- Positive -->
+<div class="bg-surface-container-lowest rounded-[20px] p-[24px] card-shadow border border-surface-dim flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Positive</span>
+<span class="material-symbols-outlined text-tertiary text-[20px]">sentiment_satisfied</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-display-lg text-display-lg text-on-surface">68%</span>
+<span class="font-body-sm text-body-sm text-tertiary flex items-center pb-2"><span class="material-symbols-outlined text-[16px]">arrow_upward</span> 2%</span>
+</div>
+</div>
+<!-- Neutral -->
+<div class="bg-surface-container-lowest rounded-[20px] p-[24px] card-shadow border border-surface-dim flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Neutral</span>
+<span class="material-symbols-outlined text-outline text-[20px]">sentiment_neutral</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-display-lg text-display-lg text-on-surface">22%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center pb-2"><span class="material-symbols-outlined text-[16px]">remove</span> 0%</span>
+</div>
+</div>
+<!-- Negative -->
+<div class="bg-surface-container-lowest rounded-[20px] p-[24px] card-shadow border border-surface-dim flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Negative</span>
+<span class="material-symbols-outlined text-error text-[20px]">sentiment_dissatisfied</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-display-lg text-display-lg text-on-surface">10%</span>
+<span class="font-body-sm text-body-sm text-tertiary flex items-center pb-2"><span class="material-symbols-outlined text-[16px]">arrow_downward</span> 3%</span>
+</div>
+</div>
+<!-- Overall Sentiment -->
+<div class="bg-primary rounded-[20px] p-[24px] card-shadow border border-primary flex flex-col justify-between text-on-primary">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">Score</span>
+<span class="material-symbols-outlined text-on-primary text-[20px]">speed</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-display-lg text-display-lg">84</span>
+<span class="font-body-sm text-body-sm text-on-primary-container pb-2">/100</span>
+</div>
+</div>
+<!-- AI Confidence -->
+<div class="bg-surface-container-lowest rounded-[20px] p-[24px] card-shadow border border-surface-dim flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Confidence</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">memory</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-display-lg text-display-lg text-on-surface">96%</span>
+</div>
+</div>
+<!-- Review Volume -->
+<div class="bg-surface-container-lowest rounded-[20px] p-[24px] card-shadow border border-surface-dim flex flex-col justify-between">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Volume</span>
+<span class="material-symbols-outlined text-primary text-[20px]">forum</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-display-lg text-display-lg text-on-surface">4.2k</span>
+</div>
+</div>
+</div>
+<!-- Main Data Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- AI Insights & Trend Chart (Span 8) -->
+<div class="lg:col-span-8 flex flex-col gap-gutter">
+<!-- Trend Chart -->
+<div class="bg-surface-container-lowest rounded-[20px] p-[24px] card-shadow border border-surface-dim min-h-[300px] flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Sentiment Trend (30 Days)</h3>
+<button class="p-1 rounded text-on-surface-variant hover:bg-surface-container-low"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="flex-1 relative flex items-end w-full pb-4">
+<!-- Mock Line Chart -->
+<div class="absolute inset-0 w-full h-full border-b border-l border-surface-dim flex items-end">
+<div class="w-1/6 h-full border-r border-dashed border-surface-dim opacity-50 relative"><span class="absolute -bottom-6 text-label-sm text-outline">W1</span></div>
+<div class="w-1/6 h-full border-r border-dashed border-surface-dim opacity-50 relative"><span class="absolute -bottom-6 text-label-sm text-outline">W2</span></div>
+<div class="w-1/6 h-full border-r border-dashed border-surface-dim opacity-50 relative"><span class="absolute -bottom-6 text-label-sm text-outline">W3</span></div>
+<div class="w-1/6 h-full border-r border-dashed border-surface-dim opacity-50 relative"><span class="absolute -bottom-6 text-label-sm text-outline">W4</span></div>
+<div class="w-1/6 h-full border-r border-dashed border-surface-dim opacity-50 relative"></div>
+<!-- SVG Path for trend -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none" viewbox="0 0 100 100">
+<path class="opacity-80" d="M 0 50 Q 20 40 40 60 T 80 30 L 100 20" fill="none" stroke="#2563EB" stroke-width="2"></path>
+<path class="opacity-20" d="M 0 50 Q 20 40 40 60 T 80 30 L 100 20 L 100 100 L 0 100 Z" fill="url(#blue-gradient)"></path>
+<defs>
+<lineargradient id="blue-gradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#2563EB"></stop>
+<stop offset="100%" stop-color="transparent"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+</div>
+</div>
+<!-- Industry Heatmap -->
+<div class="bg-surface-container-lowest rounded-[20px] p-[24px] card-shadow border border-surface-dim">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Industry Heatmap</h3>
+</div>
+<div class="w-full h-48 rounded-lg overflow-hidden relative border border-surface-dim">
+<div class="bg-cover bg-center w-full h-full opacity-80" data-alt="A clean, abstract data visualization representing an industry heatmap in a modern corporate software interface, using geometric blocks of varying sizes colored in subtle shades of blue, teal, and soft red on a pristine white background. The aesthetic is highly polished and analytical." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAFRihYXFWPcoOoAwqSjTda_7nJxk4B5646_x6wqdUT5eJYxqjM2x_EPaCvnovbd8Cm_DdqXVIQcmPZMaDBHFRy4nL_b7zjL1J0fyMjxUrEYcHeJAa7Exl6Qdiu0BWBxbmzJCXxZ3RabPZK95SixBlCeOEhXQ7k78ow4MI6GPFrrM5K_odsaqKCPC97XWoLo-YZhc0X00H2oxh4K-Grk638mhXFmTzvvDQK-9eIwROnFfARvhQTbRduOQ')"></div>
+</div>
+</div>
+</div>
+<!-- Side Panel (Span 4) -->
+<div class="lg:col-span-4 flex flex-col gap-gutter">
+<!-- AI Insights -->
+<div class="bg-secondary-fixed rounded-[20px] p-[24px] card-shadow border border-secondary-fixed-dim">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary icon-fill">auto_awesome</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">AI Insights</h3>
+</div>
+<ul class="flex flex-col gap-3 font-body-sm text-body-sm text-on-surface">
+<li class="flex items-start gap-2 bg-surface-container-lowest/50 p-3 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">info</span>
+<span>Competitor X received <strong>22% more negative reviews</strong> this week regarding customer support response times.</span>
+</li>
+<li class="flex items-start gap-2 bg-surface-container-lowest/50 p-3 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">lightbulb</span>
+<span>Your new feature launch correlated with a <strong>15% bump</strong> in positive sentiment mentions across social platforms.</span>
+</li>
+<li class="flex items-start gap-2 bg-surface-container-lowest/50 p-3 rounded-lg">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0 mt-0.5">trending_up</span>
+<span>Pricing sentiment remains stable, but 'Value for Money' mentions dropped slightly across the industry.</span>
+</li>
+</ul>
+</div>
+<!-- Distribution Donut -->
+<div class="bg-surface-container-lowest rounded-[20px] p-[24px] card-shadow border border-surface-dim">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Sentiment Distribution</h3>
+<div class="relative w-48 h-48 mx-auto flex items-center justify-center">
+<!-- Mock Donut -->
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-error" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="10, 90" stroke-width="4"></path>
+<path class="text-outline-variant" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="22, 78" stroke-dashoffset="-10" stroke-width="4"></path>
+<path class="text-tertiary" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="68, 32" stroke-dashoffset="-32" stroke-width="4"></path>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-display-lg text-[32px] text-on-surface leading-none">4.2k</span>
+<span class="font-label-sm text-outline mt-1">Total Signals</span>
+</div>
+</div>
+</div>
+<!-- Leaderboard -->
+<div class="bg-surface-container-lowest rounded-[20px] p-[24px] card-shadow border border-surface-dim flex-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Top Competitor Ranking</h3>
+<div class="flex flex-col gap-0">
+<div class="flex items-center justify-between py-3 border-b border-surface-dim group hover:bg-surface-container-low px-2 rounded transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-label-md text-primary w-4">1.</span>
+<span class="font-body-md text-on-surface font-medium">Acme Corp</span>
+</div>
+<span class="font-label-md text-tertiary">88</span>
+</div>
+<div class="flex items-center justify-between py-3 border-b border-surface-dim group hover:bg-surface-container-low px-2 rounded transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-label-md text-outline w-4">2.</span>
+<span class="font-body-md text-on-surface font-medium">Globex</span>
+</div>
+<span class="font-label-md text-tertiary">84</span>
+</div>
+<div class="flex items-center justify-between py-3 border-b border-surface-dim group hover:bg-surface-container-low px-2 rounded transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-label-md text-outline w-4">3.</span>
+<span class="font-body-md text-on-surface font-medium">Initech</span>
+</div>
+<span class="font-label-md text-on-surface-variant">76</span>
+</div>
+<div class="flex items-center justify-between py-3 group hover:bg-surface-container-low px-2 rounded transition-colors">
+<div class="flex items-center gap-3">
+<span class="font-label-md text-outline w-4">4.</span>
+<span class="font-body-md text-on-surface font-medium">Umbrella Corp</span>
+</div>
+<span class="font-label-md text-error">62</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

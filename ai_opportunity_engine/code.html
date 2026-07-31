@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CompetIQ AI - AI Opportunity Engine</title>
+<!-- Tailwind CSS & Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config defined by the system -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface": "#f7f9fb",
+                      "on-primary-container": "#eeefff",
+                      "on-secondary": "#ffffff",
+                      "outline-variant": "#c3c6d7",
+                      "inverse-primary": "#b4c5ff",
+                      "secondary-container": "#645efb",
+                      "on-error": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface-container": "#eceef0",
+                      "primary-fixed-dim": "#b4c5ff",
+                      "on-secondary-fixed-variant": "#3323cc",
+                      "surface-dim": "#d8dadc",
+                      "surface-container-low": "#f2f4f6",
+                      "secondary": "#4b41e1",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "inverse-surface": "#2d3133",
+                      "on-primary-fixed": "#00174b",
+                      "on-tertiary-fixed": "#002113",
+                      "error": "#ba1a1a",
+                      "secondary-fixed": "#e2dfff",
+                      "on-surface": "#191c1e",
+                      "surface-bright": "#f7f9fb",
+                      "on-primary-fixed-variant": "#003ea8",
+                      "inverse-on-surface": "#eff1f3",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-highest": "#e0e3e5",
+                      "primary": "#004ac6",
+                      "surface-container-high": "#e6e8ea",
+                      "on-background": "#191c1e",
+                      "outline": "#737686",
+                      "on-secondary-container": "#fffbff",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "on-tertiary-container": "#bdffdb",
+                      "on-error-container": "#93000a",
+                      "surface-tint": "#0053db",
+                      "on-secondary-fixed": "#0f0069",
+                      "tertiary": "#006242",
+                      "tertiary-container": "#007d55",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-variant": "#e0e3e5",
+                      "primary-fixed": "#dbe1ff",
+                      "background": "#f7f9fb",
+                      "on-surface-variant": "#434655",
+                      "tertiary-fixed": "#6ffbbe",
+                      "primary-container": "#2563eb",
+                      "error-container": "#ffdad6"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-md": "16px",
+                      "margin-page": "32px",
+                      "gutter": "24px",
+                      "stack-lg": "24px",
+                      "stack-sm": "8px",
+                      "sidebar-width": "260px",
+                      "container-max": "1440px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Poppins"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Poppins"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Poppins"
+                      ],
+                      "headline-md": [
+                              "Poppins"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Chart.js for visualizations -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        h1, h2, h3, h4, h5, h6, .font-display-lg, .font-headline-lg, .font-headline-md, .font-headline-sm {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0px 4px 20px -2px rgba(15, 23, 42, 0.05);
+        }
+        
+        /* Ambient Shadows */
+        .shadow-ambient-lvl1 {
+            box-shadow: 0px 4px 20px -2px rgba(15, 23, 42, 0.05);
+        }
+        .shadow-ambient-lvl2 {
+            box-shadow: 0px 12px 32px -4px rgba(15, 23, 42, 0.1);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: theme('colors.surface-variant');
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden bg-background">
+<!-- Shared Component: SideNavBar -->
+<aside class="bg-surface-container-lowest dark:bg-inverse-surface fixed left-0 top-0 h-screen w-sidebar-width border-r border-outline-variant dark:border-outline flat no shadows transition-all duration-200 ease-in-out flex flex-col h-full py-stack-lg z-40 hidden md:flex">
+<!-- Brand / Header -->
+<div class="px-gutter mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined fill text-2xl" data-icon="intelligence">files</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-inverse-primary">CompetIQ AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Intelligence Suite</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="flex-1 overflow-y-auto px-4 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span>Competitors</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="dataset">dataset</span>
+<span>Data Collection</span>
+</a>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary dark:text-inverse-primary font-bold border-l-4 border-primary dark:border-inverse-primary bg-surface-container dark:bg-surface-variant transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined fill" data-icon="psychology">psychology</span>
+<span>AI Intelligence</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span>Alerts</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant dark:text-outline-variant hover:bg-surface-container-low dark:hover:bg-surface-variant transition-colors font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+<!-- Footer / User Profile snippet -->
+<div class="mt-auto px-4">
+<div class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-low cursor-pointer transition-colors border-t border-outline-variant/30 mt-4 pt-4">
+<img class="w-8 h-8 rounded-full object-cover" data-alt="A small, professional portrait photo of a corporate executive against a minimal background, used as an avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyPzSLhITjfCHFB1tyxUIICZpO9OSUthz0F5JJjV27YN3Rh4i2fnOO_OwR1IWkx2Rdv7IvU7VJpBy2k8eIsdvKOr1ocJNvKAjcbLF-g_KZIC-lBEmoOFYWc_yD33cCw7a7hE9Sz4yVkNId_VgwgSS-XIYg6zVK5AUf0ro8gNjc33BYmX0CSsQVQwBMZRKrMJzbCKojdeqVqEnSH08JuzIEqwfh2vXJYY2lhHA4l4dkVMyK3MBdsFjRQw"/>
+<div class="flex-1 min-w-0">
+<p class="font-label-md text-label-md text-on-surface truncate">E. Director</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">Strategy</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">logout</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full ml-0 md:ml-[260px] relative w-full overflow-hidden">
+<!-- Shared Component: TopAppBar -->
+<header class="bg-surface/80 dark:bg-inverse-surface/80 sticky top-0 right-0 z-50 backdrop-blur-md border-b border-outline-variant dark:border-outline shadow-sm transition-all duration-200 flex justify-between items-center h-16 px-margin-page w-full">
+<!-- Left side: Mobile menu & Context -->
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="font-label-md text-label-md">AI Intelligence</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="font-label-md text-label-md text-primary">Opportunity Engine</span>
+</div>
+</div>
+<!-- Right side: Actions -->
+<div class="flex items-center gap-4">
+<!-- Search Bar -->
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-xl" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all w-64 shadow-inner" placeholder="Search opportunities..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-inverse-primary cursor-pointer rounded-full hover:bg-surface-container-low transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full border border-surface-container-lowest"></span>
+</button>
+<button class="p-2 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-inverse-primary cursor-pointer rounded-full hover:bg-surface-container-low transition-colors hidden sm:block">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="p-2 text-on-surface-variant dark:text-outline-variant hover:text-primary dark:hover:text-inverse-primary cursor-pointer rounded-full hover:bg-surface-container-low transition-colors hidden sm:block">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<img class="w-8 h-8 rounded-full ml-2 object-cover border border-outline-variant cursor-pointer" data-alt="A small, high-quality headshot of a business professional, used as a profile avatar in a clean corporate interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD53e5lFBPZjvENf1EMJjvBB9c7tora6zrWjCw1NE6RtTm0xUkMv9xJVsc_HOD67kYinNcYQCBpD-L2nEcIYXksOfzXzMu9ZJYixypTMg6dsl7kYJGw9IXrpgQpmDSjLOKLypbVokvaQf_6z-vujtg0gs3FuQlinkIf68I9_y_63M6gjBPFeBnVNt5SD6IqLlbGAtG7sXDo1HJtUXOGSXQidm0aHNiPctqdVle8QOBeogfUFduyn1cGwA"/>
+</div>
+</div>
+</header>
+<!-- Scrollable Canvas -->
+<div class="flex-1 overflow-y-auto p-margin-page pb-32">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+<div>
+<h2 class="font-display-lg text-headline-lg font-bold text-on-surface">Opportunity Engine</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Executive strategy recommendations powered by market intelligence.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors bg-surface-container-lowest shadow-sm">
+<span class="material-symbols-outlined text-lg">download</span> Export Brief
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary rounded-lg font-label-md text-label-md text-on-primary hover:bg-primary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-lg">auto_awesome</span> Generate Plan
+                    </button>
+</div>
+</div>
+<!-- Hero KPIs (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-gutter">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border border-outline-variant/30 shadow-ambient-lvl1 relative overflow-hidden flex flex-col justify-between h-40">
+<div class="absolute right-0 top-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-10 -mt-10"></div>
+<div>
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-primary text-xl">radar</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Opportunity Score</h3>
+</div>
+</div>
+<div class="flex items-end gap-3 z-10">
+<span class="font-display-lg text-display-lg font-bold text-on-surface leading-none">92</span>
+<span class="font-body-lg text-body-lg text-on-surface-variant mb-1">/100</span>
+</div>
+<div class="mt-2 text-tertiary font-label-sm text-label-sm flex items-center gap-1 z-10">
+<span class="material-symbols-outlined text-sm">trending_up</span> +4 pts from last quarter
+                    </div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border border-outline-variant/30 shadow-ambient-lvl1 relative overflow-hidden flex flex-col justify-between h-40">
+<div class="absolute right-0 top-0 w-32 h-32 bg-secondary/5 rounded-bl-full -mr-10 -mt-10"></div>
+<div>
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-secondary text-xl">payments</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Revenue Potential</h3>
+</div>
+</div>
+<div class="flex items-end gap-3 z-10">
+<span class="font-display-lg text-display-lg font-bold text-on-surface leading-none">$2.4M</span>
+</div>
+<div class="mt-2 text-tertiary font-label-sm text-label-sm flex items-center gap-1 z-10">
+<span class="material-symbols-outlined text-sm">info</span> Identified across 3 sectors
+                    </div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border border-outline-variant/30 shadow-ambient-lvl1 relative overflow-hidden flex flex-col justify-between h-40">
+<div class="absolute right-0 top-0 w-32 h-32 bg-tertiary/5 rounded-bl-full -mr-10 -mt-10"></div>
+<div>
+<div class="flex items-center gap-2 text-on-surface-variant mb-1">
+<span class="material-symbols-outlined text-tertiary text-xl">security</span>
+<h3 class="font-label-md text-label-md uppercase tracking-wider">Competitive Risk</h3>
+</div>
+</div>
+<div class="flex items-end gap-3 z-10">
+<span class="font-display-lg text-display-lg font-bold text-tertiary leading-none">Low</span>
+</div>
+<div class="mt-2 text-on-surface-variant font-label-sm text-label-sm flex items-center gap-1 z-10">
+                        Window of opportunity: 6-9 months
+                    </div>
+</div>
+</div>
+<!-- Main Content Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: AI Opportunity Feed (Span 8) -->
+<div class="lg:col-span-8 flex flex-col gap-gutter">
+<div class="flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Prioritized Opportunities</h3>
+<button class="text-primary font-label-sm text-label-sm hover:underline">View All</button>
+</div>
+<!-- Opportunity Card 1 (High Priority) -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border-l-4 border-l-primary border-t border-r border-b border-outline-variant/30 shadow-ambient-lvl1 hover:shadow-ambient-lvl2 transition-shadow cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined">rocket_launch</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Exploit Competitor X API Pricing Change</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Market Gap • Immediate Action Recommended</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-error-container text-on-error-container rounded-full font-label-sm text-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">priority_high</span> P1
+                            </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-6">Competitor X announced a 40% price increase on their enterprise tier. Sentiment analysis shows 62% negative reaction. Launch targeted migration campaign immediately.</p>
+<div class="grid grid-cols-3 gap-4 p-4 bg-surface rounded-xl border border-outline-variant/20">
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Confidence</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">94%</span>
+</div>
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Est. ROI</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-tertiary">3.5x</span>
+</div>
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Difficulty</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Low</span>
+</div>
+</div>
+</div>
+<!-- Opportunity Card 2 -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border-l-4 border-l-secondary border-t border-r border-b border-outline-variant/30 shadow-ambient-lvl1 hover:shadow-ambient-lvl2 transition-shadow cursor-pointer">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-secondary/10 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined">extension</span>
+</div>
+<div>
+<h4 class="font-headline-sm text-headline-sm font-semibold text-on-surface">Feature Gap: Automated Compliance Reporting</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Product Suggestion • Strategic</p>
+</div>
+</div>
+<span class="px-3 py-1 bg-surface-container-highest text-on-surface rounded-full font-label-sm text-label-sm font-bold">
+                                P2
+                            </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface mb-6">Analysis of top 3 competitors reveals no native SOC2 automated reporting. Developing this feature addresses a major pain point cited in 140+ recent G2 reviews.</p>
+<div class="grid grid-cols-3 gap-4 p-4 bg-surface rounded-xl border border-outline-variant/20">
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Confidence</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">88%</span>
+</div>
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Est. ROI</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-tertiary">2.1x</span>
+</div>
+<div>
+<span class="block font-label-sm text-label-sm text-on-surface-variant mb-1">Difficulty</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-on-surface">Med</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Sidebar content (Span 4) -->
+<div class="lg:col-span-4 flex flex-col gap-gutter">
+<!-- Today's Executive Briefing -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border border-outline-variant/30 shadow-ambient-lvl1">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+                            Executive Briefing
+                        </h3>
+<ul class="space-y-4">
+<li class="flex gap-3 pb-4 border-b border-outline-variant/20 last:border-0 last:pb-0">
+<div class="mt-1 w-2 h-2 rounded-full bg-error shrink-0"></div>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface">Competitor Y acquired Startup Z, consolidating AI talent.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Impact: High Risk</p>
+</div>
+</li>
+<li class="flex gap-3 pb-4 border-b border-outline-variant/20 last:border-0 last:pb-0">
+<div class="mt-1 w-2 h-2 rounded-full bg-tertiary shrink-0"></div>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface">New regulatory draft favors our current data architecture.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Impact: Positive</p>
+</div>
+</li>
+<li class="flex gap-3">
+<div class="mt-1 w-2 h-2 rounded-full bg-primary shrink-0"></div>
+<div>
+<p class="font-body-sm text-body-sm text-on-surface">Market sentiment shift: Privacy over customization.</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Impact: Moderate Opportunity</p>
+</div>
+</li>
+</ul>
+<button class="w-full mt-6 py-2 border border-outline-variant rounded-lg font-label-md text-label-md text-on-surface hover:bg-surface-container-low transition-colors">Read Full Brief</button>
+</div>
+<!-- AI Roadmap -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border border-outline-variant/30 shadow-ambient-lvl1">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface mb-4">Strategic Roadmap</h3>
+<div class="relative pl-6 border-l-2 border-surface-container-high space-y-6">
+<div class="relative">
+<div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-primary ring-4 ring-surface-container-lowest"></div>
+<h4 class="font-label-md text-label-md text-on-surface">Immediate (0-14 Days)</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Deploy targeted ad spend against Competitor X pricing.</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-surface-container-highest ring-4 ring-surface-container-lowest border-2 border-surface-container-lowest"></div>
+<h4 class="font-label-md text-label-md text-on-surface">30-Day Plan</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Draft PR pushing privacy narrative aligned with new regulations.</p>
+</div>
+<div class="relative">
+<div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-surface-container-highest ring-4 ring-surface-container-lowest border-2 border-surface-container-lowest"></div>
+<h4 class="font-label-md text-label-md text-on-surface">90-Day Plan</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Begin scoping automated compliance reporting feature.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Charts Section (Full Width spanning) -->
+<div class="mt-gutter grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<!-- Opportunity Timeline Chart -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border border-outline-variant/30 shadow-ambient-lvl1">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface mb-4">Opportunity Window Timeline</h3>
+<div class="h-64 w-full relative">
+<canvas id="timelineChart"></canvas>
+</div>
+</div>
+<!-- Risk Matrix Chart -->
+<div class="bg-surface-container-lowest rounded-[20px] p-6 border border-outline-variant/30 shadow-ambient-lvl1">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-on-surface mb-4">Risk vs. Reward Matrix</h3>
+<div class="h-64 w-full relative">
+<canvas id="bubbleChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Chart JS Initialization -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Colors from theme
+            const primaryColor = '#2563eb';
+            const secondaryColor = '#4f46e5';
+            const tertiaryColor = '#006242';
+            const gridColor = '#f1f5f9';
+            const textColor = '#434655';
+
+            // Timeline Chart (Bar/Line hybrid or Area)
+            const ctxTimeline = document.getElementById('timelineChart').getContext('2d');
+            new Chart(ctxTimeline, {
+                type: 'line',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4', 'Q1 (Next)'],
+                    datasets: [{
+                        label: 'Projected Value ($M)',
+                        data: [0.5, 1.2, 2.4, 2.1, 1.8],
+                        borderColor: primaryColor,
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: gridColor, drawBorder: false },
+                            ticks: { color: textColor, font: { family: 'Inter', size: 12 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: textColor, font: { family: 'Inter', size: 12 } }
+                        }
+                    }
+                }
+            });
+
+            // Bubble Chart for Risk vs Reward
+            const ctxBubble = document.getElementById('bubbleChart').getContext('2d');
+            new Chart(ctxBubble, {
+                type: 'bubble',
+                data: {
+                    datasets: [{
+                        label: 'Opportunities',
+                        data: [
+                            { x: 2, y: 8, r: 15 }, // High reward, low risk
+                            { x: 5, y: 5, r: 10 }, // Med reward, med risk
+                            { x: 8, y: 9, r: 20 }, // High reward, high risk
+                            { x: 3, y: 4, r: 8 }   // Low reward, low risk
+                        ],
+                        backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                        borderColor: secondaryColor,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Risk: ${context.raw.x}, Reward: ${context.raw.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'Potential Reward', color: textColor },
+                            beginAtZero: true,
+                            max: 10,
+                            grid: { color: gridColor, drawBorder: false },
+                            ticks: { display: false }
+                        },
+                        x: {
+                            title: { display: true, text: 'Implementation Risk', color: textColor },
+                            beginAtZero: true,
+                            max: 10,
+                            grid: { color: gridColor, drawBorder: false },
+                            ticks: { display: false }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>

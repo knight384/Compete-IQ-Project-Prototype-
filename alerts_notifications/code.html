@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Alerts &amp; Notifications - CompetIQ AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#eeefff",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#e2dfff",
+                        "surface-container": "#eceef0",
+                        "primary": "#004ac6",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#006242",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-container": "#fffbff",
+                        "on-tertiary-fixed": "#002113",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-container": "#007d55",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "secondary": "#4b41e1",
+                        "on-tertiary-container": "#bdffdb",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#0053db",
+                        "on-surface": "#191c1e",
+                        "background": "#f7f9fb",
+                        "surface-bright": "#f7f9fb",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-fixed": "#00174b",
+                        "inverse-primary": "#b4c5ff",
+                        "on-background": "#191c1e",
+                        "on-secondary-fixed": "#0f0069",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#645efb",
+                        "on-surface-variant": "#434655",
+                        "surface": "#f7f9fb",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-container": "#2563eb",
+                        "primary-fixed": "#dbe1ff",
+                        "surface-variant": "#e0e3e5",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "outline": "#737686",
+                        "tertiary-fixed": "#6ffbbe",
+                        "outline-variant": "#c3c6d7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "sidebar-width": "260px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "margin-page": "32px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Poppins"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "headline-sm": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .bento-card {
+            border-radius: 20px;
+            border: 1px solid theme('colors.surface-container-highest');
+            box-shadow: 0px 4px 20px -2px rgba(15, 23, 42, 0.05);
+            background-color: theme('colors.surface-container-lowest');
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+        .bento-card:hover {
+            box-shadow: 0px 8px 24px -4px rgba(15, 23, 42, 0.1);
+        }
+        .alert-card-high {
+            border-left: 4px solid theme('colors.error');
+        }
+        .alert-card-med {
+            border-left: 4px solid theme('colors.secondary-container');
+        }
+        .alert-card-low {
+            border-left: 4px solid theme('colors.tertiary');
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased flex">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 bottom-0 w-[260px] z-40 flex flex-col bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-primary-container flex items-center justify-center text-on-primary-container font-headline-sm">C</div>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary-fixed">CompetIQ AI</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Enterprise Analytics</p>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto py-4">
+<ul class="space-y-1">
+<li><a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#"><span class="material-symbols-outlined" data-icon="dashboard">dashboard</span> Dashboard</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#"><span class="material-symbols-outlined" data-icon="analytics">analytics</span> Competitors</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#"><span class="material-symbols-outlined" data-icon="database">database</span> Data Collection</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#"><span class="material-symbols-outlined" data-icon="psychology">psychology</span> AI Intelligence</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#"><span class="material-symbols-outlined" data-icon="assessment">assessment</span> Reports</a></li>
+<li><a class="text-primary dark:text-primary-fixed bg-secondary-fixed/10 flex items-center gap-3 px-4 py-3 border-l-4 border-primary text-label-md font-label-md scale-[0.98] transition-transform" href="#"><span class="material-symbols-outlined fill" data-icon="notifications" data-weight="fill">notifications</span> Alerts</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#"><span class="material-symbols-outlined" data-icon="settings">settings</span> Settings</a></li>
+</ul>
+</div>
+<div class="p-4 border-t border-outline-variant dark:border-outline">
+<button class="w-full py-2 bg-primary-container text-on-primary-container rounded-lg text-label-md font-label-md hover:opacity-90 transition-opacity mb-4">Upgrade Plan</button>
+<ul class="space-y-1">
+<li><a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#"><span class="material-symbols-outlined" data-icon="help">help</span> Help Center</a></li>
+<li><a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#"><span class="material-symbols-outlined" data-icon="person">person</span> Account</a></li>
+</ul>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 ml-[260px] flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 right-0 z-30 flex justify-between items-center px-gutter h-16 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-surface-container-highest">
+<div class="flex items-center">
+<h2 class="text-headline-md font-headline-md text-on-surface font-bold tracking-tight">Alerts &amp; Notifications</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full border-outline-variant bg-surface-container-low text-body-sm focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all w-64 outline-none" placeholder="Search alerts..." type="text"/>
+</div>
+<button class="p-2 rounded-full hover:bg-surface-variant/50 transition-all text-on-surface-variant focus:ring-2 focus:ring-primary/10">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a female business executive wearing a dark blazer, smiling slightly, set against a bright, modern corporate office background with subtle glass reflections. The lighting is soft and flattering, highlighting a sophisticated, polished aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdHUpjiWyULk8XMofdV3oj9SETnYlZEN4VuqI9SSkUBHTrzSGpQTPMB_p2RzRFioDK4ntlngqfl8WKslf4i4ffvt6JoEh0n_D1skueUqQxsgl48BHEMXjOEKF-QSUhCw-DEIJW3hZfQT_7u_l0cZ3RIUR64_gkpcNGI9M7n5tAxC4gJ4DQfPShDbQIsIM1HnBJfekqmGzyHqvAe-htT3QSPiIMF9lNiqdSKmkLned6qz_pmYS0pi5-mg"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-margin-page bg-background">
+<!-- KPI Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+<!-- KPI 1 -->
+<div class="bento-card flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Critical Alerts</p>
+<span class="material-symbols-outlined text-error" data-icon="warning">warning</span>
+</div>
+<div class="flex items-end gap-2 mt-auto">
+<h3 class="text-display-lg font-display-lg text-on-surface">3</h3>
+<span class="text-body-sm text-error flex items-center mb-2"><span class="material-symbols-outlined text-[16px]" data-icon="arrow_upward">arrow_upward</span> 2</span>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bento-card flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Warnings</p>
+<span class="material-symbols-outlined text-secondary-container" data-icon="error">error</span>
+</div>
+<div class="flex items-end gap-2 mt-auto">
+<h3 class="text-display-lg font-display-lg text-on-surface">12</h3>
+<span class="text-body-sm text-tertiary flex items-center mb-2"><span class="material-symbols-outlined text-[16px]" data-icon="arrow_downward">arrow_downward</span> 5</span>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bento-card flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Resolved</p>
+<span class="material-symbols-outlined text-tertiary" data-icon="check_circle">check_circle</span>
+</div>
+<div class="flex items-end gap-2 mt-auto">
+<h3 class="text-display-lg font-display-lg text-on-surface">45</h3>
+<span class="text-body-sm text-on-surface-variant mb-2">This week</span>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bento-card flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Unread</p>
+<span class="material-symbols-outlined text-primary" data-icon="mark_email_unread">mark_email_unread</span>
+</div>
+<div class="flex items-end gap-2 mt-auto">
+<h3 class="text-display-lg font-display-lg text-on-surface">8</h3>
+</div>
+</div>
+<!-- KPI 5 -->
+<div class="bento-card flex flex-col">
+<div class="flex justify-between items-start mb-4">
+<p class="text-label-md font-label-md text-on-surface-variant uppercase tracking-wider">Today's Activity</p>
+<span class="material-symbols-outlined text-outline" data-icon="timeline">timeline</span>
+</div>
+<div class="flex items-end gap-2 mt-auto">
+<h3 class="text-display-lg font-display-lg text-on-surface">24</h3>
+<span class="text-body-sm text-on-surface-variant mb-2">Events</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Main Feed -->
+<div class="lg:col-span-8 flex flex-col gap-4">
+<div class="flex justify-between items-center mb-2">
+<h3 class="text-headline-sm font-headline-sm text-on-surface font-semibold">Real-Time Event Feed</h3>
+<div class="flex gap-2">
+<button class="px-3 py-1 rounded bg-primary-container text-on-primary-container text-label-sm font-label-sm">All</button>
+<button class="px-3 py-1 rounded bg-surface-container text-on-surface-variant text-label-sm font-label-sm hover:bg-surface-container-high transition-colors">Critical</button>
+<button class="px-3 py-1 rounded bg-surface-container text-on-surface-variant text-label-sm font-label-sm hover:bg-surface-container-high transition-colors">Warnings</button>
+</div>
+</div>
+<!-- Alert Item 1 -->
+<div class="bento-card alert-card-high flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+<div class="bg-error/10 p-3 rounded-full shrink-0">
+<span class="material-symbols-outlined text-error" data-icon="trending_down">trending_down</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-error text-on-error">High Priority</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Just now</span>
+</div>
+<h4 class="text-body-lg font-body-lg font-semibold text-on-surface mb-1">Competitor Price Drop Detected</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">TechCorp Inc. has reduced the price of their Enterprise Tier by 15%, falling below our current entry point.</p>
+<div class="mt-2 flex gap-4 text-label-sm font-label-sm">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]" data-icon="business">business</span> TechCorp Inc.</span>
+<span class="flex items-center gap-1 text-error"><span class="material-symbols-outlined text-[16px]" data-icon="monitoring">monitoring</span> High Impact</span>
+</div>
+</div>
+<div class="shrink-0 flex sm:flex-col gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-4 py-2 bg-primary text-on-primary rounded-lg text-label-md font-label-md hover:bg-primary/90 transition-colors">Analyze</button>
+<button class="flex-1 sm:flex-none px-4 py-2 border border-outline-variant text-on-surface rounded-lg text-label-md font-label-md hover:bg-surface-container transition-colors">Dismiss</button>
+</div>
+</div>
+<!-- Alert Item 2 -->
+<div class="bento-card alert-card-med flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+<div class="bg-secondary-container/10 p-3 rounded-full shrink-0">
+<span class="material-symbols-outlined text-secondary-container" data-icon="rocket_launch">rocket_launch</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-secondary-container text-on-primary">Medium Priority</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">2 hours ago</span>
+</div>
+<h4 class="text-body-lg font-body-lg font-semibold text-on-surface mb-1">New Product Launch</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">InnovaSolutions has published a new landing page for 'Analytics Pro', indicating an imminent launch.</p>
+<div class="mt-2 flex gap-4 text-label-sm font-label-sm">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]" data-icon="business">business</span> InnovaSolutions</span>
+<span class="flex items-center gap-1 text-secondary-container"><span class="material-symbols-outlined text-[16px]" data-icon="visibility">visibility</span> Monitor</span>
+</div>
+</div>
+<div class="shrink-0 flex sm:flex-col gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-4 py-2 bg-primary text-on-primary rounded-lg text-label-md font-label-md hover:bg-primary/90 transition-colors">View Details</button>
+</div>
+</div>
+<!-- Alert Item 3 -->
+<div class="bento-card alert-card-med flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+<div class="bg-secondary-container/10 p-3 rounded-full shrink-0">
+<span class="material-symbols-outlined text-secondary-container" data-icon="forum">forum</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-secondary-container text-on-primary">Medium Priority</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">5 hours ago</span>
+</div>
+<h4 class="text-body-lg font-body-lg font-semibold text-on-surface mb-1">Negative Review Spike</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">GlobalData Systems received 15 new 1-star reviews in the last 24 hours citing 'downtime issues'.</p>
+<div class="mt-2 flex gap-4 text-label-sm font-label-sm">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]" data-icon="business">business</span> GlobalData Sys.</span>
+<span class="flex items-center gap-1 text-secondary-container"><span class="material-symbols-outlined text-[16px]" data-icon="campaign">campaign</span> Opportunity</span>
+</div>
+</div>
+<div class="shrink-0 flex sm:flex-col gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-4 py-2 bg-primary text-on-primary rounded-lg text-label-md font-label-md hover:bg-primary/90 transition-colors">Read Reviews</button>
+</div>
+</div>
+<!-- Alert Item 4 -->
+<div class="bento-card alert-card-low flex flex-col sm:flex-row gap-4 items-start sm:items-center opacity-80">
+<div class="bg-tertiary/10 p-3 rounded-full shrink-0">
+<span class="material-symbols-outlined text-tertiary" data-icon="feed">feed</span>
+</div>
+<div class="flex-1">
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-surface-container-high text-on-surface">Low Priority</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Yesterday</span>
+</div>
+<h4 class="text-body-lg font-body-lg font-semibold text-on-surface mb-1">Executive Leadership Change</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Press release spotted: Acme Corp announces new Chief Technology Officer, Sarah Jenkins.</p>
+<div class="mt-2 flex gap-4 text-label-sm font-label-sm">
+<span class="flex items-center gap-1 text-on-surface-variant"><span class="material-symbols-outlined text-[16px]" data-icon="business">business</span> Acme Corp</span>
+<span class="flex items-center gap-1 text-tertiary"><span class="material-symbols-outlined text-[16px]" data-icon="info">info</span> Informational</span>
+</div>
+</div>
+<div class="shrink-0 flex sm:flex-col gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none px-4 py-2 border border-outline-variant text-on-surface rounded-lg text-label-md font-label-md hover:bg-surface-container transition-colors">Acknowledge</button>
+</div>
+</div>
+<div class="flex justify-center mt-4">
+<button class="text-primary font-label-md hover:underline">Load More Alerts</button>
+</div>
+</div>
+<!-- Settings Sidebar (Right) -->
+<div class="lg:col-span-4 flex flex-col gap-6">
+<div class="bento-card">
+<h3 class="text-headline-sm font-headline-sm text-on-surface font-semibold mb-4 border-b border-surface-container-highest pb-4">Notification Channels</h3>
+<div class="space-y-6">
+<!-- Email -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface" data-icon="mail">mail</span>
+</div>
+<div>
+<h4 class="text-body-md font-semibold text-on-surface">Email Digests</h4>
+<p class="text-label-sm text-on-surface-variant">Daily summaries at 8 AM</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Slack -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface" data-icon="tag">tag</span>
+</div>
+<div>
+<h4 class="text-body-md font-semibold text-on-surface">Slack Integration</h4>
+<p class="text-label-sm text-on-surface-variant">Real-time critical alerts</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Teams -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface" data-icon="group">group</span>
+</div>
+<div>
+<h4 class="text-body-md font-semibold text-on-surface">Microsoft Teams</h4>
+<p class="text-label-sm text-on-surface-variant">Weekly report channel</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border border-outline-variant text-on-surface rounded-lg text-label-md font-label-md hover:bg-surface-container transition-colors flex justify-center items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="settings_suggest">settings_suggest</span> Manage Preferences
+                        </button>
+</div>
+<div class="bento-card bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary" data-icon="smart_toy">smart_toy</span>
+<h4 class="text-body-md font-semibold text-on-surface">AI Insights Engine</h4>
+</div>
+<p class="text-body-sm text-on-surface-variant mb-4">Your alert threshold for 'Price Drops' is currently set to highly sensitive. Consider adjusting to reduce noise.</p>
+<button class="text-primary text-label-sm font-label-md hover:underline">Review AI Thresholds →</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register - CompetIQ AI</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "on-surface": "#191c1e",
+                      "secondary-container": "#645efb",
+                      "surface": "#f7f9fb",
+                      "error": "#ba1a1a",
+                      "surface-variant": "#e0e3e5",
+                      "on-error-container": "#93000a",
+                      "primary-fixed": "#dbe1ff",
+                      "on-tertiary-fixed": "#002113",
+                      "on-secondary-container": "#fffbff",
+                      "on-tertiary-fixed-variant": "#005236",
+                      "on-primary-fixed-variant": "#003ea8",
+                      "surface-dim": "#d8dadc",
+                      "outline-variant": "#c3c6d7",
+                      "surface-tint": "#0053db",
+                      "on-tertiary-container": "#bdffdb",
+                      "secondary-fixed-dim": "#c3c0ff",
+                      "tertiary-fixed-dim": "#4edea3",
+                      "primary-fixed-dim": "#b4c5ff",
+                      "on-background": "#191c1e",
+                      "on-surface-variant": "#434655",
+                      "inverse-primary": "#b4c5ff",
+                      "surface-container-high": "#e6e8ea",
+                      "secondary-fixed": "#e2dfff",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#4b41e1",
+                      "inverse-on-surface": "#eff1f3",
+                      "error-container": "#ffdad6",
+                      "primary": "#004ac6",
+                      "on-primary-container": "#eeefff",
+                      "background": "#f7f9fb",
+                      "tertiary-container": "#007d55",
+                      "surface-container": "#eceef0",
+                      "surface-container-low": "#f2f4f6",
+                      "on-primary": "#ffffff",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-highest": "#e0e3e5",
+                      "on-secondary-fixed-variant": "#3323cc",
+                      "primary-container": "#2563eb",
+                      "tertiary": "#006242",
+                      "on-secondary-fixed": "#0f0069",
+                      "inverse-surface": "#2d3133",
+                      "outline": "#737686",
+                      "tertiary-fixed": "#6ffbbe",
+                      "surface-bright": "#f7f9fb",
+                      "on-primary-fixed": "#00174b",
+                      "surface-container-lowest": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "24px",
+                      "container-max": "1440px",
+                      "sidebar-width": "260px",
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "stack-lg": "24px",
+                      "margin-page": "32px"
+              },
+              "fontFamily": {
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "headline-sm": [
+                              "Poppins"
+                      ],
+                      "headline-lg": [
+                              "Poppins"
+                      ],
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Poppins"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Poppins"
+                      ]
+              },
+              "fontSize": {
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-sm": [
+                              "12px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-pattern {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen flex items-center justify-center p-4 md:p-8">
+<div class="max-w-[1200px] w-full bg-surface-container-lowest rounded-[20px] shadow-[0px_12px_32px_-4px_rgba(15,23,42,0.1)] border border-surface-container flex flex-col lg:flex-row overflow-hidden">
+<!-- Registration Form Section -->
+<div class="w-full lg:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+<div class="mb-10">
+<div class="flex items-center gap-2 mb-6">
+<span aria-hidden="true" class="material-symbols-outlined text-primary text-3xl icon-fill">psychology</span>
+<span class="font-headline-sm text-headline-sm font-bold text-primary">CompetIQ AI</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Create your CompetIQ Account</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Join 500+ enterprises using AI to dominate their market.</p>
+</div>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2" for="fullName">Full Name</label>
+<input class="w-full h-10 px-3 rounded-lg border border-surface-container-highest bg-surface focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-sm text-body-sm text-on-surface placeholder:text-outline-variant" id="fullName" placeholder="Jane Doe" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2" for="companyName">Company Name</label>
+<input class="w-full h-10 px-3 rounded-lg border border-surface-container-highest bg-surface focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-sm text-body-sm text-on-surface placeholder:text-outline-variant" id="companyName" placeholder="Acme Corp" type="text"/>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2" for="email">Business Email</label>
+<input class="w-full h-10 px-3 rounded-lg border border-surface-container-highest bg-surface focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-sm text-body-sm text-on-surface placeholder:text-outline-variant" id="email" placeholder="jane@acmecorp.com" type="email"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2" for="industry">Industry</label>
+<select class="w-full h-10 px-3 rounded-lg border border-surface-container-highest bg-surface focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-sm text-body-sm text-on-surface" id="industry">
+<option disabled="" selected="" value="">Select Industry</option>
+<option value="tech">Technology</option>
+<option value="finance">Finance</option>
+<option value="healthcare">Healthcare</option>
+<option value="retail">Retail</option>
+<option value="other">Other</option>
+</select>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2" for="password">Password</label>
+<input class="w-full h-10 px-3 rounded-lg border border-surface-container-highest bg-surface focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-sm text-body-sm text-on-surface placeholder:text-outline-variant" id="password" placeholder="••••••••" type="password"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant mb-2" for="confirmPassword">Confirm Password</label>
+<input class="w-full h-10 px-3 rounded-lg border border-surface-container-highest bg-surface focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all font-body-sm text-body-sm text-on-surface placeholder:text-outline-variant" id="confirmPassword" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<div class="flex items-start gap-3 mt-4">
+<div class="flex items-center h-5">
+<input class="w-4 h-4 rounded border-surface-container-highest text-primary focus:ring-primary" id="terms" type="checkbox"/>
+</div>
+<label class="font-body-sm text-body-sm text-on-surface-variant" for="terms">
+                        I accept the <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>
+</label>
+</div>
+<div class="mt-8 space-y-4">
+<button class="w-full h-10 bg-primary-container text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary transition-colors flex items-center justify-center" type="button">
+                        Create Account
+                    </button>
+<div class="relative flex items-center py-2">
+<div class="flex-grow border-t border-surface-container-highest"></div>
+<span class="flex-shrink-0 mx-4 text-on-surface-variant font-label-sm text-label-sm">OR</span>
+<div class="flex-grow border-t border-surface-container-highest"></div>
+</div>
+<button class="w-full h-10 bg-surface-container-lowest border border-surface-container-highest text-on-surface rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors flex items-center justify-center gap-2" type="button">
+<svg class="w-5 h-5" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+<path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+<path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+<path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+</svg>
+                        Continue with Google
+                    </button>
+</div>
+<p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-6">
+                    Already have an account? <a class="text-primary font-medium hover:underline" href="#">Sign in</a>
+</p>
+</form>
+</div>
+<!-- Illustration/Information Section -->
+<div class="hidden lg:flex lg:w-1/2 bg-surface-container-low p-12 flex-col justify-center relative overflow-hidden bg-pattern">
+<!-- Decorative gradient orb -->
+<div class="absolute top-0 right-0 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 w-96 h-96 bg-secondary-container/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+<div class="relative z-10 max-w-md mx-auto">
+<div class="bg-surface-container-lowest/80 backdrop-blur-xl p-8 rounded-[20px] shadow-sm border border-surface-container-highest">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-6">3 Steps to Insights</h2>
+<div class="space-y-8">
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">1</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface mb-1">Connect Data Sources</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Securely integrate your existing tools and proprietary datasets in minutes.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">2</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface mb-1">AI Processing</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Our models analyze competitors, market trends, and identify actionable gaps.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">3</span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface mb-1">Actionable Intelligence</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Receive automated reports and real-time alerts directly to your dashboard.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>

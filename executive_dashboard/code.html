@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CompetIQ AI - Executive Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error": "#ffffff",
+                        "on-surface": "#191c1e",
+                        "secondary-container": "#645efb",
+                        "surface": "#f7f9fb",
+                        "error": "#ba1a1a",
+                        "surface-variant": "#e0e3e5",
+                        "on-error-container": "#93000a",
+                        "primary-fixed": "#dbe1ff",
+                        "on-tertiary-fixed": "#002113",
+                        "on-secondary-container": "#fffbff",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-dim": "#d8dadc",
+                        "outline-variant": "#c3c6d7",
+                        "surface-tint": "#0053db",
+                        "on-tertiary-container": "#bdffdb",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-background": "#191c1e",
+                        "on-surface-variant": "#434655",
+                        "inverse-primary": "#b4c5ff",
+                        "surface-container-high": "#e6e8ea",
+                        "secondary-fixed": "#e2dfff",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#4b41e1",
+                        "inverse-on-surface": "#eff1f3",
+                        "error-container": "#ffdad6",
+                        "primary": "#004ac6",
+                        "on-primary-container": "#eeefff",
+                        "background": "#f7f9fb",
+                        "tertiary-container": "#007d55",
+                        "surface-container": "#eceef0",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "primary-container": "#2563eb",
+                        "tertiary": "#006242",
+                        "on-secondary-fixed": "#0f0069",
+                        "inverse-surface": "#2d3133",
+                        "outline": "#737686",
+                        "tertiary-fixed": "#6ffbbe",
+                        "surface-bright": "#f7f9fb",
+                        "on-primary-fixed": "#00174b",
+                        "surface-container-lowest": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "card": "20px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "sidebar-width": "260px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "margin-page": "32px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Poppins"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #F8FAFC; color: #191c1e; }
+        .card-shadow { box-shadow: 0px 4px 20px -2px rgba(15, 23, 42, 0.05); }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        .input-focus:focus-within { border-color: #2563EB; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased overflow-x-hidden min-h-screen flex bg-[#F8FAFC]">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 bottom-0 w-[260px] z-40 flex flex-col bg-surface-container-lowest dark:bg-inverse-surface border-r border-outline-variant dark:border-outline">
+<div class="px-6 py-8 flex flex-col gap-2">
+<div class="flex items-center gap-3">
+<img alt="Organization Logo" class="w-8 h-8 rounded-md" data-alt="A small, stylized geometric logo in shades of blue representing artificial intelligence and corporate analytics, set against a pristine white background. Clean, modern aesthetic suitable for an enterprise dashboard. High resolution, sharp edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACjuCRZAIoL51x_naP9NmEqPTi60tDS_U160ymEXQsWn7w7EGqVM24tCPzXgE29R0UoWCu1t2xk-CwTBCCdXVZ71c7EIRK8TFVwYqDLRnfbvfQN4HQzP0-HccBp18ORQLX11HLvoiq5d8G9ox3yuUrOqAUVB5A_WVFlF0wvmwxjuprAXYkCOXpT8MQRTcm4GOQKZMWxmTP_G4yN46vr5348Zfe4fsX-mXK0LWVw7Nlb9uWrqxRi1xgLg"/>
+<div>
+<h1 class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary-fixed">CompetIQ AI</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Enterprise Analytics</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-4 py-4 space-y-1">
+<a class="text-primary dark:text-primary-fixed bg-secondary-fixed/10 flex items-center gap-3 px-4 py-3 border-l-4 border-primary rounded-r-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-label-md font-label-md">Dashboard</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-label-md font-label-md">Competitors</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">database</span>
+<span class="text-label-md font-label-md">Data Collection</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-label-md font-label-md">AI Intelligence</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="text-label-md font-label-md">Reports</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="text-label-md font-label-md">Alerts</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high dark:hover:bg-surface-container transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</a>
+</div>
+<div class="p-6">
+<button class="w-full bg-primary-container text-on-primary py-2 px-4 rounded-lg text-label-md font-label-md hover:opacity-90 transition-opacity">
+                Upgrade Plan
+            </button>
+</div>
+<div class="px-4 pb-6 space-y-1 border-t border-outline-variant pt-4 mt-auto">
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="text-label-md font-label-md">Help Center</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 hover:bg-surface-container-high transition-all rounded-lg" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-label-md font-label-md">Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 ml-[260px] flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="sticky top-0 right-0 z-30 flex justify-between items-center px-gutter h-16 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl shadow-sm border-b border-surface-variant/50">
+<div class="flex items-center">
+<div class="relative input-focus flex items-center bg-surface-container-lowest border border-slate-200 rounded-lg px-3 py-1.5 w-64 transition-all">
+<span class="material-symbols-outlined text-outline text-sm mr-2">search</span>
+<input class="bg-transparent border-none outline-none text-body-sm font-body-sm w-full placeholder:text-outline-variant focus:ring-0 p-0" placeholder="Search insights..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="text-on-surface-variant hover:bg-surface-variant/50 rounded-full p-2 transition-colors focus:ring-2 ring-primary/10">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-variant/50 rounded-full p-2 transition-colors focus:ring-2 ring-primary/10">
+<span class="material-symbols-outlined">apps</span>
+</button>
+<img alt="User Profile Avatar" class="w-8 h-8 rounded-full border border-surface-variant ml-2 object-cover" data-alt="A high-quality, professional headshot of a corporate executive, smiling warmly. The lighting is soft and flattering, set against a neutral, out-of-focus modern office background. High resolution, bright corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUuLBWL2srOe1JpX0o-6mCh6ppvzlL3yREopXMCBUqRcE65C4G1NWLd9duiiNlGNdlgGScRmGNyz3nI39WnHJ9iRvaye1B-349Q5f7qONMnGXChb1sqqYgcVo06vR8Labv4qN6HgDn7MlTjr3kcsBKAuNV69s-qUJHuX7v3vJaoBwzqGe2TKuBEMObCjm4rjYORTRgn2Oj4qS7qiUnpV9sNShXjw4zXV4l-zRPEZSCLjhXrjcmTAiGZA"/>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 p-margin-page max-w-container-max mx-auto w-full space-y-stack-lg">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+<div>
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Executive Overview</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1">Real-time competitive intelligence and market positioning.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center bg-surface-container-lowest border border-slate-200 rounded-lg px-3 py-2 text-label-md font-label-md text-on-surface-variant shadow-sm cursor-pointer hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-lg mr-2">calendar_today</span>
+                        Last 30 Days
+                        <span class="material-symbols-outlined text-lg ml-2">expand_more</span>
+</div>
+<button class="bg-surface-container-lowest border border-slate-200 text-primary-container px-4 py-2 rounded-lg text-label-md font-label-md hover:bg-primary-container hover:text-white transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">download</span>
+                        Export
+                    </button>
+</div>
+</div>
+<!-- KPI Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-slate-100 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<span class="text-label-md font-label-md text-on-surface-variant">Competitors Monitored</span>
+<div class="bg-primary/10 text-primary p-2 rounded-lg">
+<span class="material-symbols-outlined text-xl">radar</span>
+</div>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface flex items-baseline gap-2">
+                            12
+                            <span class="text-label-sm font-label-sm text-tertiary flex items-center bg-tertiary/10 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span> +3
+                            </span>
+</div>
+<p class="text-label-sm font-label-sm text-outline mt-1">vs previous period</p>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-slate-100 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<span class="text-label-md font-label-md text-on-surface-variant">Market Sentiment</span>
+<div class="bg-tertiary/10 text-tertiary p-2 rounded-lg">
+<span class="material-symbols-outlined text-xl">sentiment_satisfied</span>
+</div>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface">
+                            78%
+                        </div>
+<p class="text-label-sm font-label-sm text-tertiary mt-1 font-medium">Positive (+4%)</p>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-slate-100 flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<span class="text-label-md font-label-md text-on-surface-variant">Opportunity Score</span>
+<div class="bg-secondary/10 text-secondary p-2 rounded-lg">
+<span class="material-symbols-outlined text-xl">insights</span>
+</div>
+</div>
+<div>
+<div class="text-headline-lg font-headline-lg text-on-surface">
+                            8.4<span class="text-headline-sm font-headline-sm text-outline-variant">/10</span>
+</div>
+<p class="text-label-sm font-label-sm text-outline mt-1">High potential identified</p>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-slate-100 flex flex-col justify-between relative overflow-hidden">
+<div class="absolute top-0 right-0 w-16 h-16 bg-error/5 rounded-bl-full z-0"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<span class="text-label-md font-label-md text-on-surface-variant">Pricing Changes</span>
+<div class="bg-error/10 text-error p-2 rounded-lg">
+<span class="material-symbols-outlined text-xl">currency_exchange</span>
+</div>
+</div>
+<div class="relative z-10">
+<div class="text-headline-lg font-headline-lg text-on-surface">
+                            5
+                        </div>
+<p class="text-label-sm font-label-sm text-error mt-1 flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[14px]">warning</span> Action Required
+                        </p>
+</div>
+</div>
+</div>
+<!-- Main Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Center Column (Charts) -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-gutter">
+<!-- Chart 1: Sentiment Trend -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-slate-100">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Sentiment Trend</h3>
+<button class="text-outline hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="h-64 w-full">
+<canvas id="sentimentChart"></canvas>
+</div>
+</div>
+<!-- Chart 2: Competitor Comparison -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-slate-100">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Competitor Comparison</h3>
+<div class="flex gap-2">
+<span class="text-label-sm font-label-sm bg-surface-container-low px-2 py-1 rounded text-on-surface-variant cursor-pointer hover:bg-surface-variant">Features</span>
+<span class="text-label-sm font-label-sm px-2 py-1 rounded text-outline cursor-pointer hover:bg-surface-container-low">Pricing</span>
+</div>
+</div>
+<div class="h-64 w-full">
+<canvas id="competitorChart"></canvas>
+</div>
+</div>
+</div>
+<!-- Right Column (Widgets) -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<!-- AI Recommendations -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-slate-100 flex-1">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">AI Recommendations</h3>
+</div>
+<div class="space-y-4">
+<div class="p-4 rounded-lg bg-surface-container-low border border-surface-variant/50 hover:border-primary/30 transition-colors cursor-pointer group">
+<p class="text-body-sm font-body-sm text-on-surface"><strong>Competitor X</strong> dropped prices by 10% on entry tier. Consider targeted loyalty campaign.</p>
+<div class="mt-2 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="text-label-sm font-label-sm text-primary flex items-center gap-1">Take Action <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
+</div>
+</div>
+<div class="p-4 rounded-lg bg-surface-container-low border border-surface-variant/50 hover:border-primary/30 transition-colors cursor-pointer group">
+<p class="text-body-sm font-body-sm text-on-surface">Surge in negative reviews for <strong>Brand Y's</strong> new feature. Highlight stability in next ad spend.</p>
+</div>
+<div class="p-4 rounded-lg bg-surface-container-low border border-surface-variant/50 hover:border-primary/30 transition-colors cursor-pointer group">
+<p class="text-body-sm font-body-sm text-on-surface">New market entrant detected in European sector. Initialize comprehensive tracking protocol.</p>
+</div>
+</div>
+</div>
+<!-- Recent Alerts -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-slate-100">
+<h3 class="text-headline-sm font-headline-sm text-on-surface mb-4">Recent Alerts</h3>
+<div class="space-y-4">
+<div class="flex gap-3">
+<div class="mt-0.5">
+<div class="w-2 h-2 rounded-full bg-error mt-1.5"></div>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface">Pricing Page Updated</p>
+<p class="text-body-sm font-body-sm text-outline mt-0.5">Apex Solutions · 2 hours ago</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="mt-0.5">
+<div class="w-2 h-2 rounded-full bg-tertiary mt-1.5"></div>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface">New Feature Release</p>
+<p class="text-body-sm font-body-sm text-outline mt-0.5">GlobalTech · 5 hours ago</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="mt-0.5">
+<div class="w-2 h-2 rounded-full bg-outline-variant mt-1.5"></div>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface">Executive Hire</p>
+<p class="text-body-sm font-body-sm text-outline mt-0.5">Nova Corp · 1 day ago</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="bg-primary-container text-on-primary rounded-card p-6 shadow-sm border border-primary/20">
+<h3 class="text-headline-sm font-headline-sm mb-4">Quick Actions</h3>
+<div class="flex flex-col gap-2">
+<button class="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-lg text-label-md font-label-md transition-colors flex items-center justify-between group">
+                                 Create Report
+                                 <span class="material-symbols-outlined text-[18px] opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all">arrow_forward</span>
+</button>
+<button class="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-lg text-label-md font-label-md transition-colors flex items-center justify-between group">
+                                 Add Competitor
+                                 <span class="material-symbols-outlined text-[18px] opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all">arrow_forward</span>
+</button>
+<button class="bg-white/10 hover:bg-white/20 text-white py-2 px-4 rounded-lg text-label-md font-label-md transition-colors flex items-center justify-between group">
+                                 Run AI Audit
+                                 <span class="material-symbols-outlined text-[18px] opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Chart Row -->
+<div class="bg-surface-container-lowest rounded-card p-6 card-shadow border border-slate-100 mb-8">
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-headline-sm font-headline-sm text-on-surface">Review Volume Growth</h3>
+</div>
+<div class="h-64 w-full">
+<canvas id="reviewChart"></canvas>
+</div>
+</div>
+</main>
+</div>
+<!-- Chart Scripts -->
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart Defaults
+            Chart.defaults.font.family = 'Inter, sans-serif';
+            Chart.defaults.color = '#737686';
+            
+            const gridOptions = {
+                color: '#F1F5F9',
+                drawBorder: false,
+            };
+
+            // Sentiment Area Chart
+            const ctxSentiment = document.getElementById('sentimentChart').getContext('2d');
+            
+            const gradientSentiment = ctxSentiment.createLinearGradient(0, 0, 0, 400);
+            gradientSentiment.addColorStop(0, 'rgba(37, 99, 235, 0.2)'); // Primary Blue
+            gradientSentiment.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+
+            new Chart(ctxSentiment, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Brand Sentiment',
+                        data: [65, 68, 62, 74, 75, 78],
+                        borderColor: '#2563EB',
+                        backgroundColor: gradientSentiment,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#FFFFFF',
+                        pointBorderColor: '#2563EB',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: false, min: 50, grid: gridOptions },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Competitor Bar Chart
+            const ctxComp = document.getElementById('competitorChart').getContext('2d');
+            new Chart(ctxComp, {
+                type: 'bar',
+                data: {
+                    labels: ['CompetIQ', 'Apex', 'GlobalTech', 'Nova', 'Synergy'],
+                    datasets: [{
+                        label: 'Feature Score',
+                        data: [9.2, 8.5, 7.8, 6.5, 5.9],
+                        backgroundColor: [
+                            '#2563EB', // Primary
+                            '#e0e3e5', // Surface Variant
+                            '#e0e3e5',
+                            '#e0e3e5',
+                            '#e0e3e5'
+                        ],
+                        borderRadius: 4,
+                        barThickness: 32
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 10, grid: gridOptions },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Review Line Chart
+            const ctxReview = document.getElementById('reviewChart').getContext('2d');
+            new Chart(ctxReview, {
+                type: 'line',
+                data: {
+                    labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
+                    datasets: [
+                        {
+                            label: 'CompetIQ',
+                            data: [120, 135, 150, 180, 210, 240, 280, 310],
+                            borderColor: '#2563EB',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Apex',
+                            data: [180, 185, 190, 195, 205, 215, 220, 230],
+                            borderColor: '#645efb', // Secondary Container
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            align: 'end',
+                            labels: { usePointStyle: true, boxWidth: 8 }
+                        }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: gridOptions },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+    </script>
+</body></html>

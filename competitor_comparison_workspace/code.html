@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Competitor Comparison Workspace - CompetIQ AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Poppins:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#0053db",
+                        "secondary": "#4b41e1",
+                        "primary-container": "#2563eb",
+                        "tertiary-container": "#007d55",
+                        "on-surface": "#191c1e",
+                        "surface-container": "#eceef0",
+                        "surface-dim": "#d8dadc",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "surface-variant": "#e0e3e5",
+                        "surface-container-high": "#e6e8ea",
+                        "primary": "#004ac6",
+                        "on-error-container": "#93000a",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-container": "#fffbff",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-surface-variant": "#434655",
+                        "error": "#ba1a1a",
+                        "secondary-fixed": "#e2dfff",
+                        "inverse-primary": "#b4c5ff",
+                        "on-primary-container": "#eeefff",
+                        "on-tertiary-container": "#bdffdb",
+                        "surface": "#f7f9fb",
+                        "primary-fixed": "#dbe1ff",
+                        "on-primary": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "tertiary-fixed": "#6ffbbe",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "surface-container-highest": "#e0e3e5",
+                        "on-error": "#ffffff",
+                        "background": "#f7f9fb",
+                        "tertiary": "#006242",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "on-secondary": "#ffffff",
+                        "on-background": "#191c1e",
+                        "inverse-surface": "#2d3133",
+                        "on-tertiary-fixed": "#002113",
+                        "surface-bright": "#f7f9fb",
+                        "secondary-container": "#645efb",
+                        "on-primary-fixed": "#00174b",
+                        "on-secondary-fixed": "#0f0069",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "surface-container-lowest": "#ffffff",
+                        "outline-variant": "#c3c6d7",
+                        "outline": "#737686"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "gutter": "24px",
+                        "margin-page": "32px",
+                        "stack-lg": "24px",
+                        "sidebar-width": "260px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "display-lg": ["Poppins"],
+                        "label-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #F8FAFC;
+        }
+        .enterprise-card {
+            border-radius: 20px;
+            background-color: #ffffff;
+            border: 1px solid #F1F5F9;
+            box-shadow: 0px 4px 20px -2px rgba(15, 23, 42, 0.05);
+            padding: 24px;
+        }
+        .enterprise-card-level-2 {
+            border-radius: 20px;
+            background-color: #ffffff;
+            box-shadow: 0px 12px 32px -4px rgba(15, 23, 42, 0.1);
+            padding: 24px;
+        }
+        .btn-primary {
+            background-color: #2563EB;
+            color: #ffffff;
+            border-radius: 8px;
+            height: 40px;
+            padding: 0 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #1D4ED8;
+        }
+        .btn-ghost {
+            color: #475569;
+            border-radius: 8px;
+            height: 40px;
+            padding: 0 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-ghost:hover {
+            background-color: #F1F5F9;
+            color: #1E293B;
+        }
+        .nav-item.active {
+            color: #004ac6;
+            font-weight: 600;
+            border-left: 4px solid #004ac6;
+            background-color: #eceef0;
+        }
+        .nav-item.inactive {
+            color: #434655;
+        }
+        .table-row-hover:hover {
+            background-color: #F8FAFC;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface antialiased bg-background">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen w-sidebar-width bg-surface-container-lowest border-r border-outline-variant flex flex-col py-stack-lg z-40 transition-all duration-200 ease-in-out hidden md:flex">
+<div class="px-gutter mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary-container flex items-center justify-center text-on-primary font-headline-md">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">CompetIQ AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Intelligence Suite</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-1 px-stack-sm">
+<a class="nav-item inactive flex items-center gap-3 px-4 py-3 rounded-r-full hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="nav-item active flex items-center gap-3 px-4 py-3 rounded-r-full transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+<span class="font-body-md text-body-md">Competitors</span>
+</a>
+<a class="nav-item inactive flex items-center gap-3 px-4 py-3 rounded-r-full hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">dataset</span>
+<span class="font-body-md text-body-md">Data Collection</span>
+</a>
+<a class="nav-item inactive flex items-center gap-3 px-4 py-3 rounded-r-full hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">psychology</span>
+<span class="font-body-md text-body-md">AI Intelligence</span>
+</a>
+<a class="nav-item inactive flex items-center gap-3 px-4 py-3 rounded-r-full hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">assessment</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+<a class="nav-item inactive flex items-center gap-3 px-4 py-3 rounded-r-full hover:bg-surface-container-low transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="font-body-md text-body-md">Alerts</span>
+</a>
+<a class="nav-item inactive flex items-center gap-3 px-4 py-3 rounded-r-full hover:bg-surface-container-low transition-colors mt-auto" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="sticky top-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm flex justify-between items-center h-16 px-margin-page w-full md:ml-sidebar-width transition-all duration-200">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="hidden md:flex items-center bg-surface-container-lowest border border-outline-variant rounded-full px-4 py-2 w-96 focus-within:border-primary-container focus-within:ring-2 focus-within:ring-primary-container/10 transition-all">
+<span class="material-symbols-outlined text-outline mr-2 text-[20px]">search</span>
+<input class="bg-transparent border-none outline-none w-full font-body-sm text-body-sm text-on-surface placeholder:text-outline-variant focus:ring-0 p-0" placeholder="Search competitors, reports, or insights..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined">apps</span>
+</button>
+<div class="ml-4 w-9 h-9 rounded-full overflow-hidden border border-outline-variant cursor-pointer">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate executive in a modern office setting. The lighting is bright and clean, reflecting a high-end enterprise environment. The subject is wearing a crisp business suit, exuding confidence and reliability, perfectly matching a premium software platform's user avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9kBRE0TBghy6FYWfgms-CCfoxSJqKs4vx2_B8x7f092EovoS7XWu40ggvqWOy3JubXG-jtJ0wUXMe5pDOtt2VCs-sU2FEF6Cq2nP9ozPZ3B2QXV2G5LFaiLFnh67OH9ufR5X13vzUoJURbgC_fwV-mwpd_Vf70RQq69jxwbKnIIi2Knu9-T0rzhDCpPC17s0e-xoYdiLmKlp6N7XIC_tYV5A30wArg4zF0tAliUd5QPw79N7Q0JjTHQ"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="md:ml-sidebar-width p-margin-page pt-gutter max-w-container-max mx-auto">
+<!-- Page Header & Toolbar -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-gutter">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">Competitor Comparison Workspace</h2>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">Analyze feature parity, market sentiment, and AI capabilities across selected competitors to identify strategic advantages.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="btn-ghost border border-outline-variant">
+<span class="material-symbols-outlined mr-2 text-[18px]">share</span>
+                    Share View
+                </button>
+<button class="btn-primary">
+<span class="material-symbols-outlined mr-2 text-[18px]">picture_as_pdf</span>
+                    Export Comparison (PDF)
+                </button>
+</div>
+</div>
+<!-- Filters & Tabs -->
+<div class="enterprise-card mb-gutter flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 p-4">
+<div class="flex items-center gap-3 w-full lg:w-auto">
+<span class="font-label-md text-label-md text-on-surface-variant whitespace-nowrap">Compare:</span>
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1 px-3 py-1.5 bg-primary-container text-on-primary rounded-full font-label-sm text-label-sm">
+                        CompetIQ
+                        <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-white/80">close</span>
+</span>
+<span class="inline-flex items-center gap-1 px-3 py-1.5 bg-surface-container-high text-on-surface rounded-full border border-outline-variant font-label-sm text-label-sm">
+                        Synthetix AI
+                        <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-error">close</span>
+</span>
+<span class="inline-flex items-center gap-1 px-3 py-1.5 bg-surface-container-high text-on-surface rounded-full border border-outline-variant font-label-sm text-label-sm">
+                        ApexCorp
+                        <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-error">close</span>
+</span>
+<span class="inline-flex items-center gap-1 px-3 py-1.5 bg-surface-container-high text-on-surface rounded-full border border-outline-variant font-label-sm text-label-sm border-dashed text-on-surface-variant cursor-pointer hover:bg-surface-container-highest transition-colors">
+<span class="material-symbols-outlined text-[14px]">add</span>
+                        Add Competitor
+                    </span>
+</div>
+</div>
+<div class="flex overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0 hide-scrollbar gap-2">
+<button class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm whitespace-nowrap hover:bg-surface-container-high transition-colors">Pricing</button>
+<button class="px-4 py-2 rounded-lg bg-primary/10 text-primary font-label-sm text-label-sm font-semibold whitespace-nowrap border-b-2 border-primary">Features</button>
+<button class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm whitespace-nowrap hover:bg-surface-container-high transition-colors">Reviews</button>
+<button class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm whitespace-nowrap hover:bg-surface-container-high transition-colors">Sentiment</button>
+<button class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm whitespace-nowrap hover:bg-surface-container-high transition-colors">AI Capability</button>
+<button class="px-4 py-2 rounded-lg bg-surface-container-low text-on-surface font-label-sm text-label-sm whitespace-nowrap hover:bg-surface-container-high transition-colors">Market Presence</button>
+</div>
+</div>
+<!-- Top Section: Grid -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-gutter mb-gutter">
+<!-- AI Strategy Summary -->
+<div class="xl:col-span-4 flex flex-col gap-gutter">
+<div class="enterprise-card bg-gradient-to-br from-surface-container-lowest to-surface-container-low border-l-4 border-primary">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary">auto_awesome</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">AI Strategy Summary</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-6 leading-relaxed">
+                        CompetIQ maintains a distinct advantage in <strong>AI Processing Speed</strong> and <strong>Custom Integrations</strong> compared to Synthetix AI. However, ApexCorp is rapidly closing the gap in <em>Predictive Analytics</em>. Prioritize emphasizing our superior security compliance in Q3 marketing.
+                    </p>
+<div class="space-y-4">
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-sm text-label-sm text-on-surface">Overall Threat Level</span>
+<span class="font-label-sm text-label-sm text-[#F59E0B] font-bold">Medium (64/100)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-[#10B981] via-[#F59E0B] to-[#EF4444] w-[64%] rounded-full"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-1">
+<span class="font-label-sm text-label-sm text-on-surface">Opportunity Score</span>
+<span class="font-label-sm text-label-sm text-[#10B981] font-bold">High (82/100)</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-[#10B981] w-[82%] rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Small Data Visual: Market Share -->
+<div class="enterprise-card flex-1">
+<h3 class="font-label-md text-label-md text-on-surface mb-4">Estimated Market Share</h3>
+<div class="h-48 w-full bg-surface-container-low rounded-lg relative overflow-hidden flex items-end justify-center pb-4">
+<!-- Placeholder for Chart -->
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="font-label-sm text-label-sm text-outline">Market Share Distribution Chart (Plotly Placeholder)</span>
+</div>
+<div class="w-full flex h-8 bg-surface-variant rounded-full overflow-hidden mx-4 relative z-10 opacity-80">
+<div class="h-full bg-primary-container" style="width: 45%;"></div>
+<div class="h-full bg-secondary" style="width: 30%;"></div>
+<div class="h-full bg-tertiary-container" style="width: 25%;"></div>
+</div>
+</div>
+<div class="flex justify-center gap-4 mt-4">
+<div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-primary-container"></div><span class="font-label-sm text-label-sm text-on-surface-variant">CompetIQ (45%)</span></div>
+<div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-secondary"></div><span class="font-label-sm text-label-sm text-on-surface-variant">Synthetix (30%)</span></div>
+<div class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-tertiary-container"></div><span class="font-label-sm text-label-sm text-on-surface-variant">ApexCorp (25%)</span></div>
+</div>
+</div>
+</div>
+<!-- Radar Chart & Visualization -->
+<div class="xl:col-span-8 enterprise-card flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Feature Coverage Dimensions</h3>
+<button class="text-primary hover:bg-primary/5 p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="flex-1 flex flex-col lg:flex-row gap-8 items-center justify-center">
+<!-- Radar Chart Area -->
+<div class="w-full lg:w-2/3 aspect-square max-w-md relative bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxjaXJjbGUgY3g9IjUwJSIgY3k9IjUwJSIgcj0iNDUlIiBmaWxsPSJub25lIiBzdHJva2U9IiNlMGUzZTUiIHN0cm9rZS13aWR0aD0iMSIvPjxjaXJjbGUgY3g9IjUwJSIgY3k9IjUwJSIgcj0iMzUlIiBmaWxsPSJub25lIiBzdHJva2U9IiNlMGUzZTUiIHN0cm9rZS13aWR0aD0iMSIvPjxjaXJjbGUgY3g9IjUwJSIgY3k9IjUwJSIgcj0iMjUlIiBmaWxsPSJub25lIiBzdHJva2U9IiNlMGUzZTUiIHN0cm9rZS13aWR0aD0iMSIvPjxjaXJjbGUgY3g9IjUwJSIgY3k9IjUwJSIgcj0iMTUlIiBmaWxsPSJub25lIiBzdHJva2U9IiNlMGUzZTUiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==')] bg-center bg-no-repeat bg-contain">
+<!-- Simulated Polygon for CompetIQ -->
+<svg class="absolute inset-0 w-full h-full" viewbox="0 0 100 100">
+<polygon fill="rgba(37, 99, 235, 0.2)" points="50,15 85,35 75,80 25,80 15,35" stroke="#2563EB" stroke-width="2"></polygon>
+<circle cx="50" cy="15" fill="#2563EB" r="2"></circle>
+<circle cx="85" cy="35" fill="#2563EB" r="2"></circle>
+<circle cx="75" cy="80" fill="#2563EB" r="2"></circle>
+<circle cx="25" cy="80" fill="#2563EB" r="2"></circle>
+<circle cx="15" cy="35" fill="#2563EB" r="2"></circle>
+<!-- Simulated Polygon for Synthetix -->
+<polygon fill="rgba(75, 65, 225, 0.1)" points="50,25 75,45 65,70 35,75 25,40" stroke="#4b41e1" stroke-dasharray="4,4" stroke-width="1.5"></polygon>
+</svg>
+<!-- Labels -->
+<span class="absolute top-2 left-1/2 -translate-x-1/2 font-label-sm text-label-sm text-on-surface font-semibold">Core API</span>
+<span class="absolute top-1/3 -right-4 font-label-sm text-label-sm text-on-surface font-semibold">Security</span>
+<span class="absolute bottom-6 right-8 font-label-sm text-label-sm text-on-surface font-semibold">Analytics</span>
+<span class="absolute bottom-6 left-8 font-label-sm text-label-sm text-on-surface font-semibold">Scalability</span>
+<span class="absolute top-1/3 -left-2 font-label-sm text-label-sm text-on-surface font-semibold">UX Design</span>
+</div>
+<!-- Legend & Insights -->
+<div class="w-full lg:w-1/3 flex flex-col gap-4">
+<div class="p-4 bg-primary/5 rounded-lg border border-primary/20">
+<div class="flex items-center gap-2 mb-2">
+<div class="w-3 h-3 rounded-full bg-primary-container"></div>
+<span class="font-label-md text-label-md text-on-surface">CompetIQ</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Dominates in Core API architecture and overall UX Design, offering a superior developer experience.</p>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant/50">
+<div class="flex items-center gap-2 mb-2">
+<div class="w-3 h-3 rounded-full bg-secondary"></div>
+<span class="font-label-md text-label-md text-on-surface">Synthetix AI</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Lags slightly in Analytics capabilities but maintains strong Security compliance standards.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Comparison Matrix -->
+<div class="enterprise-card mb-gutter overflow-hidden">
+<div class="flex justify-between items-center mb-6 px-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Feature Comparison Matrix</h3>
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Show differences only</span>
+<button class="w-10 h-6 bg-primary-container rounded-full relative transition-colors">
+<div class="w-4 h-4 bg-white rounded-full absolute right-1 top-1 shadow-sm"></div>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse min-w-[800px]">
+<thead>
+<tr class="border-b border-surface-dim">
+<th class="py-4 px-6 font-label-md text-label-md text-on-surface-variant bg-surface-container-lowest w-1/4">Feature Category</th>
+<th class="py-4 px-6 font-label-md text-label-md text-primary bg-primary/5 w-1/4 border-l border-r border-primary/10">CompetIQ</th>
+<th class="py-4 px-6 font-label-md text-label-md text-on-surface bg-surface-container-lowest w-1/4">Synthetix AI</th>
+<th class="py-4 px-6 font-label-md text-label-md text-on-surface bg-surface-container-lowest w-1/4">ApexCorp</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm">
+<!-- Category Row -->
+<tr class="bg-surface-container-low">
+<td class="py-2 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" colspan="4">Artificial Intelligence</td>
+</tr>
+<tr class="border-b border-surface-container-high table-row-hover">
+<td class="py-4 px-6 text-on-surface font-medium">Natural Language Processing</td>
+<td class="py-4 px-6 text-center bg-primary/5 border-l border-r border-primary/10">
+<span class="material-symbols-outlined text-[#10B981]">check_circle</span>
+</td>
+<td class="py-4 px-6 text-center text-outline-variant">
+<span class="material-symbols-outlined text-[#10B981]">check_circle</span>
+</td>
+<td class="py-4 px-6 text-center text-outline-variant">
+<span class="material-symbols-outlined">cancel</span>
+</td>
+</tr>
+<tr class="border-b border-surface-container-high table-row-hover">
+<td class="py-4 px-6 text-on-surface font-medium">Predictive Modeling</td>
+<td class="py-4 px-6 text-center bg-primary/5 border-l border-r border-primary/10">
+<span class="inline-flex items-center gap-1 px-2 py-1 bg-[#10B981]/10 text-[#059669] rounded text-xs font-semibold">
+<span class="material-symbols-outlined text-[14px]">stars</span> Advantage
+                                </span>
+</td>
+<td class="py-4 px-6 text-center text-outline-variant">
+<span class="material-symbols-outlined text-[#10B981]">check_circle</span>
+</td>
+<td class="py-4 px-6 text-center text-outline-variant">
+<span class="material-symbols-outlined text-[#10B981]">check_circle</span>
+</td>
+</tr>
+<!-- Category Row -->
+<tr class="bg-surface-container-low">
+<td class="py-2 px-6 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider" colspan="4">Data &amp; Security</td>
+</tr>
+<tr class="border-b border-surface-container-high table-row-hover">
+<td class="py-4 px-6 text-on-surface font-medium">SOC2 Type II Compliance</td>
+<td class="py-4 px-6 text-center bg-primary/5 border-l border-r border-primary/10">
+<span class="material-symbols-outlined text-[#10B981]">check_circle</span>
+</td>
+<td class="py-4 px-6 text-center text-outline-variant">
+<span class="material-symbols-outlined text-[#10B981]">check_circle</span>
+</td>
+<td class="py-4 px-6 text-center text-outline-variant">
+<span class="material-symbols-outlined text-[#10B981]">check_circle</span>
+</td>
+</tr>
+<tr class="border-b border-surface-container-high table-row-hover">
+<td class="py-4 px-6 text-on-surface font-medium">Custom Data Retention Policies</td>
+<td class="py-4 px-6 text-center bg-primary/5 border-l border-r border-primary/10">
+<span class="material-symbols-outlined text-[#10B981]">check_circle</span>
+</td>
+<td class="py-4 px-6 text-center text-outline-variant">
+<span class="material-symbols-outlined">cancel</span>
+</td>
+<td class="py-4 px-6 text-center text-outline-variant">
+<span class="material-symbols-outlined">cancel</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-surface-dim flex justify-center">
+<button class="btn-ghost text-primary">View Full Feature Matrix (42 items)</button>
+</div>
+</div>
+<!-- SWOT Analysis Cards -->
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-4">Strategic SWOT vs. Field</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-gutter">
+<div class="enterprise-card border-t-4 border-t-[#10B981] bg-gradient-to-b from-[#10B981]/5 to-transparent">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-[#10B981]">trending_up</span>
+<h4 class="font-label-md text-label-md text-on-surface font-bold uppercase">Strengths</h4>
+</div>
+<ul class="space-y-2 font-body-sm text-body-sm text-on-surface-variant">
+<li class="flex items-start gap-2"><span class="text-[#10B981]">•</span> Superior AI processing latency.</li>
+<li class="flex items-start gap-2"><span class="text-[#10B981]">•</span> More comprehensive API documentation.</li>
+<li class="flex items-start gap-2"><span class="text-[#10B981]">•</span> Higher user retention rate (92%).</li>
+</ul>
+</div>
+<div class="enterprise-card border-t-4 border-t-[#F59E0B] bg-gradient-to-b from-[#F59E0B]/5 to-transparent">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-[#F59E0B]">trending_down</span>
+<h4 class="font-label-md text-label-md text-on-surface font-bold uppercase">Weaknesses</h4>
+</div>
+<ul class="space-y-2 font-body-sm text-body-sm text-on-surface-variant">
+<li class="flex items-start gap-2"><span class="text-[#F59E0B]">•</span> Higher entry-level pricing tier.</li>
+<li class="flex items-start gap-2"><span class="text-[#F59E0B]">•</span> Steeper initial learning curve for admins.</li>
+<li class="flex items-start gap-2"><span class="text-[#F59E0B]">•</span> Limited out-of-the-box CRM integrations.</li>
+</ul>
+</div>
+<div class="enterprise-card border-t-4 border-t-primary-container bg-gradient-to-b from-primary-container/5 to-transparent">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-primary-container">lightbulb</span>
+<h4 class="font-label-md text-label-md text-on-surface font-bold uppercase">Opportunities</h4>
+</div>
+<ul class="space-y-2 font-body-sm text-body-sm text-on-surface-variant">
+<li class="flex items-start gap-2"><span class="text-primary-container">•</span> Target mid-market transitioning to Enterprise.</li>
+<li class="flex items-start gap-2"><span class="text-primary-container">•</span> Expand predictive modeling capabilities.</li>
+<li class="flex items-start gap-2"><span class="text-primary-container">•</span> Co-marketing with major cloud providers.</li>
+</ul>
+</div>
+<div class="enterprise-card border-t-4 border-t-[#EF4444] bg-gradient-to-b from-[#EF4444]/5 to-transparent">
+<div class="flex items-center gap-2 mb-3">
+<span class="material-symbols-outlined text-[#EF4444]">warning</span>
+<h4 class="font-label-md text-label-md text-on-surface font-bold uppercase">Threats</h4>
+</div>
+<ul class="space-y-2 font-body-sm text-body-sm text-on-surface-variant">
+<li class="flex items-start gap-2"><span class="text-[#EF4444]">•</span> Synthetix AI aggressive pricing strategy.</li>
+<li class="flex items-start gap-2"><span class="text-[#EF4444]">•</span> ApexCorp impending v3.0 release.</li>
+<li class="flex items-start gap-2"><span class="text-[#EF4444]">•</span> Potential economic downturn affecting IT budgets.</li>
+</ul>
+</div>
+</div>
+</main>
+</body></html>

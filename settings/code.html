@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CompetIQ AI - Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-container": "#eeefff",
+                        "surface-container-high": "#e6e8ea",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#e2dfff",
+                        "surface-container": "#eceef0",
+                        "primary": "#004ac6",
+                        "on-error": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#006242",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#2d3133",
+                        "on-secondary-container": "#fffbff",
+                        "on-tertiary-fixed": "#002113",
+                        "surface-dim": "#d8dadc",
+                        "tertiary-container": "#007d55",
+                        "secondary-fixed-dim": "#c3c0ff",
+                        "tertiary-fixed-dim": "#4edea3",
+                        "secondary": "#4b41e1",
+                        "on-tertiary-container": "#bdffdb",
+                        "on-tertiary-fixed-variant": "#005236",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#0053db",
+                        "on-surface": "#191c1e",
+                        "background": "#f7f9fb",
+                        "surface-bright": "#f7f9fb",
+                        "primary-fixed-dim": "#b4c5ff",
+                        "on-secondary-fixed-variant": "#3323cc",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-fixed": "#00174b",
+                        "inverse-primary": "#b4c5ff",
+                        "on-background": "#191c1e",
+                        "on-secondary-fixed": "#0f0069",
+                        "inverse-on-surface": "#eff1f3",
+                        "on-secondary": "#ffffff",
+                        "secondary-container": "#645efb",
+                        "on-surface-variant": "#434655",
+                        "surface": "#f7f9fb",
+                        "surface-container-highest": "#e0e3e5",
+                        "primary-container": "#2563eb",
+                        "primary-fixed": "#dbe1ff",
+                        "surface-variant": "#e0e3e5",
+                        "on-primary-fixed-variant": "#003ea8",
+                        "outline": "#737686",
+                        "tertiary-fixed": "#6ffbbe",
+                        "outline-variant": "#c3c6d7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "sidebar-width": "260px",
+                        "stack-sm": "8px",
+                        "stack-md": "16px",
+                        "stack-lg": "24px",
+                        "margin-page": "32px"
+                    },
+                    "fontFamily": {
+                        "body-sm": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-lg": ["Poppins"],
+                        "label-sm": ["Inter"],
+                        "display-lg": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "headline-sm": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "1.2", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "1.4", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; }
+        h1, h2, h3, h4, h5, h6, .font-headline-lg, .font-display-lg, .font-headline-md, .font-headline-sm { font-family: 'Poppins', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+        
+        .card-shadow { box-shadow: 0px 4px 20px -2px rgba(15, 23, 42, 0.05); }
+        .input-glow:focus { box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); border-color: #2563EB; }
+        
+        /* Custom Toggle Switch */
+        .toggle-checkbox:checked { right: 0; border-color: #2563EB; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #2563EB; }
+        .toggle-checkbox:checked + .toggle-label:before { transform: translateX(100%); border-color: white; }
+    </style>
+</head>
+<body class="text-on-surface antialiased flex bg-background h-screen overflow-hidden">
+<!-- SideNavBar (Shared Component) -->
+<nav class="bg-surface-container-lowest dark:bg-inverse-surface flex-col fixed left-0 top-0 bottom-0 w-[260px] z-40 flex border-r border-outline-variant dark:border-outline hidden md:flex">
+<!-- Header -->
+<div class="p-6 flex items-center gap-3 border-b border-outline-variant/30">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white text-lg">psychology</span>
+</div>
+<div>
+<div class="text-headline-sm font-headline-sm font-bold text-primary dark:text-primary-fixed leading-tight">CompetIQ AI</div>
+<div class="text-label-sm font-label-sm text-on-surface-variant">Enterprise Analytics</div>
+</div>
+</div>
+<!-- Scrollable Navigation -->
+<div class="flex-1 overflow-y-auto py-4">
+<div class="px-3 space-y-1">
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span>Competitors</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span>Data Collection</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span>AI Intelligence</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span>Reports</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span>Alerts</span>
+</a>
+<!-- ACTIVE STATE: Settings -->
+<a class="text-primary dark:text-primary-fixed bg-secondary-fixed/10 flex items-center gap-3 px-4 py-3 border-l-4 border-primary rounded-r-lg scale-[0.98] transition-transform text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined fill" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="p-4 border-t border-outline-variant/30 space-y-2">
+<button class="w-full bg-primary-container text-white py-2 rounded-lg text-label-md font-label-md flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">rocket_launch</span> Upgrade Plan
+            </button>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Help Center</span>
+</a>
+<a class="text-on-surface-variant dark:text-surface-variant flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-surface-container-high dark:hover:bg-surface-container transition-all text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span>Account</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 ml-0 md:ml-[260px] h-screen overflow-y-auto bg-background flex flex-col relative">
+<!-- TopAppBar (Shared Component - Reduced for focused Settings view) -->
+<header class="sticky top-0 right-0 z-30 flex justify-between items-center px-gutter h-16 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl shadow-sm bg-surface/80 dark:bg-surface/80 backdrop-blur-md">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface-variant hover:bg-surface-variant/50 rounded-full p-2 transition-all">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="text-headline-md font-headline-md font-bold text-on-surface">Settings</div>
+</div>
+<div class="flex items-center gap-2">
+<!-- Search (on_left configuration indicated in JSON, but moving to header for layout balance) -->
+<div class="relative hidden sm:block mr-2">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-sm">search</span>
+<input class="w-64 pl-9 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-sm focus:outline-none input-glow transition-all" placeholder="Search settings..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 rounded-full p-2 transition-all focus:ring-2 focus:ring-primary/10">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-variant/50 dark:hover:bg-surface-variant/20 rounded-full p-2 transition-all focus:ring-2 focus:ring-primary/10">
+<span class="material-symbols-outlined" data-icon="apps">apps</span>
+</button>
+<div class="ml-2 w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center border border-outline-variant cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all">
+<img alt="User Profile Avatar" class="w-full h-full rounded-full object-cover" data-alt="A professional headshot of a corporate executive, clean bright background, modern minimalist style, sharp focus, 8k resolution, suitable for a user profile avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7jmkjK6mXJ7c6M5g7w16Vt8TaVbmV05MECQO1NRpqMH-1jyKNJJTMkGwP9UXaHNjOKVobyoUeH5Dp86bk8XvVVZ7r4fRBi-dIitAESAP_rGh7mWGvlqrHsK7lKoXswriWQJ7p0HuhXmKLmW8ddwy9Bd7eYx2kdP9WWAnURY-YscDzuAHoJd82QRzp6jnxQYLHMt5Dv8ZdrSuv7H-3QbJcgEsPDHzuTR6K1rcAUistvnu6tRX0ThfnnA"/>
+</div>
+</div>
+</header>
+<!-- Settings Content -->
+<div class="p-margin-page mx-auto max-w-container-max w-full">
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Settings Sidebar Navigation -->
+<aside class="w-full lg:w-64 shrink-0">
+<div class="bg-surface-container-lowest rounded-[20px] p-2 card-shadow border border-surface-variant/50 sticky top-24">
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl">tune</span>
+                                General
+                            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-primary-fixed/30 text-primary font-bold border-l-2 border-primary text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl fill">domain</span>
+                                Workspace
+                            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl">group</span>
+                                Users &amp; Roles
+                            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl">memory</span>
+                                AI Configuration
+                            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl">extension</span>
+                                Integrations
+                            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl">palette</span>
+                                Appearance
+                            </a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-low transition-colors text-label-md font-label-md" href="#">
+<span class="material-symbols-outlined text-xl">security</span>
+                                Security
+                            </a>
+</nav>
+</div>
+</aside>
+<!-- Settings Forms Area -->
+<div class="flex-1 space-y-8 max-w-4xl pb-24">
+<!-- Section Header -->
+<div>
+<h2 class="text-headline-sm font-headline-sm font-semibold text-on-surface">Workspace Settings</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">Manage your organization's core details and preferences.</p>
+</div>
+<!-- Card: Workspace Details -->
+<div class="bg-surface-container-lowest rounded-[20px] card-shadow border border-surface-variant/50 overflow-hidden">
+<div class="px-6 py-4 border-b border-surface-variant/50 bg-surface-container-low/50">
+<h3 class="text-label-md font-label-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">info</span>
+                                Basic Information
+                            </h3>
+</div>
+<div class="p-6 space-y-6">
+<!-- Field Group -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1.5">Workspace Name <span class="text-error">*</span></label>
+<input class="w-full h-10 px-3 bg-surface rounded-lg border border-outline-variant text-body-sm focus:outline-none input-glow transition-all" type="text" value="Acme Corp Global"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1.5">Industry Sector</label>
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-10 bg-surface rounded-lg border border-outline-variant text-body-sm appearance-none focus:outline-none input-glow transition-all">
+<option>Technology / SaaS</option>
+<option>Financial Services</option>
+<option>Healthcare</option>
+<option>Manufacturing</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Single Full Width Field -->
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1.5">Workspace Logo</label>
+<div class="flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl border border-outline-variant bg-surface-container-low flex items-center justify-center overflow-hidden">
+<img alt="Workspace Logo" class="w-full h-full object-cover" data-alt="A sleek, modern corporate logo icon featuring abstract geometric shapes in deep blue and indigo, set against a clean white background, conveying intelligence and enterprise scale." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFYjkiwKUifbXuAk9I6KM54lYs72c-4Od_wtWwaF0aQibZXIGFYy6tlbPDBX-NqYJbrLS9zTo3kcl3F7b73lV1hEBB18AEYndQpEQScQt3Uv1QB_ZSbsdIquQZ38djrIrQhfE2knLz5tXAsQfWuLnVfus6fPQMTFe_2WN7LBkf-KmT_o0wuH4HHT5A-LTqn5s9wtCJ4qo2r0bjt2z5tSzdu2R8C4TRMePaRSwkmhX5e_EOQdtwe3GrtA"/>
+</div>
+<div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-surface border border-outline-variant rounded-lg text-label-md font-label-md text-on-surface hover:bg-surface-container-low transition-colors">Change</button>
+<button class="px-4 py-2 text-error hover:bg-error-container/20 rounded-lg text-label-md font-label-md transition-colors">Remove</button>
+</div>
+<p class="text-label-sm font-label-sm text-outline mt-2">Recommended size: 256x256px. Max 2MB (JPG, PNG).</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card: Localization -->
+<div class="bg-surface-container-lowest rounded-[20px] card-shadow border border-surface-variant/50 overflow-hidden">
+<div class="px-6 py-4 border-b border-surface-variant/50 bg-surface-container-low/50">
+<h3 class="text-label-md font-label-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">public</span>
+                                Localization
+                            </h3>
+</div>
+<div class="p-6 space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1.5">Default Timezone</label>
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-10 bg-surface rounded-lg border border-outline-variant text-body-sm appearance-none focus:outline-none input-glow transition-all">
+<option>(UTC-08:00) Pacific Time (US &amp; Canada)</option>
+<option>(UTC-05:00) Eastern Time (US &amp; Canada)</option>
+<option>(UTC+00:00) Greenwich Mean Time</option>
+<option>(UTC+01:00) Central European Time</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1.5">Date Format</label>
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-10 bg-surface rounded-lg border border-outline-variant text-body-sm appearance-none focus:outline-none input-glow transition-all">
+<option>MM/DD/YYYY</option>
+<option>DD/MM/YYYY</option>
+<option>YYYY-MM-DD</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card: AI Configuration (Preview) -->
+<div class="bg-surface-container-lowest rounded-[20px] card-shadow border border-surface-variant/50 overflow-hidden">
+<div class="px-6 py-4 border-b border-surface-variant/50 bg-surface-container-low/50 flex justify-between items-center">
+<h3 class="text-label-md font-label-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">psychology</span>
+                                AI Engine Preferences
+                            </h3>
+</div>
+<div class="p-6 space-y-6">
+<!-- Toggle Row -->
+<div class="flex items-center justify-between py-2">
+<div>
+<div class="text-label-md font-label-md text-on-surface">Automated Competitor Scanning</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">Allow AI to autonomously discover and analyze new market entrants.</div>
+</div>
+<div class="relative inline-block w-12 h-6 align-middle select-none transition duration-200 ease-in">
+<input checked="" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-transform duration-200 ease-in" id="toggle1" name="toggle" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-outline-variant cursor-pointer transition-colors duration-200 ease-in" for="toggle1"></label>
+</div>
+</div>
+<hr class="border-surface-variant/50"/>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1.5">Primary Inference Model</label>
+<div class="relative">
+<select class="w-full h-10 pl-3 pr-10 bg-surface rounded-lg border border-outline-variant text-body-sm appearance-none focus:outline-none input-glow transition-all">
+<option>CompetIQ Proprietary (Recommended)</option>
+<option>GPT-4 Enterprise</option>
+<option>Claude 3 Opus</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
+</div>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm text-on-surface-variant mb-1.5">Confidence Threshold</label>
+<div class="flex items-center gap-4 h-10">
+<input class="w-full h-2 bg-surface-variant rounded-lg appearance-none cursor-pointer accent-primary" max="99" min="50" type="range" value="85"/>
+<span class="text-label-md font-label-md text-on-surface w-12 text-right">85%</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Bar (Sticky Bottom in main area) -->
+<div class="sticky bottom-6 flex justify-end gap-3 pt-4">
+<button class="px-6 py-2.5 bg-surface border border-outline-variant rounded-lg text-label-md font-label-md text-on-surface hover:bg-surface-container-low transition-colors">
+                            Cancel
+                        </button>
+<button class="px-6 py-2.5 bg-primary-container text-white rounded-lg text-label-md font-label-md hover:bg-primary transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">save</span>
+                            Save Changes
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
