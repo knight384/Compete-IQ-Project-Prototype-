@@ -22,6 +22,44 @@ interface CompetitorData {
   products?: { id: string; name: string }[];
 }
 
+function CompetitorProductsCell({ competitorId }: { competitorId: string }) {
+  const [products, setProducts] = React.useState<{ id: string; name: string }[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+
+  React.useEffect(() => {
+    async function loadProducts() {
+      try {
+        const data = await api.get<{ id: string; name: string }[]>(`/products?competitorId=${competitorId}`);
+        setProducts(data);
+      } catch (err) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProducts();
+  }, [competitorId]);
+
+  if (loading) {
+    return <span className="text-on-surface-variant text-xs">Loading...</span>;
+  }
+  
+  if (error) {
+    return <span className="text-error text-xs">Failed to load</span>;
+  }
+
+  return (
+    <div className="flex flex-wrap gap-1">
+      {products.length > 0 ? products.map((p) => (
+        <span key={p.id} className="inline-flex items-center px-2 py-0.5 rounded text-xs border border-outline-variant text-on-surface-variant">{p.name}</span>
+      )) : (
+        <span className="text-on-surface-variant text-xs">No products</span>
+      )}
+    </div>
+  );
+}
+
 export default function CompetitorListPage() {
   const [competitors, setCompetitors] = React.useState<CompetitorData[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -113,7 +151,6 @@ export default function CompetitorListPage() {
             <TableBody className="divide-y divide-surface-variant bg-surface-container-lowest">
               {competitors.map((comp) => {
                 const statusVariant = comp.status === "Active" ? "success" : "error";
-                const products = comp.products || [];
                 const formattedDate = new Date(comp.updatedAt).toLocaleDateString();
 
                 return (
@@ -136,13 +173,7 @@ export default function CompetitorListPage() {
                       <Badge variant="default" className="bg-surface-container-high text-on-surface font-medium">{comp.industry || "General"}</Badge>
                     </TableCell>
                     <TableCell className="px-6">
-                      <div className="flex flex-wrap gap-1">
-                        {products.length > 0 ? products.map((p: { id: string; name: string }) => (
-                          <span key={p.id} className="inline-flex items-center px-2 py-0.5 rounded text-xs border border-outline-variant text-on-surface-variant">{p.name}</span>
-                        )) : (
-                          <span className="text-on-surface-variant text-xs">No products</span>
-                        )}
-                      </div>
+                      <CompetitorProductsCell competitorId={comp.id} />
                     </TableCell>
                     <TableCell className="px-6">
                       <Badge variant={statusVariant as any} className="gap-1.5 rounded-full font-medium">

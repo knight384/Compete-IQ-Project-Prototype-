@@ -22,14 +22,23 @@ interface CompetitorDetail {
 export default function CompetitorDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
   const [competitor, setCompetitor] = React.useState<CompetitorDetail | null>(null);
+  const [products, setProducts] = React.useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    async function loadCompetitor() {
+    async function loadData() {
       try {
         const data = await api.get<CompetitorDetail>(`/competitors/${id}`);
         setCompetitor(data);
+        
+        try {
+          const productsData = await api.get<{id: string, name: string}[]>(`/products?competitorId=${id}`);
+          setProducts(productsData);
+        } catch (prodErr) {
+          console.error("Failed to load products", prodErr);
+        }
+        
         setError(null);
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -41,7 +50,7 @@ export default function CompetitorDetailsPage({ params }: { params: Promise<{ id
         setLoading(false);
       }
     }
-    loadCompetitor();
+    loadData();
   }, [id]);
 
   if (loading) {
@@ -114,7 +123,7 @@ export default function CompetitorDetailsPage({ params }: { params: Promise<{ id
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-gutter">
         <KPICard 
           title="Product Count"
-          value="0" /* Placeholder: API doesn't return products count currently */
+          value={products.length.toString()}
           icon="inventory_2"
           iconClassName="bg-surface text-secondary"
           trend={{ value: "N/A", label: "", isNeutral: true }}
