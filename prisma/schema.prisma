@@ -8,16 +8,17 @@ datasource db {
 }
 
 model Organization {
-  id        String   @id @default(uuid())
-  name      String
-  industry  String?
-  settings  Json?
-  
+  id       String  @id @default(uuid())
+  name     String
+  industry String?
+  settings Json?
+
   users       User[]
   competitors Competitor[]
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  datasets    Dataset[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {
@@ -27,35 +28,36 @@ enum Role {
 }
 
 model User {
-  id           String       @id @default(uuid())
-  email        String       @unique
+  id           String  @id @default(uuid())
+  email        String  @unique
   passwordHash String
   name         String?
-  role         Role         @default(VIEWER)
-  
+  role         Role    @default(VIEWER)
+
   orgId        String
   organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([orgId])
 }
 
 model Competitor {
-  id        String   @id @default(uuid())
+  id        String  @id @default(uuid())
   name      String
   domain    String?
   logoText  String
   logoColor String
   industry  String?
   status    String
-  score     Int      @default(0)
-  
-  orgId     String
+  score     Int     @default(0)
+
+  orgId        String
   organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  
-  products  Product[]
+
+  products        Product[]
+  datasetInsights DatasetInsight[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -65,33 +67,107 @@ model Competitor {
 }
 
 model Product {
-  id           String     @id @default(uuid())
-  name         String
-  description  String?
-  
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
   competitorId String
   competitor   Competitor @relation(fields: [competitorId], references: [id], onDelete: Cascade)
-  
-  features     Feature[]
 
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  features        Feature[]
+  datasetInsights DatasetInsight[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([competitorId])
 }
 
 model Feature {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   description String?
   status      String
-  
-  productId   String
-  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([productId])
 }
 
+enum DatasetStatus {
+  UPLOADED
+  MAPPING_REQUIRED
+  PROCESSING
+  READY
+  FAILED
+}
+
+model Dataset {
+  id               String        @id @default(uuid())
+  originalFilename String
+  storageKey       String
+  format           String?
+  mimeType         String?
+  fileSize         Int?
+  status           DatasetStatus @default(UPLOADED)
+  failureReason    String?
+  semanticMapping  Json?
+
+  orgId        String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  profile  DatasetProfile?
+  insights DatasetInsight[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orgId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model DatasetProfile {
+  id String @id @default(uuid())
+
+  datasetId String  @unique
+  dataset   Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  rowCount          Int?
+  columnCount       Int?
+  columnMetadata    Json?
+  summaryStatistics Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DatasetInsight {
+  id String @id @default(uuid())
+
+  datasetId String
+  dataset   Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  type       String
+  title      String
+  summary    String
+  confidence String?
+  evidence   Json?
+
+  competitorId String?
+  competitor   Competitor? @relation(fields: [competitorId], references: [id], onDelete: SetNull)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([datasetId])
+  @@index([competitorId])
+  @@index([productId])
+}
