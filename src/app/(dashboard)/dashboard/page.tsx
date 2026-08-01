@@ -5,8 +5,27 @@ import { Button } from "@/components/ui/Button"
 import { KPICard, DashboardCard } from "@/components/shared/DashboardCards"
 import { ChartWrapper } from "@/components/shared/ChartWrapper"
 import { PageHeader } from "@/components/shared/PageLayout"
+import { api } from "@/lib/api-client"
 
 export default function DashboardPage() {
+  const [competitorsCount, setCompetitorsCount] = React.useState<number | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(false);
+
+  React.useEffect(() => {
+    async function loadStats() {
+      try {
+        const data = await api.get<{id: string}[]>('/competitors');
+        setCompetitorsCount(data.length);
+      } catch (err) {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadStats();
+  }, []);
+
   const sentimentChartData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
     datasets: [{
@@ -104,10 +123,10 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
         <KPICard 
           title="Competitors Monitored"
-          value="12"
+          value={loading ? "..." : error ? "!" : competitorsCount?.toString() || "0"}
           icon="radar"
           iconClassName="bg-primary/10 text-primary"
-          trend={{ value: "+3", label: "vs previous period", isPositive: true }}
+          trend={{ value: "+3", label: "vs previous period (mock)", isPositive: true }}
         />
         <KPICard 
           title="Market Sentiment"
