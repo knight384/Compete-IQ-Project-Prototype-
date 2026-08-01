@@ -2,6 +2,11 @@ import { Dataset } from '@prisma/client';
 import { datasetRepository } from './dataset.repository';
 import { LocalStorageProvider } from '../../shared/storage/local-storage-provider';
 import { StorageProvider } from '../../shared/storage/storage-provider';
+import { ParsedDataset } from '../../shared/parsing/dataset-parser';
+import { CsvDatasetParser } from '../../shared/parsing/csv-dataset-parser';
+import { XlsxDatasetParser } from '../../shared/parsing/xlsx-dataset-parser';
+import { DatasetParser } from '../../shared/parsing/dataset-parser';
+import { DatasetNotFoundError, DatasetValidationError, DatasetFormatError } from '../../shared/errors/dataset-errors';
 
 // Hardcoded maximum file size for Milestone 4.3 (10MB limit)
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -112,6 +117,66 @@ export class DatasetService {
       console.error('Storage deletion failed for deleted dataset:', error);
       // We don't throw here because the DB record is already successfully gone
     }
+  }
+
+  async parseDataset(datasetId: string, orgId: string): Promise<ParsedDataset> {
+    // 1. Fetch Dataset through DatasetRepository using id + orgId.
+    const dataset = await datasetRepository.findById(datasetId, orgId);
+    if (!dataset) {
+      throw new DatasetNotFoundError('Dataset not found');
+    }
+
+    // 2. Read file through StorageProvider.
+    let buffer: Buffer;
+    try {
+      buffer = await this.storage.read(dataset.storageKey);
+    } catch (error: unknown) {
+      console.error('Failed to read dataset from storage:', error);
+      // Propagate as infrastructure error, don't fail the dataset state.
+      throw new Error('Failed to read dataset from storage.');
+    }
+
+    // 3. Select parser explicitly based on the validated stored dataset format
+    let parser: DatasetParser;
+    if (dataset.format === 'CSV') {
+      parser = new CsvDatasetParser();
+    } else if (dataset.format === 'XLSX') {
+      parser = new XlsxDatasetParser();
+    } else {
+      // Transition dataset to FAILED with static failureReason
+      await datasetRepository.updateStatusAndFailureReason(datasetId, orgId, 'FAILED', 'Unsupported dataset format.');
+      throw new DatasetFormatError('Unsupported dataset format.');
+    }
+
+    // 4. Parse & Validate normalized structure.
+    let parsedDataset: ParsedDataset;
+    try {
+      parsedDataset = await parser.parse(buffer);
+    } catch (error: unknown) {
+      const failureReason = error instanceof DatasetValidationError 
+        ? error.message 
+        : 'Unknown validation error occurred during parsing.';
+        
+      console.error('Dataset parsing validation failed:', failureReason);
+      
+      // Attempt to update status to FAILED safely. 
+      // If this fails, we let the infrastructure error bubble up.
+      await datasetRepository.updateStatusAndFailureReason(datasetId, orgId, 'FAILED', failureReason);
+      
+      // Propagate the controlled validation error
+      if (error instanceof DatasetValidationError) {
+        throw error;
+      } else {
+        throw new DatasetValidationError(failureReason);
+      }
+    }
+
+    // 5. Success -> Transition status
+    // If DB fails here, it propagates as an infrastructure error. 
+    // We do not mark the dataset FAILED just because Prisma failed to update to MAPPING_REQUIRED.
+    await datasetRepository.updateStatusAndFailureReason(datasetId, orgId, 'MAPPING_REQUIRED', null);
+    
+    return parsedDataset;
   }
 }
 

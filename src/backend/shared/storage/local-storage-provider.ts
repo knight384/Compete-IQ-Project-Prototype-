@@ -44,6 +44,26 @@ export class LocalStorageProvider implements StorageProvider {
     return safeKey;
   }
 
+  async read(storageKey: string): Promise<Buffer> {
+    const fullPath = path.resolve(this.baseDir, storageKey);
+    const resolvedBase = path.resolve(this.baseDir);
+
+    // Prevent path traversal
+    const relative = path.relative(resolvedBase, fullPath);
+    if (relative.startsWith('..') || path.isAbsolute(relative)) {
+      throw new Error('Invalid storage key');
+    }
+
+    try {
+      return await fs.readFile(fullPath);
+    } catch (error: unknown) {
+      if (error instanceof Error && 'code' in error && (error as any).code === 'ENOENT') {
+        throw new Error('File not found in storage');
+      }
+      throw error;
+    }
+  }
+
   async delete(storageKey: string): Promise<void> {
     const fullPath = path.resolve(this.baseDir, storageKey);
     const resolvedBase = path.resolve(this.baseDir);

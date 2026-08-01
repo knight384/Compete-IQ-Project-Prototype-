@@ -52,6 +52,20 @@ export class DatasetRepository {
       data: { status },
     });
   }
+
+  async updateStatusAndFailureReason(id: string, orgId: string, status: DatasetStatus, failureReason: string | null = null): Promise<Dataset> {
+    const existing = await prisma.dataset.findFirst({
+      where: { id, orgId },
+    });
+    if (!existing) {
+      throw new Error('Dataset not found');
+    }
+
+    return prisma.dataset.update({
+      where: { id },
+      data: { status, failureReason },
+    });
+  }
 }
 
 export const datasetRepository = new DatasetRepository();
