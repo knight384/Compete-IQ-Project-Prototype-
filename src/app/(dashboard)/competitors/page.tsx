@@ -196,7 +196,7 @@ export default function CompetitorListPage() {
                     <TableCell className="px-6 text-body-sm font-body-sm text-on-surface-variant">{formattedDate}</TableCell>
                     <TableCell className="px-6 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Link href={`/dashboard/competitors/${comp.id}`}>
+                        <Link href={`/competitors/${comp.id}`}>
                           <button className="p-1.5 rounded text-on-surface-variant hover:text-primary-container hover:bg-primary-fixed/20 transition-colors" title="View Details">
                             <span className="material-symbols-outlined text-[18px]">visibility</span>
                           </button>

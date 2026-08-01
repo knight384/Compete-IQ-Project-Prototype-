@@ -78,7 +78,7 @@ export default function CompetitorDetailsPage({ params }: { params: Promise<{ id
       {/* Breadcrumb */}
       <div className="mb-6">
         <Breadcrumb items={[
-          { label: "Competitors", href: "/dashboard/competitors" },
+          { label: "Competitors", href: "/competitors" },
           { label: competitor.name }
         ]} />
       </div>
