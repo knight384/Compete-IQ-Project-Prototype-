@@ -4,36 +4,99 @@ import * as React from "react"
 import { Button } from "@/components/ui/Button"
 import { KPICard, DashboardCard } from "@/components/shared/DashboardCards"
 import { Breadcrumb } from "@/components/ui/Breadcrumb"
+import { api } from "@/lib/api-client"
+import { LoadingState, EmptyState } from "@/components/shared/Feedback"
 
-export default function CompetitorDetailsPage({ params }: { params: { id: string } }) {
-  // Mock data for the ID
+interface CompetitorDetail {
+  id: string;
+  name: string;
+  domain: string | null;
+  logoText: string;
+  logoColor: string;
+  industry: string | null;
+  status: string;
+  score: number;
+  updatedAt: string | Date;
+}
+
+export default function CompetitorDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params);
+  const [competitor, setCompetitor] = React.useState<CompetitorDetail | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    async function loadCompetitor() {
+      try {
+        const data = await api.get<CompetitorDetail>(`/competitors/${id}`);
+        setCompetitor(data);
+        setError(null);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Failed to load competitor details');
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCompetitor();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center min-h-[400px]">
+        <LoadingState title="Loading Competitor Details..." />
+      </div>
+    );
+  }
+
+  if (error || !competitor) {
+    return (
+      <div className="flex-1 flex items-center justify-center min-h-[400px]">
+        <EmptyState 
+          icon="error" 
+          title="Competitor Not Found" 
+          description={error || "The competitor you are looking for does not exist or has been removed."}
+        />
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Breadcrumb */}
       <div className="mb-6">
         <Breadcrumb items={[
           { label: "Competitors", href: "/dashboard/competitors" },
-          { label: "Synthetix AI" }
+          { label: competitor.name }
         ]} />
       </div>
 
       {/* Profile Header */}
       <div className="bg-surface-container-lowest rounded-card p-6 shadow-ambient-1 border border-surface-container-highest mb-gutter flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div className="flex items-center gap-6">
-          <div className="w-20 h-20 bg-surface rounded-xl border border-outline-variant flex items-center justify-center p-2 shadow-sm">
-            <img className="w-full h-full object-contain rounded-lg" alt="Synthetix AI Logo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBox7Zb7KgpNV0L2ebCiHdrxMlxHJWsyOwd1aQPx8OSxwpMP0aflpXXyvx65dg7ZKuxL4bf_voNWNvn7LWPyNRK13KBX9nTVOBTGpvpgBFTfHto3rMJiU1aZ4PVBLAjGFqgoW7836eTvi5mXVUIxwwX1tYBbkTWRe1EIiX-HP6D3lLJAD9kGswMjq010Ep8QyApWGvAX4LX437JViYvVhJIWDX0bkqtKx7lA2rZH_M63PCg-YlG-IQIlg"/>
+          <div className={`w-20 h-20 rounded-xl border border-outline-variant flex items-center justify-center p-2 shadow-sm ${competitor.logoColor || 'bg-surface text-on-surface'}`}>
+             <span className="text-3xl font-bold">{competitor.logoText || competitor.name.charAt(0)}</span>
           </div>
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-headline-lg font-headline-lg text-on-surface">Synthetix AI</h2>
-              <span className="bg-tertiary-container/10 text-tertiary text-label-sm font-label-sm px-2 py-1 rounded-full flex items-center gap-1 border border-tertiary/20">
-                <span className="material-symbols-outlined text-[14px]">monitoring</span>
-                Active Monitoring
+              <h2 className="text-headline-lg font-headline-lg text-on-surface">{competitor.name}</h2>
+              <span className={`bg-tertiary-container/10 text-tertiary text-label-sm font-label-sm px-2 py-1 rounded-full flex items-center gap-1 border border-tertiary/20`}>
+                <span className="material-symbols-outlined text-[14px]">
+                  {competitor.status === "Active" ? "monitoring" : "warning"}
+                </span>
+                {competitor.status}
               </span>
             </div>
             <div className="flex items-center gap-4 text-body-sm font-body-sm text-on-surface-variant">
-              <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">domain</span> Enterprise AI Solutions</span>
-              <a className="flex items-center gap-1 text-primary hover:underline" href="#"><span className="material-symbols-outlined text-[16px]">language</span> synthetix.ai</a>
+              <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">domain</span> {competitor.industry || "General Industry"}</span>
+              {competitor.domain && (
+                <a className="flex items-center gap-1 text-primary hover:underline" href={`https://${competitor.domain}`} target="_blank" rel="noreferrer">
+                  <span className="material-symbols-outlined text-[16px]">language</span> {competitor.domain}
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -51,34 +114,34 @@ export default function CompetitorDetailsPage({ params }: { params: { id: string
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-gutter">
         <KPICard 
           title="Product Count"
-          value="24"
+          value="0" /* Placeholder: API doesn't return products count currently */
           icon="inventory_2"
           iconClassName="bg-surface text-secondary"
-          trend={{ value: "+2 this quarter", label: "", isPositive: true }}
+          trend={{ value: "N/A", label: "", isNeutral: true }}
           className="border border-surface-container-highest shadow-ambient-1"
         />
         <KPICard 
-          title="Sentiment Score"
-          value={<>8.4<span className="text-headline-sm text-outline">/10</span></>}
-          icon="sentiment_satisfied"
+          title="Market Score"
+          value={<>{competitor.score}<span className="text-headline-sm text-outline">/100</span></>}
+          icon="show_chart"
           iconClassName="bg-surface text-primary"
-          trend={{ value: "-0.2 this month", label: "", isNegative: true }}
+          trend={{ value: "Stable", label: "", isNeutral: true }}
           className="border border-surface-container-highest shadow-ambient-1"
         />
         <KPICard 
           title="Feature Gap"
-          value={<>12<span className="text-headline-sm text-outline"> missing</span></>}
+          value={<>--<span className="text-headline-sm text-outline"> missing</span></>}
           icon="compare_arrows"
           iconClassName="bg-surface text-error"
-          trend={{ value: "We lead in 5 areas", label: "", isPositive: true }}
+          trend={{ value: "Not calculated yet", label: "", isNeutral: true }}
           className="border border-surface-container-highest shadow-ambient-1"
         />
         <KPICard 
           title="Pricing Index"
-          value="Premium"
+          value="N/A"
           icon="attach_money"
           iconClassName="bg-surface text-tertiary"
-          trend={{ value: "~15% higher than market avg", label: "", isNeutral: true }}
+          trend={{ value: "Data unavailable", label: "", isNeutral: true }}
           className="border border-surface-container-highest shadow-ambient-1"
         />
       </div>
@@ -90,45 +153,43 @@ export default function CompetitorDetailsPage({ params }: { params: { id: string
           {/* Tabs */}
           <div className="border-b border-outline-variant flex gap-6 overflow-x-auto hide-scrollbar">
             <button className="pb-3 text-primary border-b-2 border-primary font-label-md text-label-md whitespace-nowrap">Overview</button>
-            <button className="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md whitespace-nowrap">Features</button>
-            <button className="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md whitespace-nowrap">Pricing</button>
-            <button className="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md whitespace-nowrap">Reviews</button>
+            <button className="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md whitespace-nowrap">Features (Placeholder)</button>
+            <button className="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md whitespace-nowrap">Pricing (Placeholder)</button>
+            <button className="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md whitespace-nowrap">Reviews (Placeholder)</button>
           </div>
 
-          {/* AI Insights Overview Card */}
+          {/* AI Insights Overview Card (Placeholder content retained from mock) */}
           <div className="bg-surface-container-lowest rounded-card p-6 shadow-ambient-1 border border-surface-container-highest relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
             <div className="flex items-center gap-2 mb-4 relative z-10">
               <span className="material-symbols-outlined text-primary">auto_awesome</span>
-              <h3 className="text-headline-sm font-headline-sm text-on-surface">Executive Summary</h3>
+              <h3 className="text-headline-sm font-headline-sm text-on-surface">Executive Summary (AI Generated Mock)</h3>
             </div>
             <p className="text-body-md font-body-md text-on-surface-variant mb-6 relative z-10 leading-relaxed">
-              Synthetix AI continues to dominate the premium tier, heavily investing in their generative text capabilities. However, recent customer reviews indicate friction in their API onboarding process. We recommend prioritizing our "One-Click Integration" marketing to capture their dissatisfied mid-market tier.
+              {competitor.name} continues to dominate their tier. We recommend prioritizing our "One-Click Integration" marketing to capture their dissatisfied mid-market tier. (This is placeholder AI analysis).
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
               <div className="bg-surface p-4 rounded-xl border border-outline-variant">
                 <h4 className="text-label-md font-label-md text-on-surface mb-2 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-tertiary"></span> Strengths
+                  <span className="w-2 h-2 rounded-full bg-tertiary"></span> Strengths (Mock)
                 </h4>
                 <ul className="text-body-sm font-body-sm text-on-surface-variant space-y-2">
-                  <li>Deep enterprise CRM integrations</li>
-                  <li>Advanced custom model training</li>
+                  <li>Deep enterprise integrations</li>
                 </ul>
               </div>
               <div className="bg-surface p-4 rounded-xl border border-outline-variant">
                 <h4 className="text-label-md font-label-md text-on-surface mb-2 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-error"></span> Vulnerabilities
+                  <span className="w-2 h-2 rounded-full bg-error"></span> Vulnerabilities (Mock)
                 </h4>
                 <ul className="text-body-sm font-body-sm text-on-surface-variant space-y-2">
-                  <li>High entry price point ($4k/mo)</li>
-                  <li>Steep learning curve for admins</li>
+                  <li>High entry price point</li>
                 </ul>
               </div>
             </div>
           </div>
 
-          {/* Recent Activity Table */}
-          <DashboardCard title="Recent Activity" className="p-0 border-surface-container-highest shadow-ambient-1 overflow-hidden" action={
+          {/* Recent Activity Table (Placeholder content retained) */}
+          <DashboardCard title="Recent Activity (Mock)" className="p-0 border-surface-container-highest shadow-ambient-1 overflow-hidden" action={
             <button className="text-primary font-label-sm text-label-sm hover:underline">View All</button>
           }>
             <div className="overflow-x-auto">
@@ -142,31 +203,13 @@ export default function CompetitorDetailsPage({ params }: { params: { id: string
                 </thead>
                 <tbody className="text-body-sm font-body-sm text-on-surface">
                   <tr className="border-b border-outline-variant hover:bg-surface/50 transition-colors">
-                    <td className="p-4 whitespace-nowrap">Oct 24, 2023</td>
+                    <td className="p-4 whitespace-nowrap">{new Date(competitor.updatedAt).toLocaleDateString()}</td>
                     <td className="p-4">
                       <span className="bg-primary/10 text-primary px-2 py-1 rounded-md text-label-sm inline-flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">new_releases</span> Feature Launch
+                        <span className="material-symbols-outlined text-[14px]">update</span> Profile Updated
                       </span>
                     </td>
-                    <td className="p-4">Released 'Auto-Suggest v3' with multilinguistic support.</td>
-                  </tr>
-                  <tr className="border-b border-outline-variant hover:bg-surface/50 transition-colors">
-                    <td className="p-4 whitespace-nowrap">Oct 12, 2023</td>
-                    <td className="p-4">
-                      <span className="bg-error/10 text-error px-2 py-1 rounded-md text-label-sm inline-flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">price_change</span> Pricing Change
-                      </span>
-                    </td>
-                    <td className="p-4">Increased base enterprise tier by 12%.</td>
-                  </tr>
-                  <tr className="hover:bg-surface/50 transition-colors">
-                    <td className="p-4 whitespace-nowrap">Sep 28, 2023</td>
-                    <td className="p-4">
-                      <span className="bg-secondary/10 text-secondary px-2 py-1 rounded-md text-label-sm inline-flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">campaign</span> Marketing
-                      </span>
-                    </td>
-                    <td className="p-4">Launched "Future of Work" Q4 Ad Campaign.</td>
+                    <td className="p-4">Competitor profile data was updated in the system.</td>
                   </tr>
                 </tbody>
               </table>
@@ -176,8 +219,8 @@ export default function CompetitorDetailsPage({ params }: { params: { id: string
 
         {/* Right Sidebar Panel */}
         <div className="col-span-12 lg:col-span-4 space-y-6">
-          {/* AI Threat Analysis */}
-          <DashboardCard title="Threat Level" titleIcon={<span className="material-symbols-outlined text-error">warning</span>} className="border-surface-container-highest shadow-ambient-1">
+          {/* AI Threat Analysis (Placeholder content) */}
+          <DashboardCard title="Threat Level (Mock)" titleIcon={<span className="material-symbols-outlined text-error">warning</span>} className="border-surface-container-highest shadow-ambient-1">
             <div className="relative h-4 bg-surface rounded-full overflow-hidden mb-2">
               <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-tertiary via-secondary to-error w-3/4 rounded-full"></div>
             </div>
@@ -196,37 +239,7 @@ export default function CompetitorDetailsPage({ params }: { params: { id: string
                   <p className="text-[12px] text-on-surface-variant">They are ignoring businesses under 50 employees.</p>
                 </div>
               </li>
-              <li className="flex items-start gap-3">
-                <div className="bg-tertiary-container/20 p-1.5 rounded-full text-tertiary mt-0.5">
-                  <span className="material-symbols-outlined text-[16px]">target</span>
-                </div>
-                <div>
-                  <p className="text-label-sm font-label-sm text-on-surface">Highlight Usability</p>
-                  <p className="text-[12px] text-on-surface-variant">Reviewers consistently complain about UI complexity.</p>
-                </div>
-              </li>
             </ul>
-          </DashboardCard>
-
-          {/* Competitor Timeline Mini */}
-          <DashboardCard title="Strategic Timeline" className="border-surface-container-highest shadow-ambient-1">
-            <div className="relative border-l-2 border-outline-variant ml-3 space-y-6">
-              <div className="relative pl-6">
-                <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-surface border-2 border-primary"></div>
-                <p className="text-label-sm text-primary font-label-sm mb-1">Expected Q1 2024</p>
-                <p className="text-body-sm font-body-sm text-on-surface">Mobile App Redesign Release</p>
-              </div>
-              <div className="relative pl-6">
-                <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-primary border-2 border-surface"></div>
-                <p className="text-label-sm text-on-surface-variant font-label-sm mb-1">Sep 2023</p>
-                <p className="text-body-sm font-body-sm text-on-surface">Acquired Dataflow Inc. for $45M</p>
-              </div>
-              <div className="relative pl-6">
-                <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full bg-outline-variant border-2 border-surface"></div>
-                <p className="text-label-sm text-on-surface-variant font-label-sm mb-1">Jun 2023</p>
-                <p className="text-body-sm font-body-sm text-on-surface">Series C Funding ($120M)</p>
-              </div>
-            </div>
           </DashboardCard>
         </div>
       </div>
