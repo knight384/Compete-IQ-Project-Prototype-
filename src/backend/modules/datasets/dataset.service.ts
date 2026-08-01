@@ -6,7 +6,8 @@ import { ParsedDataset } from '../../shared/parsing/dataset-parser';
 import { CsvDatasetParser } from '../../shared/parsing/csv-dataset-parser';
 import { XlsxDatasetParser } from '../../shared/parsing/xlsx-dataset-parser';
 import { DatasetParser } from '../../shared/parsing/dataset-parser';
-import { DatasetNotFoundError, DatasetValidationError, DatasetFormatError } from '../../shared/errors/dataset-errors';
+import { DatasetNotFoundError, DatasetValidationError, DatasetFormatError, DatasetStateError, DatasetMappingError } from '../../shared/errors/dataset-errors';
+import { suggestSemanticMappings, ColumnMapping, SemanticMappingDocument, SemanticField } from '../../shared/mapping/semantic-mapping';
 
 // Hardcoded maximum file size for Milestone 4.3 (10MB limit)
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
@@ -119,40 +120,52 @@ export class DatasetService {
     }
   }
 
-  async parseDataset(datasetId: string, orgId: string): Promise<ParsedDataset> {
-    // 1. Fetch Dataset through DatasetRepository using id + orgId.
+  /**
+   * Internal helper that reads the stored file, selects the parser,
+   * parses and validates, and returns ParsedDataset without mutating database state.
+   */
+  private async readAndParseDataset(datasetId: string, orgId: string): Promise<ParsedDataset> {
     const dataset = await datasetRepository.findById(datasetId, orgId);
     if (!dataset) {
       throw new DatasetNotFoundError('Dataset not found');
     }
 
-    // 2. Read file through StorageProvider.
     let buffer: Buffer;
     try {
       buffer = await this.storage.read(dataset.storageKey);
     } catch (error: unknown) {
       console.error('Failed to read dataset from storage:', error);
-      // Propagate as infrastructure error, don't fail the dataset state.
       throw new Error('Failed to read dataset from storage.');
     }
 
-    // 3. Select parser explicitly based on the validated stored dataset format
     let parser: DatasetParser;
     if (dataset.format === 'CSV') {
       parser = new CsvDatasetParser();
     } else if (dataset.format === 'XLSX') {
       parser = new XlsxDatasetParser();
     } else {
-      // Transition dataset to FAILED with static failureReason
-      await datasetRepository.updateStatusAndFailureReason(datasetId, orgId, 'FAILED', 'Unsupported dataset format.');
       throw new DatasetFormatError('Unsupported dataset format.');
     }
 
-    // 4. Parse & Validate normalized structure.
-    let parsedDataset: ParsedDataset;
+    // This parses and structurally validates (width limits, row limits)
+    return parser.parse(buffer);
+  }
+
+  async parseDataset(datasetId: string, orgId: string): Promise<ParsedDataset> {
     try {
-      parsedDataset = await parser.parse(buffer);
+      const parsedDataset = await this.readAndParseDataset(datasetId, orgId);
+      
+      // Success -> Transition status
+      await datasetRepository.updateStatusAndFailureReason(datasetId, orgId, 'MAPPING_REQUIRED', null);
+      
+      return parsedDataset;
     } catch (error: unknown) {
+      // If the error comes from our readAndParseDataset due to unsupported format, transition it here
+      if (error instanceof DatasetFormatError) {
+        await datasetRepository.updateStatusAndFailureReason(datasetId, orgId, 'FAILED', 'Unsupported dataset format.');
+        throw error;
+      }
+      
       const failureReason = error instanceof DatasetValidationError 
         ? error.message 
         : 'Unknown validation error occurred during parsing.';
@@ -160,7 +173,6 @@ export class DatasetService {
       console.error('Dataset parsing validation failed:', failureReason);
       
       // Attempt to update status to FAILED safely. 
-      // If this fails, we let the infrastructure error bubble up.
       await datasetRepository.updateStatusAndFailureReason(datasetId, orgId, 'FAILED', failureReason);
       
       // Propagate the controlled validation error
@@ -170,13 +182,95 @@ export class DatasetService {
         throw new DatasetValidationError(failureReason);
       }
     }
+  }
 
-    // 5. Success -> Transition status
-    // If DB fails here, it propagates as an infrastructure error. 
-    // We do not mark the dataset FAILED just because Prisma failed to update to MAPPING_REQUIRED.
-    await datasetRepository.updateStatusAndFailureReason(datasetId, orgId, 'MAPPING_REQUIRED', null);
+  async getMappingSuggestions(datasetId: string, orgId: string) {
+    const dataset = await datasetRepository.findById(datasetId, orgId);
+    if (!dataset) {
+      throw new DatasetNotFoundError('Dataset not found');
+    }
+
+    if (dataset.status !== 'MAPPING_REQUIRED') {
+      throw new DatasetStateError(`Cannot generate suggestions for dataset in state: ${dataset.status}`);
+    }
+
+    // Reuse parsing infrastructure strictly without mutating database status
+    const parsedDataset = await this.readAndParseDataset(datasetId, orgId);
     
-    return parsedDataset;
+    // Suggest mappings deterministically
+    return suggestSemanticMappings(parsedDataset.headers);
+  }
+
+  async confirmColumnMapping(datasetId: string, orgId: string, mappings: ColumnMapping[]): Promise<Dataset> {
+    const dataset = await datasetRepository.findById(datasetId, orgId);
+    if (!dataset) {
+      throw new DatasetNotFoundError('Dataset not found');
+    }
+
+    if (dataset.status !== 'MAPPING_REQUIRED') {
+      throw new DatasetStateError(`Cannot map columns for dataset in state: ${dataset.status}`);
+    }
+
+    if (!mappings || mappings.length === 0) {
+      throw new DatasetMappingError('Mapping payload cannot be empty');
+    }
+
+    // Reuse parsing infrastructure to obtain actual headers cleanly
+    const parsedDataset = await this.readAndParseDataset(datasetId, orgId);
+    const actualHeaders = parsedDataset.headers;
+    const actualHeaderSet = new Set(actualHeaders);
+
+    // 4. A confirmed mapping must cover EVERY actual parsed source header exactly once.
+    if (mappings.length !== actualHeaders.length) {
+      throw new DatasetMappingError(`Mapping must cover exactly ${actualHeaders.length} source columns. Received ${mappings.length}.`);
+    }
+
+    const seenSources = new Set<string>();
+    const seenSemantics = new Set<SemanticField>();
+
+    for (const mapping of mappings) {
+      if (!actualHeaderSet.has(mapping.sourceColumn)) {
+        throw new DatasetMappingError(`Unknown source column: "${mapping.sourceColumn}"`);
+      }
+      
+      if (seenSources.has(mapping.sourceColumn)) {
+        throw new DatasetMappingError(`Duplicate source column mapping: "${mapping.sourceColumn}"`);
+      }
+      seenSources.add(mapping.sourceColumn);
+
+      // Explicitly reject null or undefined semantic fields
+      const field = mapping.semanticField;
+      if (field === null || field === undefined) {
+        throw new DatasetMappingError(`Semantic field cannot be null or missing for column: "${mapping.sourceColumn}"`);
+      }
+
+      if (!Object.values(SemanticField).includes(field)) {
+        throw new DatasetMappingError(`Invalid semantic field: "${field}"`);
+      }
+
+      // 5. Singleton policy: Non-IGNORE fields should not be duplicated
+      if (field !== SemanticField.IGNORE) {
+        if (seenSemantics.has(field)) {
+          throw new DatasetMappingError(`Duplicate mapping for singleton semantic field: "${field}"`);
+        }
+        seenSemantics.add(field);
+      }
+    }
+
+    // Check if every source header was mapped
+    for (const header of actualHeaders) {
+      if (!seenSources.has(header)) {
+        throw new DatasetMappingError(`Missing mapping for source column: "${header}"`);
+      }
+    }
+
+    const mappingDocument: SemanticMappingDocument = {
+      version: 1,
+      columns: mappings
+    };
+
+    // Transition to MAPPED
+    return datasetRepository.updateSemanticMapping(datasetId, orgId, mappingDocument, 'MAPPED');
   }
 }
 

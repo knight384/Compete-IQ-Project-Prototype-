@@ -18,3 +18,17 @@ export class DatasetFormatError extends Error {
     this.name = 'DatasetFormatError';
   }
 }
+
+export class DatasetStateError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DatasetStateError';
+  }
+}
+
+export class DatasetMappingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DatasetMappingError';
+  }
+}

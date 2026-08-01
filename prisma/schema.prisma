@@ -101,6 +101,7 @@ model Feature {
 enum DatasetStatus {
   UPLOADED
   MAPPING_REQUIRED
+  MAPPED
   PROCESSING
   READY
   FAILED

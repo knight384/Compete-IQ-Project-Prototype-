@@ -66,6 +66,23 @@ export class DatasetRepository {
       data: { status, failureReason },
     });
   }
+
+  async updateSemanticMapping(id: string, orgId: string, mapping: any, status: DatasetStatus): Promise<Dataset> {
+    const existing = await prisma.dataset.findFirst({
+      where: { id, orgId },
+    });
+    if (!existing) {
+      throw new Error('Dataset not found');
+    }
+
+    return prisma.dataset.update({
+      where: { id },
+      data: { 
+        semanticMapping: mapping,
+        status 
+      },
+    });
+  }
 }
 
 export const datasetRepository = new DatasetRepository();
