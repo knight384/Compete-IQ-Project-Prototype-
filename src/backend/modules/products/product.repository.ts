@@ -37,6 +37,22 @@ export class ProductRepository {
   }
 
   /**
+   * Retrieves all products for an organization by traversing the Product -> Competitor relationship.
+   */
+  async findAllByOrganization(orgId: string): Promise<Product[]> {
+    return prisma.product.findMany({
+      where: {
+        competitor: {
+          orgId,
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
+  /**
    * Updates a product.
    */
   async update(id: string, data: Prisma.ProductUpdateInput): Promise<Product> {
