@@ -5,106 +5,70 @@ import { Button } from "@/components/ui/Button"
 import { KPICard, DashboardCard } from "@/components/shared/DashboardCards"
 import { ChartWrapper } from "@/components/shared/ChartWrapper"
 import { PageHeader } from "@/components/shared/PageLayout"
-import { api } from "@/lib/api-client"
+import { useDashboardAnalytics } from "@/lib/hooks/useDashboardAnalytics"
+
+/**
+ * Deferred-state placeholder for analytics surfaces not yet implemented.
+ * Replaces fabricated static charts from pre-5.4 implementation.
+ */
+function DeferredAnalyticsCard({ title, message }: { title: string; message: string }) {
+  return (
+    <DashboardCard title={title}>
+      <div className="flex flex-col items-center justify-center h-48 gap-3 text-center">
+        <span className="material-symbols-outlined text-4xl text-outline-variant">query_stats</span>
+        <p className="text-body-sm font-body-sm text-on-surface-variant max-w-xs">{message}</p>
+      </div>
+    </DashboardCard>
+  );
+}
 
 export default function DashboardPage() {
-  const [competitorsCount, setCompetitorsCount] = React.useState<number | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(false);
+  const { data, loading, error } = useDashboardAnalytics();
 
-  React.useEffect(() => {
-    async function loadStats() {
-      try {
-        const data = await api.get<{id: string}[]>('/competitors');
-        setCompetitorsCount(data.length);
-      } catch (err) {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadStats();
-  }, []);
+  // Derive display values — never NaN, never undefined, never fabricated fallbacks
+  const competitorCount = loading ? "—" : error ? "!" : String(data?.competitorCount ?? 0);
+  const totalInsights    = loading ? "—" : error ? "!" : String(data?.totalInsights ?? 0);
+  const avgScore         = loading ? "—" : error ? "!" : String(data?.avgIntelligenceActivityScore ?? 0);
+  const pricingOpps      = loading ? "—" : error ? "!" : String(data?.totalPricingOpportunities ?? 0);
 
-  const sentimentChartData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+  // Competitor Intelligence Activity bar chart — uses real data, explicit 0–100 Y-axis
+  const topCompetitors = data?.topCompetitors ?? [];
+
+  const intelligenceChartData = {
+    labels: topCompetitors.length > 0
+      ? topCompetitors.map((c) => c.competitorName)
+      : ['No Data'],
     datasets: [{
-      label: 'Brand Sentiment',
-      data: [65, 68, 62, 74, 75, 78],
-      borderColor: '#2563EB',
-      backgroundColor: 'rgba(37, 99, 235, 0.1)',
-      borderWidth: 2,
-      tension: 0.4,
-      fill: true,
-      pointBackgroundColor: '#FFFFFF',
-      pointBorderColor: '#2563EB',
-      pointBorderWidth: 2,
-      pointRadius: 4,
-      pointHoverRadius: 6
-    }]
-  };
-
-  const sentimentChartOptions = {
-    scales: {
-      y: { min: 50, beginAtZero: false }
-    }
-  };
-
-  const competitorChartData = {
-    labels: ['CompetIQ', 'Apex', 'GlobalTech', 'Nova', 'Synergy'],
-    datasets: [{
-      label: 'Feature Score',
-      data: [9.2, 8.5, 7.8, 6.5, 5.9],
-      backgroundColor: ['#2563EB', '#e0e3e5', '#e0e3e5', '#e0e3e5', '#e0e3e5'],
+      label: 'Intelligence Activity Score',
+      data: topCompetitors.length > 0
+        ? topCompetitors.map((c) => c.intelligenceActivityScore)
+        : [0],
+      backgroundColor: topCompetitors.map((_, i) =>
+        i === 0 ? '#2563EB' : '#e0e3e5'
+      ),
       borderRadius: 4,
-      barThickness: 32
-    }]
+      barThickness: 32,
+    }],
   };
 
-  const competitorChartOptions = {
+  const intelligenceChartOptions = {
     scales: {
-      y: { max: 10 }
-    }
-  };
-
-  const reviewChartData = {
-    labels: ['W1', 'W2', 'W3', 'W4', 'W5', 'W6', 'W7', 'W8'],
-    datasets: [
-      {
-        label: 'CompetIQ',
-        data: [120, 135, 150, 180, 210, 240, 280, 310],
-        borderColor: '#2563EB',
-        borderWidth: 2,
-        tension: 0.4,
-        pointRadius: 0
+      y: {
+        min: 0,
+        max: 100,
+        title: {
+          display: true,
+          text: 'Activity Score (0–100)',
+        },
       },
-      {
-        label: 'Apex',
-        data: [180, 185, 190, 195, 205, 215, 220, 230],
-        borderColor: '#645efb',
-        borderWidth: 2,
-        tension: 0.4,
-        pointRadius: 0
-      }
-    ]
-  };
-
-  const reviewChartOptions = {
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top' as const,
-        align: 'end' as const,
-        labels: { usePointStyle: true, boxWidth: 8 }
-      }
-    }
+    },
   };
 
   return (
     <>
       {/* Page Header */}
-      <PageHeader 
-        title="Executive Overview" 
+      <PageHeader
+        title="Executive Overview"
         description="Real-time competitive intelligence and market positioning."
         className="mb-8"
       >
@@ -119,35 +83,53 @@ export default function DashboardPage() {
         </Button>
       </PageHeader>
 
+      {/* API Error Banner */}
+      {error && (
+        <div className="mb-6 p-4 rounded-lg bg-error/10 border border-error/30 flex items-center gap-3">
+          <span className="material-symbols-outlined text-error">error</span>
+          <p className="text-body-sm font-body-sm text-on-surface">
+            Failed to load analytics: {error}
+          </p>
+        </div>
+      )}
+
       {/* KPI Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
-        <KPICard 
+        <KPICard
           title="Competitors Monitored"
-          value={loading ? "..." : error ? "!" : competitorsCount?.toString() || "0"}
+          value={competitorCount}
           icon="radar"
           iconClassName="bg-primary/10 text-primary"
-          trend={{ value: "+3", label: "vs previous period (mock)", isPositive: true }}
+          trend={{ value: loading ? "Loading…" : "Tracked competitors", label: "", isPositive: true }}
         />
-        <KPICard 
-          title="Market Sentiment"
-          value="78%"
-          icon="sentiment_satisfied"
+        <KPICard
+          title="Total Insights"
+          value={totalInsights}
+          icon="lightbulb"
           iconClassName="bg-tertiary/10 text-tertiary"
-          trend={{ value: "Positive (+4%)", label: "", isPositive: true }}
+          trend={{ value: loading ? "Loading…" : "Linked across datasets", label: "", isPositive: true }}
         />
-        <KPICard 
-          title="Opportunity Score"
-          value={<>8.4<span className="text-headline-sm font-headline-sm text-outline-variant">/10</span></>}
+        <KPICard
+          title="Avg Activity Score"
+          value={
+            loading || error
+              ? avgScore
+              : <>{avgScore}<span className="text-headline-sm font-headline-sm text-outline-variant">/100</span></>
+          }
           icon="insights"
           iconClassName="bg-secondary/10 text-secondary"
-          trend={{ value: "High potential identified", label: "", isNeutral: true }}
+          trend={{
+            value: loading ? "Loading…" : `${data?.competitorsWithIntelligenceCount ?? 0} competitors with intelligence`,
+            label: "",
+            isNeutral: true,
+          }}
         />
-        <KPICard 
-          title="Pricing Changes"
-          value="5"
+        <KPICard
+          title="Pricing Opportunities"
+          value={pricingOpps}
           icon="currency_exchange"
           iconClassName="bg-error/10 text-error"
-          trend={{ value: "Action Required", label: "", isNegative: true }}
+          trend={{ value: loading ? "Loading…" : "Across all competitors", label: "", isNegative: (data?.totalPricingOpportunities ?? 0) > 0 }}
           className="relative overflow-hidden before:absolute before:top-0 before:right-0 before:w-16 before:h-16 before:bg-error/5 before:rounded-bl-full before:z-0 [&>*]:relative [&>*]:z-10"
         />
       </div>
@@ -156,76 +138,104 @@ export default function DashboardPage() {
       <div className="grid grid-cols-12 gap-gutter">
         {/* Center Column (Charts) */}
         <div className="col-span-12 lg:col-span-8 flex flex-col gap-gutter">
-          <DashboardCard 
-            title="Sentiment Trend" 
+          {/* Deferred: Sentiment Trend (no real sentiment data available yet) */}
+          <DeferredAnalyticsCard
+            title="Sentiment Trend"
+            message="Sentiment analytics will be available after additional intelligence integration in Milestone 5.5."
+          />
+
+          {/* Competitor Intelligence Activity — real data, explicit 0–100 Y-axis */}
+          <DashboardCard
+            title="Competitor Intelligence Activity"
             action={
-              <button className="text-outline hover:text-primary transition-colors">
-                <span className="material-symbols-outlined">more_vert</span>
-              </button>
+              <span className="text-label-sm font-label-sm text-on-surface-variant px-2 py-1 rounded bg-surface-container-low">
+                Score 0–100
+              </span>
             }
           >
-            <ChartWrapper type="line" data={sentimentChartData} options={sentimentChartOptions} />
-          </DashboardCard>
-          
-          <DashboardCard 
-            title="Competitor Comparison" 
-            action={
-              <div className="flex gap-2">
-                <span className="text-label-sm font-label-sm bg-surface-container-low px-2 py-1 rounded text-on-surface-variant cursor-pointer hover:bg-surface-variant">Features</span>
-                <span className="text-label-sm font-label-sm px-2 py-1 rounded text-outline cursor-pointer hover:bg-surface-container-low">Pricing</span>
+            {loading && (
+              <div className="flex items-center justify-center h-48 text-on-surface-variant text-body-sm">
+                Loading…
               </div>
-            }
-          >
-            <ChartWrapper type="bar" data={competitorChartData} options={competitorChartOptions} />
+            )}
+            {!loading && !error && topCompetitors.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-48 gap-3 text-center">
+                <span className="material-symbols-outlined text-4xl text-outline-variant">bar_chart</span>
+                <p className="text-body-sm font-body-sm text-on-surface-variant">
+                  No competitors tracked yet. Add a competitor to see intelligence activity.
+                </p>
+              </div>
+            )}
+            {!loading && (topCompetitors.length > 0 || error) && (
+              <ChartWrapper
+                type="bar"
+                data={intelligenceChartData}
+                options={intelligenceChartOptions}
+              />
+            )}
           </DashboardCard>
         </div>
 
         {/* Right Column (Widgets) */}
         <div className="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
-          <DashboardCard 
-            title="AI Recommendations"
+          {/* Competitor Intelligence Summary — real data */}
+          <DashboardCard
+            title="Intelligence Highlights"
             titleIcon={<span className="material-symbols-outlined text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>}
             className="flex-1"
           >
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-surface-container-low border border-surface-variant/50 hover:border-primary/30 transition-colors cursor-pointer group">
-                <p className="text-body-sm font-body-sm text-on-surface"><strong>Competitor X</strong> dropped prices by 10% on entry tier. Consider targeted loyalty campaign.</p>
-                <div className="mt-2 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-label-sm font-label-sm text-primary flex items-center gap-1">Take Action <span className="material-symbols-outlined text-[14px]">arrow_forward</span></span>
-                </div>
+            {loading && (
+              <div className="flex items-center justify-center h-32 text-on-surface-variant text-body-sm">
+                Loading…
               </div>
-              <div className="p-4 rounded-lg bg-surface-container-low border border-surface-variant/50 hover:border-primary/30 transition-colors cursor-pointer group">
-                <p className="text-body-sm font-body-sm text-on-surface">Surge in negative reviews for <strong>Brand Y's</strong> new feature. Highlight stability in next ad spend.</p>
+            )}
+            {!loading && !error && topCompetitors.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-32 gap-2 text-center">
+                <span className="material-symbols-outlined text-3xl text-outline-variant">search_off</span>
+                <p className="text-body-sm font-body-sm text-on-surface-variant">
+                  No intelligence available yet. Upload and process datasets to generate insights.
+                </p>
               </div>
-              <div className="p-4 rounded-lg bg-surface-container-low border border-surface-variant/50 hover:border-primary/30 transition-colors cursor-pointer group">
-                <p className="text-body-sm font-body-sm text-on-surface">New market entrant detected in European sector. Initialize comprehensive tracking protocol.</p>
+            )}
+            {!loading && !error && topCompetitors.length > 0 && (
+              <div className="space-y-4">
+                {topCompetitors.slice(0, 3).map((comp) => (
+                  <div
+                    key={comp.competitorId}
+                    className="p-4 rounded-lg bg-surface-container-low border border-surface-variant/50 hover:border-primary/30 transition-colors"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-label-md font-label-md text-on-surface">{comp.competitorName}</p>
+                      <span className="text-label-sm font-label-sm text-primary">
+                        Score: {comp.intelligenceActivityScore}
+                      </span>
+                    </div>
+                    <p className="text-body-sm font-body-sm text-on-surface-variant">
+                      {comp.totalInsights} insight{comp.totalInsights !== 1 ? 's' : ''}
+                      {comp.featureGapCount > 0 && ` · ${comp.featureGapCount} feature gap${comp.featureGapCount !== 1 ? 's' : ''}`}
+                      {comp.pricingOpportunityCount > 0 && ` · ${comp.pricingOpportunityCount} pricing opp${comp.pricingOpportunityCount !== 1 ? 's' : ''}`}
+                    </p>
+                    <span className={`mt-2 inline-block text-label-sm font-label-sm px-2 py-0.5 rounded-full ${
+                      comp.activityLevel === 'INTENSIVE' ? 'bg-error/10 text-error' :
+                      comp.activityLevel === 'HIGH'      ? 'bg-tertiary/10 text-tertiary' :
+                      comp.activityLevel === 'MODERATE'  ? 'bg-secondary/10 text-secondary' :
+                                                           'bg-outline/10 text-outline'
+                    }`}>
+                      {comp.activityLevel}
+                    </span>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
           </DashboardCard>
 
+          {/* Deferred: Recent Alerts */}
           <DashboardCard title="Recent Alerts">
-            <div className="space-y-4">
-              <div className="flex gap-3">
-                <div className="mt-0.5"><div className="w-2 h-2 rounded-full bg-error mt-1.5"></div></div>
-                <div>
-                  <p className="text-label-md font-label-md text-on-surface">Pricing Page Updated</p>
-                  <p className="text-body-sm font-body-sm text-outline mt-0.5">Apex Solutions · 2 hours ago</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <div className="mt-0.5"><div className="w-2 h-2 rounded-full bg-tertiary mt-1.5"></div></div>
-                <div>
-                  <p className="text-label-md font-label-md text-on-surface">New Feature Release</p>
-                  <p className="text-body-sm font-body-sm text-outline mt-0.5">GlobalTech · 5 hours ago</p>
-                </div>
-              </div>
-              <div className="flex gap-3">
-                <div className="mt-0.5"><div className="w-2 h-2 rounded-full bg-outline-variant mt-1.5"></div></div>
-                <div>
-                  <p className="text-label-md font-label-md text-on-surface">Executive Hire</p>
-                  <p className="text-body-sm font-body-sm text-outline mt-0.5">Nova Corp · 1 day ago</p>
-                </div>
-              </div>
+            <div className="flex flex-col items-center justify-center h-32 gap-2 text-center">
+              <span className="material-symbols-outlined text-3xl text-outline-variant">notifications_off</span>
+              <p className="text-body-sm font-body-sm text-on-surface-variant">
+                Alert tracking will be available in a future update.
+              </p>
             </div>
           </DashboardCard>
 
@@ -249,10 +259,11 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Bottom Chart Row */}
-      <DashboardCard title="Review Volume Growth" className="mb-8">
-        <ChartWrapper type="line" data={reviewChartData} options={reviewChartOptions} />
-      </DashboardCard>
+      {/* Bottom: Deferred Review Volume Growth */}
+      <DeferredAnalyticsCard
+        title="Review Volume Growth"
+        message="Review volume analytics will be available after additional intelligence integration in Milestone 5.5."
+      />
     </>
   );
 }
