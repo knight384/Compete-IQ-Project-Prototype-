@@ -6,7 +6,7 @@ import { ParsedDataset } from '../../shared/parsing/dataset-parser';
 import { CsvDatasetParser } from '../../shared/parsing/csv-dataset-parser';
 import { XlsxDatasetParser } from '../../shared/parsing/xlsx-dataset-parser';
 import { DatasetParser } from '../../shared/parsing/dataset-parser';
-import { DatasetNotFoundError, DatasetValidationError, DatasetFormatError, DatasetStateError, DatasetMappingError } from '../../shared/errors/dataset-errors';
+import { DatasetNotFoundError, DatasetValidationError, DatasetFormatError, DatasetStateError, DatasetMappingError, DatasetIntegrityError } from '../../shared/errors/dataset-errors';
 import { suggestSemanticMappings, ColumnMapping, SemanticMappingDocument, SemanticField, validateSemanticMappingDocument } from '../../shared/mapping/semantic-mapping';
 import { generateDeterministicProfile, DatasetProfileResult } from './dataset-profiler';
 import { buildIntelligenceContext } from './dataset-intelligence-context';
@@ -21,6 +21,30 @@ export interface DatasetIntelligenceGenerationResult {
   profile: DatasetProfileResult;
   intelligence: StructuredIntelligenceResult;
 }
+
+export interface DatasetProfileDto {
+  rowCount: number | null;
+  columnCount: number | null;
+  columnMetadata: unknown;
+  summaryStatistics: unknown;
+}
+
+export interface DatasetInsightDto {
+  type: string;
+  title: string;
+  summary: string;
+  confidence: string | null;
+  evidence: unknown;
+}
+
+export interface DatasetIntelligenceDto {
+  datasetId: string;
+  status: string;
+  failureReason: string | null;
+  profile: DatasetProfileDto | null;
+  insights: DatasetInsightDto[];
+}
+
 // Hardcoded maximum file size for Milestone 4.3 (10MB limit)
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = [
@@ -375,6 +399,51 @@ export class DatasetService {
 
       throw error;
     }
+  }
+
+  async getDatasetIntelligence(datasetId: string, orgId: string): Promise<DatasetIntelligenceDto> {
+    const dataset = await datasetRepository.findWithIntelligence(datasetId, orgId);
+    if (!dataset) {
+      throw new DatasetNotFoundError('Dataset not found');
+    }
+
+    if (['UPLOADED', 'MAPPING_REQUIRED', 'MAPPED', 'PROCESSING'].includes(dataset.status)) {
+      throw new DatasetStateError(`Intelligence not available for dataset in state: ${dataset.status}`);
+    }
+
+    if (dataset.status === 'FAILED') {
+      return {
+        datasetId: dataset.id,
+        status: dataset.status,
+        failureReason: dataset.failureReason,
+        profile: null,
+        insights: []
+      };
+    }
+
+    // dataset.status === 'READY'
+    if (!dataset.profile) {
+      throw new DatasetIntegrityError('Dataset is READY but profile is missing from database.');
+    }
+
+    return {
+      datasetId: dataset.id,
+      status: dataset.status,
+      failureReason: dataset.failureReason,
+      profile: {
+        rowCount: dataset.profile.rowCount,
+        columnCount: dataset.profile.columnCount,
+        columnMetadata: dataset.profile.columnMetadata,
+        summaryStatistics: dataset.profile.summaryStatistics
+      },
+      insights: dataset.insights.map((insight) => ({
+        type: insight.type,
+        title: insight.title,
+        summary: insight.summary,
+        confidence: insight.confidence,
+        evidence: insight.evidence
+      }))
+    };
   }
 }
 

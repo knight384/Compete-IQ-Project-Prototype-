@@ -32,3 +32,10 @@ export class DatasetMappingError extends Error {
     this.name = 'DatasetMappingError';
   }
 }
+
+export class DatasetIntegrityError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'DatasetIntegrityError';
+  }
+}

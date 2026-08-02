@@ -22,6 +22,24 @@ export class DatasetRepository {
     });
   }
 
+  async findWithIntelligence(id: string, orgId: string) {
+    return prisma.dataset.findFirst({
+      where: {
+        id,
+        orgId,
+      },
+      include: {
+        profile: true,
+        insights: {
+          orderBy: [
+            { createdAt: 'asc' },
+            { id: 'asc' }
+          ]
+        }
+      }
+    });
+  }
+
   async findAllByOrganization(orgId: string): Promise<Dataset[]> {
     return prisma.dataset.findMany({
       where: { orgId },
