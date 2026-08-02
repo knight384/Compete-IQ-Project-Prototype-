@@ -1,4 +1,4 @@
-import { PrismaClient, Dataset, Prisma, DatasetStatus } from '@prisma/client';
+import { PrismaClient, Dataset, Prisma, DatasetStatus, DatasetFailureCode } from '@prisma/client';
 import { DatasetProfileResult } from './dataset-profiler';
 import { StructuredIntelligenceResult } from '../../shared/ai/intelligence-contract';
 import { DatasetStateError } from '../../shared/errors/dataset-errors';
@@ -85,7 +85,7 @@ export class DatasetRepository {
 
     return prisma.dataset.update({
       where: { id },
-      data: { status, failureReason },
+      data: { status, failureReason, failureCode: null },
     });
   }
 
@@ -101,14 +101,16 @@ export class DatasetRepository {
       where: { id },
       data: { 
         semanticMapping: JSON.parse(JSON.stringify(mapping)),
-        status 
+        status,
+        failureReason: null,
+        failureCode: null
       },
     });
   }
   async claimDatasetForProcessing(id: string, orgId: string): Promise<boolean> {
     const result = await prisma.dataset.updateMany({
       where: { id, orgId, status: 'MAPPED' },
-      data: { status: 'PROCESSING', failureReason: null }
+      data: { status: 'PROCESSING', failureReason: null, failureCode: null }
     });
     return result.count === 1;
   }
@@ -160,7 +162,7 @@ export class DatasetRepository {
       // 4. Update status to READY explicitly verifying state
       const updateResult = await tx.dataset.updateMany({
         where: { id, orgId, status: 'PROCESSING' },
-        data: { status: 'READY', failureReason: null }
+        data: { status: 'READY', failureReason: null, failureCode: null }
       });
 
       if (updateResult.count !== 1) {
@@ -169,14 +171,31 @@ export class DatasetRepository {
     });
   }
 
-  async markProcessingAsFailed(id: string, orgId: string, reason: string): Promise<void> {
+  async markProcessingAsFailed(id: string, orgId: string, reason: string, failureCode: DatasetFailureCode): Promise<void> {
     const updateResult = await prisma.dataset.updateMany({
       where: { id, orgId, status: 'PROCESSING' },
-      data: { status: 'FAILED', failureReason: reason }
+      data: { status: 'FAILED', failureReason: reason, failureCode }
     });
     if (updateResult.count !== 1) {
       throw new DatasetStateError('Dataset is not in PROCESSING state. Failed to mark as FAILED.');
     }
+  }
+
+  async retryDatasetProcessing(id: string, orgId: string, retryableCodes: DatasetFailureCode[]): Promise<boolean> {
+    const updateResult = await prisma.dataset.updateMany({
+      where: {
+        id,
+        orgId,
+        status: 'FAILED',
+        failureCode: { in: retryableCodes }
+      },
+      data: {
+        status: 'MAPPED',
+        failureReason: null,
+        failureCode: null
+      }
+    });
+    return updateResult.count === 1;
   }
 }
 

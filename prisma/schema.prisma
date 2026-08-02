@@ -107,15 +107,27 @@ enum DatasetStatus {
   FAILED
 }
 
+enum DatasetFailureCode {
+  DATASET_VALIDATION
+  DATASET_FORMAT
+  AI_CONFIGURATION
+  AI_PROVIDER
+  AI_RESPONSE_VALIDATION
+  STORAGE
+  PERSISTENCE
+  INTERNAL
+}
+
 model Dataset {
-  id               String        @id @default(uuid())
+  id               String              @id @default(uuid())
   originalFilename String
   storageKey       String
   format           String?
   mimeType         String?
   fileSize         Int?
-  status           DatasetStatus @default(UPLOADED)
+  status           DatasetStatus       @default(UPLOADED)
   failureReason    String?
+  failureCode      DatasetFailureCode?
   semanticMapping  Json?
 
   orgId        String

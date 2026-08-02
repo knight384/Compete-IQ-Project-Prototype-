@@ -1,4 +1,4 @@
-import { Dataset } from '@prisma/client';
+import { Dataset, DatasetFailureCode } from '@prisma/client';
 import { datasetRepository } from './dataset.repository';
 import { LocalStorageProvider } from '../../shared/storage/local-storage-provider';
 import { StorageProvider } from '../../shared/storage/storage-provider';
@@ -6,7 +6,7 @@ import { ParsedDataset } from '../../shared/parsing/dataset-parser';
 import { CsvDatasetParser } from '../../shared/parsing/csv-dataset-parser';
 import { XlsxDatasetParser } from '../../shared/parsing/xlsx-dataset-parser';
 import { DatasetParser } from '../../shared/parsing/dataset-parser';
-import { DatasetNotFoundError, DatasetValidationError, DatasetFormatError, DatasetStateError, DatasetMappingError, DatasetIntegrityError } from '../../shared/errors/dataset-errors';
+import { DatasetNotFoundError, DatasetValidationError, DatasetFormatError, DatasetStateError, DatasetMappingError, DatasetIntegrityError, DatasetStorageError, DatasetPersistenceError } from '../../shared/errors/dataset-errors';
 import { suggestSemanticMappings, ColumnMapping, SemanticMappingDocument, SemanticField, validateSemanticMappingDocument } from '../../shared/mapping/semantic-mapping';
 import { generateDeterministicProfile, DatasetProfileResult } from './dataset-profiler';
 import { buildIntelligenceContext } from './dataset-intelligence-context';
@@ -14,6 +14,7 @@ import { AiIntelligenceProvider } from '../../shared/ai/ai-provider';
 import { GeminiAiProvider } from '../../shared/ai/gemini-ai-provider';
 import { StructuredIntelligenceResult } from '../../shared/ai/intelligence-contract';
 import { AiConfigurationError, AiProviderError, AiResponseValidationError } from '../../shared/errors/ai-errors';
+import { RETRYABLE_DATASET_FAILURE_CODES, isRetryableFailureCode } from '../../shared/utils/dataset-failure-codes';
 
 export interface DatasetIntelligenceGenerationResult {
   datasetId: string;
@@ -41,6 +42,7 @@ export interface DatasetIntelligenceDto {
   datasetId: string;
   status: string;
   failureReason: string | null;
+  failureCode: DatasetFailureCode | null;
   profile: DatasetProfileDto | null;
   insights: DatasetInsightDto[];
 }
@@ -182,7 +184,7 @@ export class DatasetService {
       buffer = await this.storage.read(dataset.storageKey);
     } catch (error: unknown) {
       console.error('Failed to read dataset from storage:', error);
-      throw new Error('Failed to read dataset from storage.');
+      throw new DatasetStorageError('Failed to read dataset from storage.');
     }
 
     let parser: DatasetParser;
@@ -364,7 +366,11 @@ export class DatasetService {
       const intelligence = await provider.generateInsights(context);
 
       // Transactional persistence
-      await datasetRepository.persistIntelligenceTransaction(datasetId, orgId, profile, intelligence);
+      try {
+        await datasetRepository.persistIntelligenceTransaction(datasetId, orgId, profile, intelligence);
+      } catch (txErr: unknown) {
+        throw new DatasetPersistenceError('Intelligence persistence transaction failed.');
+      }
 
       return {
         datasetId,
@@ -374,31 +380,63 @@ export class DatasetService {
       };
 
     } catch (error: unknown) {
+      let failureCode: DatasetFailureCode = DatasetFailureCode.INTERNAL;
       let sanitizedReason = 'Dataset processing failed due to an unknown internal error.';
 
-      if (error instanceof DatasetValidationError || error instanceof DatasetFormatError) {
+      if (error instanceof DatasetValidationError) {
+        failureCode = DatasetFailureCode.DATASET_VALIDATION;
         sanitizedReason = `Dataset validation failed: ${error.message}`;
+      } else if (error instanceof DatasetFormatError) {
+        failureCode = DatasetFailureCode.DATASET_FORMAT;
+        sanitizedReason = `Unsupported dataset format: ${error.message}`;
       } else if (error instanceof AiConfigurationError) {
+        failureCode = DatasetFailureCode.AI_CONFIGURATION;
         sanitizedReason = 'AI configuration is unavailable.';
       } else if (error instanceof AiProviderError) {
+        failureCode = DatasetFailureCode.AI_PROVIDER;
         sanitizedReason = 'AI provider is temporarily unavailable.';
       } else if (error instanceof AiResponseValidationError) {
+        failureCode = DatasetFailureCode.AI_RESPONSE_VALIDATION;
         sanitizedReason = 'AI response failed structural or grounding validation.';
-      } else if (error instanceof Error && error.message.includes('Transaction aborted')) {
-        sanitizedReason = 'Intelligence persistence transaction failed.';
-      } else if (error instanceof Error && error.message.includes('storage')) {
+      } else if (error instanceof DatasetStorageError) {
+        failureCode = DatasetFailureCode.STORAGE;
         sanitizedReason = 'Failed to read dataset from storage.';
+      } else if (error instanceof DatasetPersistenceError) {
+        failureCode = DatasetFailureCode.PERSISTENCE;
+        sanitizedReason = 'Intelligence persistence transaction failed.';
       }
 
       // Fallback transition
       try {
-        await datasetRepository.markProcessingAsFailed(datasetId, orgId, sanitizedReason);
+        await datasetRepository.markProcessingAsFailed(datasetId, orgId, sanitizedReason, failureCode);
       } catch (fallbackError) {
         throw new Error('Infrastructure error: Failed to persist intelligence and failed to update dataset status.');
       }
 
       throw error;
     }
+  }
+
+  async retryDatasetProcessing(datasetId: string, orgId: string): Promise<Dataset> {
+    const dataset = await datasetRepository.findById(datasetId, orgId);
+    if (!dataset) {
+      throw new DatasetNotFoundError('Dataset not found');
+    }
+
+    if (dataset.status !== 'FAILED') {
+      throw new DatasetStateError(`Cannot retry dataset in state: ${dataset.status}. Expected FAILED.`);
+    }
+
+    if (!dataset.failureCode || !isRetryableFailureCode(dataset.failureCode)) {
+      throw new DatasetStateError('Dataset failure is not retryable.');
+    }
+
+    const retried = await datasetRepository.retryDatasetProcessing(datasetId, orgId, RETRYABLE_DATASET_FAILURE_CODES);
+    if (!retried) {
+      throw new DatasetStateError('Dataset state changed concurrently or retry failed.');
+    }
+
+    return this.getDatasetById(datasetId, orgId);
   }
 
   async getDatasetIntelligence(datasetId: string, orgId: string): Promise<DatasetIntelligenceDto> {
@@ -416,6 +454,7 @@ export class DatasetService {
         datasetId: dataset.id,
         status: dataset.status,
         failureReason: dataset.failureReason,
+        failureCode: dataset.failureCode ?? null,
         profile: null,
         insights: []
       };
@@ -430,6 +469,7 @@ export class DatasetService {
       datasetId: dataset.id,
       status: dataset.status,
       failureReason: dataset.failureReason,
+      failureCode: null,
       profile: {
         rowCount: dataset.profile.rowCount,
         columnCount: dataset.profile.columnCount,

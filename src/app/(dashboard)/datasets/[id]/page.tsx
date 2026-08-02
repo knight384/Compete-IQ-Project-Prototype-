@@ -16,6 +16,7 @@ export default function DatasetIntelligencePage({ params }: { params: Promise<{ 
   
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [retrying, setRetrying] = useState(false);
   
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [notFound, setNotFound] = useState(false);
@@ -95,6 +96,33 @@ export default function DatasetIntelligencePage({ params }: { params: Promise<{ 
       }
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleRetry = async () => {
+    if (!datasetId || retrying || metadata?.status !== 'FAILED') return;
+
+    setRetrying(true);
+    setErrorMsg(null);
+    try {
+      await api.post(`/datasets/${datasetId}/retry`, {});
+
+      // On successful retry, refetch dataset data (status will become MAPPED)
+      await fetchDatasetData();
+    } catch (err: unknown) {
+      if (err instanceof ApiError) {
+        if (err.status === 404) {
+          setNotFound(true);
+        } else if (err.status === 409) {
+          setErrorMsg('Dataset state changed or failure is not retryable. Please refresh.');
+        } else {
+          setErrorMsg(err.message);
+        }
+      } else {
+        setErrorMsg('Retry failed due to an unexpected error.');
+      }
+    } finally {
+      setRetrying(false);
     }
   };
 
@@ -184,14 +212,34 @@ export default function DatasetIntelligencePage({ params }: { params: Promise<{ 
             </Button>
           </div>
         );
-      case 'FAILED':
+      case 'FAILED': {
+        const retryableCodes = ['AI_CONFIGURATION', 'AI_PROVIDER', 'AI_RESPONSE_VALIDATION', 'STORAGE', 'PERSISTENCE'];
+        const isRetryable = metadata.failureCode ? retryableCodes.includes(metadata.failureCode) : false;
+
         return (
           <EmptyState 
             icon="error" 
             title="Analysis Failed" 
             description={metadata.failureReason || 'An unknown failure occurred during processing.'} 
+            action={
+              isRetryable ? (
+                <Button
+                  variant="primary"
+                  onClick={handleRetry}
+                  disabled={retrying}
+                  aria-busy={retrying}
+                  className="mt-4 gap-2"
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    {retrying ? 'hourglass_empty' : 'replay'}
+                  </span>
+                  {retrying ? 'Retrying...' : 'Retry Processing'}
+                </Button>
+              ) : undefined
+            }
           />
         );
+      }
       case 'READY':
         if (!intelligence) {
           return <LoadingState title="Loading Intelligence..." />;

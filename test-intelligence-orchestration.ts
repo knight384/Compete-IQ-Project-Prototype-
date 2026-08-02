@@ -242,7 +242,7 @@ async function runTests() {
     }
   });
 
-  await test('Provider failure after retry sets FAILED', async () => {
+  await test('Provider failure after retry sets FAILED and failureCode AI_PROVIDER', async () => {
     const mockProvider = new MockAiProvider();
     mockProvider.mockError = new AiProviderError('Provider went down');
     const service = new DatasetService(mockProvider);
@@ -253,13 +253,14 @@ async function runTests() {
     } catch (e: unknown) {
       const ds = await prisma.dataset.findUnique({ where: { id: dsId } });
       assertEqual(ds?.status, 'FAILED', 'Dataset should be FAILED');
+      assertEqual(ds?.failureCode, 'AI_PROVIDER', 'Dataset failureCode should be AI_PROVIDER');
       assertEqual(ds?.failureReason, 'AI provider is temporarily unavailable.', 'Correct sanitized reason');
     } finally {
       await cleanupDataset(dsId);
     }
   });
 
-  await test('AiConfigurationError sets FAILED and returns sanitized message', async () => {
+  await test('AiConfigurationError sets FAILED and failureCode AI_CONFIGURATION', async () => {
     const mockProvider = new MockAiProvider();
     mockProvider.mockError = new AiConfigurationError('Missing API Key');
     const service = new DatasetService(mockProvider);
@@ -270,13 +271,14 @@ async function runTests() {
     } catch (e: unknown) {
       const ds = await prisma.dataset.findUnique({ where: { id: dsId } });
       assertEqual(ds?.status, 'FAILED', 'Dataset should be FAILED');
+      assertEqual(ds?.failureCode, 'AI_CONFIGURATION', 'Dataset failureCode should be AI_CONFIGURATION');
       assertEqual(ds?.failureReason, 'AI configuration is unavailable.', 'Correct sanitized reason');
     } finally {
       await cleanupDataset(dsId);
     }
   });
 
-  await test('AiResponseValidationError sets FAILED and returns sanitized message', async () => {
+  await test('AiResponseValidationError sets FAILED and failureCode AI_RESPONSE_VALIDATION', async () => {
     const mockProvider = new MockAiProvider();
     mockProvider.mockError = new AiResponseValidationError('Bad JSON from Gemini');
     const service = new DatasetService(mockProvider);
@@ -287,18 +289,18 @@ async function runTests() {
     } catch (e: unknown) {
       const ds = await prisma.dataset.findUnique({ where: { id: dsId } });
       assertEqual(ds?.status, 'FAILED', 'Dataset should be FAILED');
+      assertEqual(ds?.failureCode, 'AI_RESPONSE_VALIDATION', 'Dataset failureCode should be AI_RESPONSE_VALIDATION');
       assertEqual(ds?.failureReason, 'AI response failed structural or grounding validation.', 'Correct sanitized reason');
     } finally {
       await cleanupDataset(dsId);
     }
   });
 
-  await test('Explicit final persistence failure sets FAILED without crashing ungracefully', async () => {
+  await test('Explicit final persistence failure sets FAILED and failureCode PERSISTENCE', async () => {
     const mockProvider = new MockAiProvider();
     const service = new DatasetService(mockProvider);
     const dsId = await setupTestDataset('MAPPED');
     
-    // Mock the persist method to throw
     const originalPersist = datasetRepository.persistIntelligenceTransaction;
     datasetRepository.persistIntelligenceTransaction = async () => {
       throw new Error('Transaction aborted explicitly by mock');
@@ -310,6 +312,7 @@ async function runTests() {
     } catch (e: unknown) {
       const ds = await prisma.dataset.findUnique({ where: { id: dsId } });
       assertEqual(ds?.status, 'FAILED', 'Dataset should be FAILED');
+      assertEqual(ds?.failureCode, 'PERSISTENCE', 'Dataset failureCode should be PERSISTENCE');
       assertEqual(ds?.failureReason, 'Intelligence persistence transaction failed.', 'Correct sanitized reason');
     } finally {
       datasetRepository.persistIntelligenceTransaction = originalPersist;
@@ -317,26 +320,103 @@ async function runTests() {
     }
   });
 
-  await test('FAILED-fallback failure throws infrastructure error safely', async () => {
+  await test('Retryable FAILED dataset can be retried to MAPPED, clearing failure fields', async () => {
     const mockProvider = new MockAiProvider();
-    mockProvider.mockError = new AiProviderError('Provider went down');
     const service = new DatasetService(mockProvider);
-    const dsId = await setupTestDataset('MAPPED');
     
-    const originalMarkFailed = datasetRepository.markProcessingAsFailed;
-    datasetRepository.markProcessingAsFailed = async () => {
-      throw new Error('DB totally down');
-    };
+    // Create dataset in FAILED state with retryable code
+    const dsId = await setupTestDataset('FAILED', MOCK_MAPPING, 'AI provider unavailable');
+    await prisma.dataset.update({
+      where: { id: dsId },
+      data: { failureCode: 'AI_PROVIDER' }
+    });
 
     try {
-      await service.generateDatasetIntelligence(dsId, ORG_ID);
-      assert(false, 'Should have thrown');
-    } catch (e: unknown) {
-      assert(e instanceof Error && e.message.includes('Infrastructure error'), 'Safe infrastructure error thrown');
-      const ds = await prisma.dataset.findUnique({ where: { id: dsId } });
-      assertEqual(ds?.status, 'PROCESSING', 'Stuck in PROCESSING due to fallback failure');
+      const updated = await service.retryDatasetProcessing(dsId, ORG_ID);
+      assertEqual(updated.status, 'MAPPED', 'Status should be MAPPED after retry');
+      assertEqual(updated.failureReason, null, 'failureReason should be null after retry');
+      assertEqual(updated.failureCode, null, 'failureCode should be null after retry');
+      assertEqual(mockProvider.invocationCount, 0, 'Retry MUST NOT invoke AI provider');
     } finally {
-      datasetRepository.markProcessingAsFailed = originalMarkFailed;
+      await cleanupDataset(dsId);
+    }
+  });
+
+  await test('Non-retryable FAILED dataset (DATASET_VALIDATION) rejects retry with DatasetStateError', async () => {
+    const mockProvider = new MockAiProvider();
+    const service = new DatasetService(mockProvider);
+    
+    const dsId = await setupTestDataset('FAILED', MOCK_MAPPING, 'Validation failed');
+    await prisma.dataset.update({
+      where: { id: dsId },
+      data: { failureCode: 'DATASET_VALIDATION' }
+    });
+
+    try {
+      await service.retryDatasetProcessing(dsId, ORG_ID);
+      assert(false, 'Should have thrown DatasetStateError');
+    } catch (e: unknown) {
+      assert(e instanceof DatasetStateError, 'Should throw DatasetStateError');
+      assertEqual(mockProvider.invocationCount, 0, 'Retry MUST NOT invoke AI provider');
+    } finally {
+      await cleanupDataset(dsId);
+    }
+  });
+
+  await test('Legacy FAILED dataset with null failureCode rejects retry with DatasetStateError', async () => {
+    const mockProvider = new MockAiProvider();
+    const service = new DatasetService(mockProvider);
+    
+    const dsId = await setupTestDataset('FAILED', MOCK_MAPPING, 'Legacy error without code');
+    // Ensure failureCode remains null
+
+    try {
+      await service.retryDatasetProcessing(dsId, ORG_ID);
+      assert(false, 'Should have thrown DatasetStateError');
+    } catch (e: unknown) {
+      assert(e instanceof DatasetStateError, 'Should throw DatasetStateError for null failureCode');
+    } finally {
+      await cleanupDataset(dsId);
+    }
+  });
+
+  await test('Non-FAILED dataset (MAPPED/READY/PROCESSING) rejects retry with DatasetStateError', async () => {
+    const mockProvider = new MockAiProvider();
+    const service = new DatasetService(mockProvider);
+    
+    const dsId = await setupTestDataset('MAPPED');
+
+    try {
+      await service.retryDatasetProcessing(dsId, ORG_ID);
+      assert(false, 'Should have thrown DatasetStateError');
+    } catch (e: unknown) {
+      assert(e instanceof DatasetStateError, 'Should throw DatasetStateError');
+    } finally {
+      await cleanupDataset(dsId);
+    }
+  });
+
+  await test('Concurrent retry calls race safely (only 1 succeeds)', async () => {
+    const mockProvider = new MockAiProvider();
+    const service = new DatasetService(mockProvider);
+    
+    const dsId = await setupTestDataset('FAILED', MOCK_MAPPING, 'AI provider unavailable');
+    await prisma.dataset.update({
+      where: { id: dsId },
+      data: { failureCode: 'AI_PROVIDER' }
+    });
+
+    try {
+      const p1 = service.retryDatasetProcessing(dsId, ORG_ID);
+      const p2 = service.retryDatasetProcessing(dsId, ORG_ID);
+
+      const results = await Promise.allSettled([p1, p2]);
+      const fulfilled = results.filter(r => r.status === 'fulfilled');
+      const rejected = results.filter(r => r.status === 'rejected');
+
+      assertEqual(fulfilled.length, 1, 'Exactly one retry should succeed');
+      assertEqual(rejected.length, 1, 'Exactly one retry should fail');
+    } finally {
       await cleanupDataset(dsId);
     }
   });

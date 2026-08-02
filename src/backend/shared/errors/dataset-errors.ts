@@ -39,3 +39,17 @@ export class DatasetIntegrityError extends Error {
     this.name = 'DatasetIntegrityError';
   }
 }
+
+export class DatasetStorageError extends Error {
+  constructor(message: string = 'Failed to access dataset storage.') {
+    super(message);
+    this.name = 'DatasetStorageError';
+  }
+}
+
+export class DatasetPersistenceError extends Error {
+  constructor(message: string = 'Intelligence persistence transaction failed.') {
+    super(message);
+    this.name = 'DatasetPersistenceError';
+  }
+}

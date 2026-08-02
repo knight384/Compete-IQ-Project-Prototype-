@@ -6,6 +6,16 @@ export type DatasetStatus =
   | 'READY'
   | 'FAILED';
 
+export type DatasetFailureCode =
+  | 'DATASET_VALIDATION'
+  | 'DATASET_FORMAT'
+  | 'AI_CONFIGURATION'
+  | 'AI_PROVIDER'
+  | 'AI_RESPONSE_VALIDATION'
+  | 'STORAGE'
+  | 'PERSISTENCE'
+  | 'INTERNAL';
+
 export interface FrontendDatasetMetadata {
   id: string;
   status: DatasetStatus;
@@ -13,6 +23,7 @@ export interface FrontendDatasetMetadata {
   format: string | null;
   fileSize: number | null;
   failureReason: string | null;
+  failureCode: DatasetFailureCode | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,6 +46,7 @@ export interface FrontendDatasetIntelligence {
   datasetId: string;
   status: 'READY' | 'FAILED';
   failureReason: string | null;
+  failureCode: DatasetFailureCode | null;
   profile: FrontendDatasetProfile | null;
   insights: FrontendDatasetInsight[];
 }

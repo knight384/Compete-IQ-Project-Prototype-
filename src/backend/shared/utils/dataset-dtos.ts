@@ -1,4 +1,4 @@
-import { Dataset, DatasetStatus } from '@prisma/client';
+import { Dataset, DatasetStatus, DatasetFailureCode } from '@prisma/client';
 
 export interface DatasetMetadataDto {
   id: string;
@@ -7,6 +7,7 @@ export interface DatasetMetadataDto {
   fileSize: number | null;
   status: DatasetStatus;
   failureReason: string | null;
+  failureCode: DatasetFailureCode | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -23,6 +24,7 @@ export function toDatasetMetadataDto(dataset: Dataset): DatasetMetadataDto {
     fileSize: dataset.fileSize !== null ? Number(dataset.fileSize) : null,
     status: dataset.status,
     failureReason: dataset.failureReason,
+    failureCode: dataset.failureCode ?? null,
     createdAt: dataset.createdAt.toISOString(),
     updatedAt: dataset.updatedAt.toISOString(),
   };

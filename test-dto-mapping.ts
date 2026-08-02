@@ -12,6 +12,7 @@ async function runDtoTest() {
     fileSize: 1024,
     status: DatasetStatus.READY,
     failureReason: null,
+    failureCode: null,
     semanticMapping: { version: 1, columns: [{ sourceColumn: 'Name', semanticField: 'PRODUCT_NAME' }] },
     createdAt: new Date('2026-08-01T10:00:00Z'),
     updatedAt: new Date('2026-08-01T11:00:00Z'),

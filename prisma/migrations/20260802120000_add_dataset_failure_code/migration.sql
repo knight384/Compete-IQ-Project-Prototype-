@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "DatasetFailureCode" AS ENUM ('DATASET_VALIDATION', 'DATASET_FORMAT', 'AI_CONFIGURATION', 'AI_PROVIDER', 'AI_RESPONSE_VALIDATION', 'STORAGE', 'PERSISTENCE', 'INTERNAL');
+
+-- AlterTable
+ALTER TABLE "Dataset" ADD COLUMN     "failureCode" "DatasetFailureCode";
