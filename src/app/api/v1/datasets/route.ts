@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { datasetService } from '@/backend/modules/datasets/dataset.service';
 import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
+import { toDatasetMetadataDto } from '@/backend/shared/utils/dataset-dtos';
 
 // Temporary mock organization ID as defined by conventions
 const MOCK_ORG_ID = '11111111-1111-1111-1111-111111111111';
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
     );
 
     // Return the created dataset metadata using standard envelope
-    return successResponse(dataset, 201);
+    return successResponse(toDatasetMetadataDto(dataset), 201);
   } catch (error: unknown) {
     console.error('Dataset upload error:', error);
     const message = error instanceof Error ? error.message : 'Unknown error during upload';
@@ -46,7 +47,7 @@ export async function GET(req: Request) {
   try {
     // TODO: Replace MOCK_ORG_ID with real auth tenant context
     const datasets = await datasetService.getDatasets(MOCK_ORG_ID);
-    return successResponse(datasets);
+    return successResponse(datasets.map(toDatasetMetadataDto));
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Failed to fetch datasets';
     return errorResponse(message, 500);

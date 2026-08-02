@@ -1,6 +1,7 @@
 import { datasetService } from '@/backend/modules/datasets/dataset.service';
 import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
 import { DatasetNotFoundError, DatasetStateError, DatasetMappingError } from '@/backend/shared/errors/dataset-errors';
+import { toDatasetMetadataDto } from '@/backend/shared/utils/dataset-dtos';
 
 // MOCK_ORG_ID until auth is integrated
 const MOCK_ORG_ID = '11111111-1111-1111-1111-111111111111';
@@ -18,7 +19,7 @@ export async function POST(
 
     const dataset = await datasetService.confirmColumnMapping(id, MOCK_ORG_ID, body.mappings);
 
-    return successResponse(dataset);
+    return successResponse(toDatasetMetadataDto(dataset));
   } catch (error: unknown) {
     if (error instanceof DatasetNotFoundError) {
       return errorResponse(error.message, 404);

@@ -10,7 +10,11 @@ export interface FrontendDatasetMetadata {
   id: string;
   status: DatasetStatus;
   originalFilename: string;
+  format: string | null;
+  fileSize: number | null;
   failureReason: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface FrontendDatasetProfile {
