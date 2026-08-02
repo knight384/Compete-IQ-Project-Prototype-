@@ -12,10 +12,11 @@ import { generateDeterministicProfile, DatasetProfileResult } from './dataset-pr
 import { buildIntelligenceContext } from './dataset-intelligence-context';
 import { AiIntelligenceProvider } from '../../shared/ai/ai-provider';
 import { GeminiAiProvider } from '../../shared/ai/gemini-ai-provider';
-import { StructuredIntelligenceResult } from '../../shared/ai/intelligence-contract';
+import { StructuredIntelligenceResult, Insight } from '../../shared/ai/intelligence-contract';
 import { AiConfigurationError, AiProviderError, AiResponseValidationError } from '../../shared/errors/ai-errors';
 import { RETRYABLE_DATASET_FAILURE_CODES, isRetryableFailureCode } from '../../shared/utils/dataset-failure-codes';
 import { toDatasetIntelligenceDto, DatasetIntelligenceDto, DatasetProfileDto, DatasetInsightDto } from '../../shared/utils/dataset-dtos';
+import { entityResolverService } from '../competitors/entity-resolver.service';
 
 export interface DatasetIntelligenceGenerationResult {
   datasetId: string;
@@ -341,6 +342,49 @@ export class DatasetService {
       // Generate Intelligence
       const provider = this.getAiProvider();
       const intelligence = await provider.generateInsights(context);
+
+      // Perform strict tenant-safe entity resolution
+      for (const insight of intelligence.insights as Array<Insight & { competitorId?: string | null; productId?: string | null }>) {
+        let resolvedCompetitorId: string | null = null;
+        let resolvedProductId: string | null = null;
+
+        const compMention = insight.targetCompetitorName?.trim() || null;
+        const prodMention = insight.targetProductName?.trim() || null;
+
+        if (compMention) {
+          const compRes = await entityResolverService.resolveCompetitor({ orgId, mention: compMention });
+          if (compRes.status === 'RESOLVED' && compRes.competitorId) {
+            resolvedCompetitorId = compRes.competitorId;
+
+            if (prodMention) {
+              const prodRes = await entityResolverService.resolveProduct({
+                orgId,
+                mention: prodMention,
+                competitorId: compRes.competitorId,
+              });
+
+              if (prodRes.status === 'RESOLVED') {
+                resolvedProductId = prodRes.productId;
+              }
+            }
+          } else {
+            // Explicit competitor mention failed to resolve or is ambiguous -> Fail closed!
+            // Do NOT attempt org-wide product resolution. Both IDs remain null.
+            resolvedCompetitorId = null;
+            resolvedProductId = null;
+          }
+        } else if (prodMention) {
+          // Competitor mention absent, but product mention present -> Org-wide product resolution
+          const prodRes = await entityResolverService.resolveProduct({ orgId, mention: prodMention });
+          if (prodRes.status === 'RESOLVED' && prodRes.productId && prodRes.competitorId) {
+            resolvedProductId = prodRes.productId;
+            resolvedCompetitorId = prodRes.competitorId;
+          }
+        }
+
+        insight.competitorId = resolvedCompetitorId;
+        insight.productId = resolvedProductId;
+      }
 
       // Transactional persistence
       try {

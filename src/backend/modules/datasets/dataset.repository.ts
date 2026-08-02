@@ -1,10 +1,9 @@
-import { PrismaClient, Dataset, Prisma, DatasetStatus, DatasetFailureCode } from '@prisma/client';
+import { Dataset, Prisma, DatasetStatus, DatasetFailureCode } from '@prisma/client';
+import { prisma } from '../../prisma/client';
 import { DatasetProfileResult } from './dataset-profiler';
-import { StructuredIntelligenceResult } from '../../shared/ai/intelligence-contract';
+import { StructuredIntelligenceResult, Insight } from '../../shared/ai/intelligence-contract';
 import { DatasetStateError } from '../../shared/errors/dataset-errors';
 import { SemanticMappingDocument } from '../../shared/mapping/semantic-mapping';
-
-const prisma = new PrismaClient();
 
 export class DatasetRepository {
   async create(data: Prisma.DatasetUncheckedCreateInput): Promise<Dataset> {
@@ -148,13 +147,15 @@ export class DatasetRepository {
       // 3. Create validated insights
       if (intelligence.insights.length > 0) {
         await tx.datasetInsight.createMany({
-          data: intelligence.insights.map((insight) => ({
+          data: intelligence.insights.map((insight: Insight & { competitorId?: string | null; productId?: string | null }) => ({
             datasetId: id,
             type: insight.type,
             title: insight.title,
             summary: insight.summary,
             confidence: insight.confidence,
-            evidence: insight.evidence ? JSON.parse(JSON.stringify(insight.evidence)) : {}
+            evidence: insight.evidence ? JSON.parse(JSON.stringify(insight.evidence)) : {},
+            competitorId: insight.competitorId ?? null,
+            productId: insight.productId ?? null
           }))
         });
       }

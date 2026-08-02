@@ -28,7 +28,9 @@ export const InsightSchema = z.object({
   title: z.string().min(1).max(100),
   summary: z.string().min(1).max(500),
   confidence: z.nativeEnum(ConfidenceLevel),
-  evidence: EvidenceSchema
+  evidence: EvidenceSchema,
+  targetCompetitorName: z.string().trim().max(100).nullable().optional(),
+  targetProductName: z.string().trim().max(100).nullable().optional()
 });
 
 export const StructuredIntelligenceResultSchema = z.object({

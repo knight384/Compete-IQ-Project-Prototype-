@@ -164,8 +164,8 @@ function runTests() {
 
   assert(!insightKeys.includes('id'), 'insight.id absent');
   assert(!insightKeys.includes('datasetId'), 'insight.datasetId absent');
-  assert(!insightKeys.includes('competitorId'), 'insight.competitorId absent');
-  assert(!insightKeys.includes('productId'), 'insight.productId absent');
+  assertEqual(insightDto.competitorId, 'comp-secret-456', 'insight.competitorId mapped');
+  assertEqual(insightDto.productId, 'prod-secret-789', 'insight.productId mapped');
   assert(!insightKeys.includes('createdAt'), 'insight.createdAt absent');
   assert(!insightKeys.includes('updatedAt'), 'insight.updatedAt absent');
 

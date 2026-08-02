@@ -30,6 +30,8 @@ export interface DatasetInsightDto {
   summary: string;
   confidence: string | null;
   evidence: BoundedEvidence | null;
+  competitorId: string | null;
+  productId: string | null;
 }
 
 export interface DatasetIntelligenceDto {
@@ -122,7 +124,7 @@ export function toDatasetMetadataDto(dataset: Dataset): DatasetMetadataDto {
 
 /**
  * Converts a database Dataset record with profile and insights into a bounded DatasetIntelligenceDto.
- * Strictly excludes internal fields (storageKey, orgId, semanticMapping, insight.id, competitorId, productId).
+ * Strictly excludes internal fields (storageKey, orgId, semanticMapping, insight.id).
  */
 export function toDatasetIntelligenceDto(dataset: {
   id: string;
@@ -141,6 +143,8 @@ export function toDatasetIntelligenceDto(dataset: {
     summary: string;
     confidence: string | null;
     evidence?: unknown;
+    competitorId?: string | null;
+    productId?: string | null;
   }>;
 }): DatasetIntelligenceDto {
   if (dataset.status === 'FAILED') {
@@ -173,6 +177,8 @@ export function toDatasetIntelligenceDto(dataset: {
       summary: insight.summary,
       confidence: insight.confidence,
       evidence: normalizeEvidence(insight.evidence),
+      competitorId: insight.competitorId ?? null,
+      productId: insight.productId ?? null,
     })),
   };
 }

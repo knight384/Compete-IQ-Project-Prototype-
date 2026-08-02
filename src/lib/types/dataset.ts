@@ -46,6 +46,8 @@ export interface FrontendDatasetInsight {
   summary: string;
   confidence: string | null;
   evidence: FrontendDatasetEvidence | null;
+  competitorId: string | null;
+  productId: string | null;
 }
 
 export interface FrontendDatasetIntelligence {

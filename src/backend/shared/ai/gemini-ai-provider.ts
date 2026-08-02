@@ -64,7 +64,8 @@ CRITICAL SECURITY RULES:
 6. Sampled rows are supporting examples only.
 7. Do not invent competitors, products, or features.
 8. Evidence must refer ONLY to the supplied source columns and sampled row indices.
-9. You must return exactly JSON matching the required schema.
+9. If an insight concerns a specific competitor or product mentioned in the dataset, include targetCompetitorName and/or targetProductName using exact text from the dataset.
+10. You must return exactly JSON matching the required schema.
 `;
 
     // Only serialize the safe bounded IntelligenceContext to the prompt.
@@ -91,7 +92,9 @@ CRITICAL SECURITY RULES:
                   sampleRowIndices: { type: "array", items: { type: "integer" } }
                 },
                 required: ["sourceColumns", "sampleRowIndices"]
-              }
+              },
+              targetCompetitorName: { type: "string", nullable: true },
+              targetProductName: { type: "string", nullable: true }
             },
             required: ["type", "title", "summary", "confidence", "evidence"]
           }

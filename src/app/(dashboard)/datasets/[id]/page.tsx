@@ -309,9 +309,17 @@ export default function DatasetIntelligencePage({ params }: { params: Promise<{ 
                 return (
                   <DashboardCard key={compositeKey} title={insight.title} className="border-outline-variant/30 shadow-ambient-1 flex flex-col">
                     <div className="flex justify-between items-start mb-2">
-                      <Badge variant="secondary" className="text-primary border-primary bg-primary/10">
-                        {insight.type}
-                      </Badge>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <Badge variant="secondary" className="text-primary border-primary bg-primary/10">
+                          {insight.type}
+                        </Badge>
+                        {(insight.competitorId || insight.productId) && (
+                          <Badge variant="default" className="text-tertiary border border-tertiary/30 bg-tertiary/10 gap-1 text-[11px]">
+                            <span className="material-symbols-outlined text-[14px]">link</span>
+                            Linked Entity
+                          </Badge>
+                        )}
+                      </div>
                     {insight.confidence && (
                       <span className="text-label-sm font-label-sm text-on-surface-variant bg-surface-variant/20 px-2 py-0.5 rounded">
                         Confidence: {insight.confidence}
