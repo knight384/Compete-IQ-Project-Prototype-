@@ -35,11 +35,17 @@ export interface FrontendDatasetProfile {
   summaryStatistics: unknown;
 }
 
+export interface FrontendDatasetEvidence {
+  sourceColumns: string[];
+  sampleRowIndices: number[];
+}
+
 export interface FrontendDatasetInsight {
   type: string;
   title: string;
   summary: string;
   confidence: string | null;
+  evidence: FrontendDatasetEvidence | null;
 }
 
 export interface FrontendDatasetIntelligence {

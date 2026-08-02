@@ -321,6 +321,31 @@ export default function DatasetIntelligencePage({ params }: { params: Promise<{ 
                     <p className="text-body-md font-body-md text-on-surface mt-2 break-words">
                       {insight.summary}
                     </p>
+                    {insight.evidence && (insight.evidence.sourceColumns.length > 0 || insight.evidence.sampleRowIndices.length > 0) && (
+                      <div className="mt-4 pt-3 border-t border-outline-variant/20 flex flex-col gap-2">
+                        <span className="text-label-sm font-label-sm font-semibold text-on-surface-variant">Evidence & Grounding</span>
+                        {insight.evidence.sourceColumns.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="text-label-sm text-on-surface-variant/80">Source Columns:</span>
+                            {insight.evidence.sourceColumns.map((col) => (
+                              <span key={col} className="inline-block max-w-xs truncate bg-surface-variant/30 text-on-surface-variant px-2 py-0.5 rounded text-label-sm font-mono">
+                                {col}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        {insight.evidence.sampleRowIndices.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="text-label-sm text-on-surface-variant/80">Sample Rows:</span>
+                            {insight.evidence.sampleRowIndices.map((idx) => (
+                              <span key={idx} className="inline-block bg-surface-variant/20 text-on-surface px-2 py-0.5 rounded text-label-sm font-mono">
+                                Row #{idx + 1}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </DashboardCard>
                 );
               })}

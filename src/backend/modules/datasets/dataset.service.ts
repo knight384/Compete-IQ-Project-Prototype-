@@ -15,36 +15,13 @@ import { GeminiAiProvider } from '../../shared/ai/gemini-ai-provider';
 import { StructuredIntelligenceResult } from '../../shared/ai/intelligence-contract';
 import { AiConfigurationError, AiProviderError, AiResponseValidationError } from '../../shared/errors/ai-errors';
 import { RETRYABLE_DATASET_FAILURE_CODES, isRetryableFailureCode } from '../../shared/utils/dataset-failure-codes';
+import { toDatasetIntelligenceDto, DatasetIntelligenceDto, DatasetProfileDto, DatasetInsightDto } from '../../shared/utils/dataset-dtos';
 
 export interface DatasetIntelligenceGenerationResult {
   datasetId: string;
   status: 'READY';
   profile: DatasetProfileResult;
   intelligence: StructuredIntelligenceResult;
-}
-
-export interface DatasetProfileDto {
-  rowCount: number | null;
-  columnCount: number | null;
-  columnMetadata: unknown;
-  summaryStatistics: unknown;
-}
-
-export interface DatasetInsightDto {
-  type: string;
-  title: string;
-  summary: string;
-  confidence: string | null;
-  evidence: unknown;
-}
-
-export interface DatasetIntelligenceDto {
-  datasetId: string;
-  status: string;
-  failureReason: string | null;
-  failureCode: DatasetFailureCode | null;
-  profile: DatasetProfileDto | null;
-  insights: DatasetInsightDto[];
 }
 
 // Hardcoded maximum file size for Milestone 4.3 (10MB limit)
@@ -449,41 +426,11 @@ export class DatasetService {
       throw new DatasetStateError(`Intelligence not available for dataset in state: ${dataset.status}`);
     }
 
-    if (dataset.status === 'FAILED') {
-      return {
-        datasetId: dataset.id,
-        status: dataset.status,
-        failureReason: dataset.failureReason,
-        failureCode: dataset.failureCode ?? null,
-        profile: null,
-        insights: []
-      };
-    }
-
-    // dataset.status === 'READY'
-    if (!dataset.profile) {
+    if (dataset.status === 'READY' && !dataset.profile) {
       throw new DatasetIntegrityError('Dataset is READY but profile is missing from database.');
     }
 
-    return {
-      datasetId: dataset.id,
-      status: dataset.status,
-      failureReason: dataset.failureReason,
-      failureCode: null,
-      profile: {
-        rowCount: dataset.profile.rowCount,
-        columnCount: dataset.profile.columnCount,
-        columnMetadata: dataset.profile.columnMetadata,
-        summaryStatistics: dataset.profile.summaryStatistics
-      },
-      insights: dataset.insights.map((insight) => ({
-        type: insight.type,
-        title: insight.title,
-        summary: insight.summary,
-        confidence: insight.confidence,
-        evidence: insight.evidence
-      }))
-    };
+    return toDatasetIntelligenceDto(dataset);
   }
 }
 
