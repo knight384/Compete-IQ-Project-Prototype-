@@ -5,6 +5,13 @@ export interface ApiResponse<T> {
   error: { message: string } | null;
 }
 
+export class ApiError extends Error {
+  constructor(message: string, public readonly status: number) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
 export async function fetchApi<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`/api/v1${endpoint}`, {
     headers: {
@@ -14,10 +21,10 @@ export async function fetchApi<T>(endpoint: string, options?: RequestInit): Prom
     ...options,
   });
 
-  const json: ApiResponse<T> = await response.json();
+  const json: ApiResponse<T> = await response.json().catch(() => ({ success: false, data: null, meta: null, error: { message: 'Invalid JSON response' } }));
 
   if (!json.success || !response.ok) {
-    throw new Error(json.error?.message || 'An unknown error occurred');
+    throw new ApiError(json.error?.message || 'An unknown error occurred', response.status);
   }
 
   return json.data as T;
