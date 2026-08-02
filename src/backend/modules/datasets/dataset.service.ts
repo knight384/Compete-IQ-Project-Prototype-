@@ -7,8 +7,20 @@ import { CsvDatasetParser } from '../../shared/parsing/csv-dataset-parser';
 import { XlsxDatasetParser } from '../../shared/parsing/xlsx-dataset-parser';
 import { DatasetParser } from '../../shared/parsing/dataset-parser';
 import { DatasetNotFoundError, DatasetValidationError, DatasetFormatError, DatasetStateError, DatasetMappingError } from '../../shared/errors/dataset-errors';
-import { suggestSemanticMappings, ColumnMapping, SemanticMappingDocument, SemanticField } from '../../shared/mapping/semantic-mapping';
+import { suggestSemanticMappings, ColumnMapping, SemanticMappingDocument, SemanticField, validateSemanticMappingDocument } from '../../shared/mapping/semantic-mapping';
+import { generateDeterministicProfile, DatasetProfileResult } from './dataset-profiler';
+import { buildIntelligenceContext } from './dataset-intelligence-context';
+import { AiIntelligenceProvider } from '../../shared/ai/ai-provider';
+import { GeminiAiProvider } from '../../shared/ai/gemini-ai-provider';
+import { StructuredIntelligenceResult } from '../../shared/ai/intelligence-contract';
+import { AiConfigurationError, AiProviderError, AiResponseValidationError } from '../../shared/errors/ai-errors';
 
+export interface DatasetIntelligenceGenerationResult {
+  datasetId: string;
+  status: 'READY';
+  profile: DatasetProfileResult;
+  intelligence: StructuredIntelligenceResult;
+}
 // Hardcoded maximum file size for Milestone 4.3 (10MB limit)
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = [
@@ -21,10 +33,21 @@ const ALLOWED_EXTENSIONS = ['.csv', '.xlsx'];
 
 export class DatasetService {
   private storage: StorageProvider;
+  private aiProviderOverride?: AiIntelligenceProvider;
+  private cachedAiProvider?: GeminiAiProvider;
 
-  constructor() {
+  constructor(aiProvider?: AiIntelligenceProvider) {
     // Injecting the local storage provider for development
     this.storage = new LocalStorageProvider();
+    this.aiProviderOverride = aiProvider;
+  }
+
+  private getAiProvider(): AiIntelligenceProvider {
+    if (this.aiProviderOverride) return this.aiProviderOverride;
+    if (!this.cachedAiProvider) {
+      this.cachedAiProvider = new GeminiAiProvider();
+    }
+    return this.cachedAiProvider;
   }
 
   async uploadDataset(
@@ -271,6 +294,87 @@ export class DatasetService {
 
     // Transition to MAPPED
     return datasetRepository.updateSemanticMapping(datasetId, orgId, mappingDocument, 'MAPPED');
+  }
+
+  async generateDatasetIntelligence(datasetId: string, orgId: string): Promise<DatasetIntelligenceGenerationResult> {
+    // 1. Pre-claim validation
+    const dataset = await datasetRepository.findById(datasetId, orgId);
+    if (!dataset) {
+      throw new DatasetNotFoundError('Dataset not found');
+    }
+
+    if (dataset.status !== 'MAPPED') {
+      throw new DatasetStateError(`Cannot generate intelligence for dataset in state: ${dataset.status}. Expected MAPPED.`);
+    }
+
+    if (!dataset.semanticMapping) {
+      throw new DatasetMappingError('Semantic mapping is missing.');
+    }
+
+    let mappingDoc: SemanticMappingDocument;
+    try {
+      mappingDoc = validateSemanticMappingDocument(dataset.semanticMapping);
+    } catch (e: unknown) {
+      throw new DatasetMappingError(e instanceof Error ? e.message : 'Semantic mapping is malformed.');
+    }
+
+    // 2. Atomic processing claim
+    const claimed = await datasetRepository.claimDatasetForProcessing(datasetId, orgId);
+    if (!claimed) {
+      throw new DatasetStateError(`Dataset state changed concurrently or is not MAPPED. Claim failed.`);
+    }
+
+    try {
+      // 3. Pipeline After Successful Claim
+      // Read and parse
+      const parsedDataset = await this.readAndParseDataset(datasetId, orgId);
+
+      // Deterministic Profile
+      const profile = generateDeterministicProfile(parsedDataset, mappingDoc);
+
+      // Intelligence Context
+      const context = buildIntelligenceContext(parsedDataset, mappingDoc, profile);
+
+      // Generate Intelligence
+      const provider = this.getAiProvider();
+      const intelligence = await provider.generateInsights(context);
+
+      // Transactional persistence
+      await datasetRepository.persistIntelligenceTransaction(datasetId, orgId, profile, intelligence);
+
+      return {
+        datasetId,
+        status: 'READY',
+        profile,
+        intelligence
+      };
+
+    } catch (error: unknown) {
+      let sanitizedReason = 'Dataset processing failed due to an unknown internal error.';
+
+      if (error instanceof DatasetValidationError || error instanceof DatasetFormatError) {
+        sanitizedReason = `Dataset validation failed: ${error.message}`;
+      } else if (error instanceof AiConfigurationError) {
+        sanitizedReason = 'AI configuration is unavailable.';
+      } else if (error instanceof AiProviderError) {
+        sanitizedReason = 'AI provider is temporarily unavailable.';
+      } else if (error instanceof AiResponseValidationError) {
+        sanitizedReason = 'AI response failed structural or grounding validation.';
+      } else if (error instanceof Error && error.message.includes('Transaction aborted')) {
+        sanitizedReason = 'Intelligence persistence transaction failed.';
+      } else if (error instanceof Error && error.message.includes('storage')) {
+        sanitizedReason = 'Failed to read dataset from storage.';
+      }
+
+      // Fallback transition
+      try {
+        await datasetRepository.markProcessingAsFailed(datasetId, orgId, sanitizedReason);
+      } catch (fallbackError) {
+        throw new Error('Infrastructure error: Failed to persist intelligence and failed to update dataset status.');
+      }
+
+      throw error;
+    }
   }
 }
 

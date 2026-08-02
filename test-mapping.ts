@@ -1,4 +1,4 @@
-import { suggestSemanticMappings, SemanticField } from './src/backend/shared/mapping/semantic-mapping';
+import { suggestSemanticMappings, SemanticField, validateSemanticMappingDocument } from './src/backend/shared/mapping/semantic-mapping';
 import { datasetService } from './src/backend/modules/datasets/dataset.service';
 import { datasetRepository } from './src/backend/modules/datasets/dataset.repository';
 import { DatasetMappingError, DatasetStateError } from './src/backend/shared/errors/dataset-errors';
@@ -23,6 +23,27 @@ async function testSuggestions() {
 
 async function run() {
   await testSuggestions();
+
+  console.log('--- Testing Validator ---');
+  function testValidator(name: string, doc: unknown, shouldPass: boolean) {
+    try {
+      validateSemanticMappingDocument(doc);
+      if (shouldPass) console.log(`${name}... PASS`);
+      else console.log(`${name}... FAIL (Should have thrown)`);
+    } catch (e: unknown) {
+      if (!shouldPass) console.log(`${name}... PASS`);
+      else console.log(`${name}... FAIL (${e instanceof Error ? e.message : 'Unknown'})`);
+    }
+  }
+
+  testValidator('1. version 1 accepted', { version: 1, columns: [] }, true);
+  testValidator('2. unsupported numeric version rejected', { version: 2, columns: [] }, false);
+  testValidator('3. null column rejected', { version: 1, columns: [null] }, false);
+  testValidator('4. primitive column rejected', { version: 1, columns: ["string"] }, false);
+  testValidator('5. array column rejected', { version: 1, columns: [[]] }, false);
+  testValidator('6. invalid semanticField rejected', { version: 1, columns: [{ sourceColumn: 'a', semanticField: 'UNKNOWN' }] }, false);
+  testValidator('7. valid mapping accepted', { version: 1, columns: [{ sourceColumn: 'a', semanticField: SemanticField.IGNORE }] }, true);
+
   
   console.log('--- Testing Confirmations ---');
   const csvContent = Buffer.from('vendor,product,price,extra1,extra2\nAcme,Widget,10,a,b');

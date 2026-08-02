@@ -29,6 +29,36 @@ export interface SemanticMappingDocument {
   columns: ColumnMapping[];
 }
 
+export function validateSemanticMappingDocument(doc: unknown): SemanticMappingDocument {
+  if (!doc || typeof doc !== 'object') {
+    throw new Error('Mapping document must be an object');
+  }
+  
+  const d = doc as Record<string, unknown>;
+  if (d.version !== 1) {
+    throw new Error('Mapping document must have version 1');
+  }
+  
+  if (!Array.isArray(d.columns)) {
+    throw new Error('Mapping document must have a columns array');
+  }
+
+  for (const colObj of d.columns) {
+    if (!colObj || typeof colObj !== 'object' || Array.isArray(colObj)) {
+      throw new Error('Each column mapping must be an object');
+    }
+    const col = colObj as Record<string, unknown>;
+    if (typeof col.sourceColumn !== 'string') {
+      throw new Error('sourceColumn must be a string');
+    }
+    if (typeof col.semanticField !== 'string' || !Object.values(SemanticField).includes(col.semanticField as SemanticField)) {
+      throw new Error(`Invalid semanticField: ${col.semanticField}`);
+    }
+  }
+
+  return doc as SemanticMappingDocument;
+}
+
 export function suggestSemanticMappings(headers: string[]): MappingSuggestion[] {
   return headers.map(header => {
     const normalized = header.toLowerCase().trim().replace(/[\s-]/g, '_');
