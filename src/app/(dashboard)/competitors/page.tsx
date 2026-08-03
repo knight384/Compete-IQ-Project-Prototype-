@@ -1,13 +1,15 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Button } from "@/components/ui/Button"
-import { PageHeader } from "@/components/shared/PageLayout"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/Table"
-import { Badge } from "@/components/ui/Badge"
-import Link from "next/link"
-import { api } from "@/lib/api-client"
-import { LoadingState, EmptyState } from "@/components/shared/Feedback"
+import * as React from "react";
+import { Button } from "@/components/ui/Button";
+import { PageHeader } from "@/components/shared/PageLayout";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/Table";
+import { Badge } from "@/components/ui/Badge";
+import Link from "next/link";
+import { api } from "@/lib/api-client";
+import { LoadingState, EmptyState } from "@/components/shared/Feedback";
+import { useSession } from "next-auth/react";
+import { CompetitorFormModal, DeleteConfirmModal } from "@/components/competitors/CompetitorModals";
 
 interface CompetitorData {
   id: string;
@@ -61,28 +63,59 @@ function CompetitorProductsCell({ competitorId }: { competitorId: string }) {
 }
 
 export default function CompetitorListPage() {
+  const { data: session } = useSession();
+  const userRole = (session?.user as any)?.role as string | undefined;
+
+  const canCreate = userRole === "ADMIN" || userRole === "ANALYST";
+  const canEdit = userRole === "ADMIN" || userRole === "ANALYST";
+  const canDelete = userRole === "ADMIN";
+
   const [competitors, setCompetitors] = React.useState<CompetitorData[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    async function loadCompetitors() {
-      try {
-        const data = await api.get<CompetitorData[]>('/competitors');
-        setCompetitors(data);
-        setError(null);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('Failed to load competitors');
-        }
-      } finally {
-        setLoading(false);
+  // Modals state
+  const [isAddOpen, setIsAddOpen] = React.useState(false);
+  const [editCompetitor, setEditCompetitor] = React.useState<CompetitorData | null>(null);
+  const [deleteCompetitor, setDeleteCompetitor] = React.useState<CompetitorData | null>(null);
+
+  const loadCompetitors = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await api.get<CompetitorData[]>('/competitors');
+      setCompetitors(data);
+      setError(null);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to load competitors');
       }
+    } finally {
+      setLoading(false);
     }
-    loadCompetitors();
   }, []);
+
+  React.useEffect(() => {
+    loadCompetitors();
+  }, [loadCompetitors]);
+
+  const handleCreateCompetitor = async (data: { name: string; domain?: string; logoText?: string; logoColor?: string; status?: string }) => {
+    await api.post('/competitors', data);
+    await loadCompetitors();
+  };
+
+  const handleEditCompetitor = async (data: { name: string; domain?: string; logoText?: string; logoColor?: string; status?: string }) => {
+    if (!editCompetitor) return;
+    await api.put(`/competitors/${editCompetitor.id}`, data);
+    await loadCompetitors();
+  };
+
+  const handleDeleteCompetitor = async () => {
+    if (!deleteCompetitor) return;
+    await api.delete(`/competitors/${deleteCompetitor.id}`);
+    await loadCompetitors();
+  };
 
   return (
     <>
@@ -95,10 +128,12 @@ export default function CompetitorListPage() {
           <span className="material-symbols-outlined text-[18px]">filter_list</span>
           Filter
         </Button>
-        <Button variant="primary" className="h-10 px-4 shadow-ambient-1 gap-2">
-          <span className="material-symbols-outlined text-[18px]">add</span>
-          Add Competitor
-        </Button>
+        {canCreate && (
+          <Button variant="primary" onClick={() => setIsAddOpen(true)} className="h-10 px-4 shadow-ambient-1 gap-2">
+            <span className="material-symbols-outlined text-[18px]">add</span>
+            Add Competitor
+          </Button>
+        )}
       </PageHeader>
 
       <div className="bg-surface-container-lowest rounded-card shadow-ambient-1 border border-surface-variant overflow-hidden flex flex-col flex-1">
@@ -201,9 +236,24 @@ export default function CompetitorListPage() {
                             <span className="material-symbols-outlined text-[18px]">visibility</span>
                           </button>
                         </Link>
-                        <button className="p-1.5 rounded text-on-surface-variant hover:text-primary-container hover:bg-primary-fixed/20 transition-colors" title="Edit">
-                          <span className="material-symbols-outlined text-[18px]">edit</span>
-                        </button>
+                        {canEdit && (
+                          <button
+                            onClick={() => setEditCompetitor(comp)}
+                            className="p-1.5 rounded text-on-surface-variant hover:text-primary-container hover:bg-primary-fixed/20 transition-colors"
+                            title="Edit"
+                          >
+                            <span className="material-symbols-outlined text-[18px]">edit</span>
+                          </button>
+                        )}
+                        {canDelete && (
+                          <button
+                            onClick={() => setDeleteCompetitor(comp)}
+                            className="p-1.5 rounded text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors"
+                            title="Delete"
+                          >
+                            <span className="material-symbols-outlined text-[18px]">delete</span>
+                          </button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
@@ -226,6 +276,30 @@ export default function CompetitorListPage() {
           </button>
         </div>
       </div>
+
+      {/* Modals */}
+      <CompetitorFormModal
+        isOpen={isAddOpen}
+        onClose={() => setIsAddOpen(false)}
+        onSubmit={handleCreateCompetitor}
+        title="Add Competitor"
+      />
+
+      <CompetitorFormModal
+        isOpen={!!editCompetitor}
+        onClose={() => setEditCompetitor(null)}
+        onSubmit={handleEditCompetitor}
+        initialData={editCompetitor || undefined}
+        title="Edit Competitor"
+      />
+
+      <DeleteConfirmModal
+        isOpen={!!deleteCompetitor}
+        onClose={() => setDeleteCompetitor(null)}
+        onConfirm={handleDeleteCompetitor}
+        title="Delete Competitor"
+        message={`Are you sure you want to delete ${deleteCompetitor?.name}? All associated products and features will be permanently removed.`}
+      />
     </>
   );
 }

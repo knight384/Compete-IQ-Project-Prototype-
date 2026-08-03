@@ -1,11 +1,13 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Button } from "@/components/ui/Button"
-import { KPICard, DashboardCard } from "@/components/shared/DashboardCards"
-import { Breadcrumb } from "@/components/ui/Breadcrumb"
-import { api } from "@/lib/api-client"
-import { LoadingState, EmptyState } from "@/components/shared/Feedback"
+import * as React from "react";
+import { Button } from "@/components/ui/Button";
+import { KPICard, DashboardCard } from "@/components/shared/DashboardCards";
+import { Breadcrumb } from "@/components/ui/Breadcrumb";
+import { api } from "@/lib/api-client";
+import { LoadingState, EmptyState } from "@/components/shared/Feedback";
+import { useSession } from "next-auth/react";
+import { ProductFormModal, FeatureFormModal, DeleteConfirmModal } from "@/components/competitors/CompetitorModals";
 
 interface CompetitorDetail {
   id: string;
@@ -19,39 +21,200 @@ interface CompetitorDetail {
   updatedAt: string | Date;
 }
 
+interface ProductDetail {
+  id: string;
+  name: string;
+  description: string | null;
+  competitorId: string;
+}
+
+interface FeatureDetail {
+  id: string;
+  name: string;
+  description: string | null;
+  status: string;
+  productId: string;
+}
+
+function ProductFeaturesSection({ product, canEdit, canDelete, onRefresh }: {
+  product: ProductDetail;
+  canEdit: boolean;
+  canDelete: boolean;
+  onRefresh: () => void;
+}) {
+  const [features, setFeatures] = React.useState<FeatureDetail[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [isAddFeatureOpen, setIsAddFeatureOpen] = React.useState(false);
+  const [editFeature, setEditFeature] = React.useState<FeatureDetail | null>(null);
+  const [deleteFeature, setDeleteFeature] = React.useState<FeatureDetail | null>(null);
+
+  const loadFeatures = React.useCallback(async () => {
+    try {
+      const data = await api.get<FeatureDetail[]>(`/features?productId=${product.id}`);
+      setFeatures(data);
+    } catch {
+      // Ignore or log error
+    } finally {
+      setLoading(false);
+    }
+  }, [product.id]);
+
+  React.useEffect(() => {
+    loadFeatures();
+  }, [loadFeatures]);
+
+  const handleCreateFeature = async (data: { name: string; description?: string; status: string }) => {
+    await api.post('/features', { ...data, productId: product.id });
+    await loadFeatures();
+  };
+
+  const handleEditFeature = async (data: { name: string; description?: string; status: string }) => {
+    if (!editFeature) return;
+    await api.put(`/features/${editFeature.id}`, data);
+    await loadFeatures();
+  };
+
+  const handleDeleteFeature = async () => {
+    if (!deleteFeature) return;
+    await api.delete(`/features/${deleteFeature.id}`);
+    await loadFeatures();
+  };
+
+  return (
+    <div className="p-4 rounded-xl bg-surface-container-low border border-surface-variant/50 space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h4 className="text-label-lg font-label-lg text-on-surface font-semibold">{product.name}</h4>
+          {product.description && <p className="text-body-sm font-body-sm text-on-surface-variant">{product.description}</p>}
+        </div>
+        <div className="flex items-center gap-2">
+          {canEdit && (
+            <Button variant="outline" size="sm" onClick={() => setIsAddFeatureOpen(true)} className="h-8 text-xs gap-1">
+              <span className="material-symbols-outlined text-[14px]">add</span> Add Feature
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Feature Pills */}
+      <div className="flex flex-wrap gap-2 pt-1">
+        {loading ? (
+          <span className="text-xs text-on-surface-variant">Loading features...</span>
+        ) : features.length === 0 ? (
+          <span className="text-xs text-on-surface-variant italic">No features tracked yet</span>
+        ) : (
+          features.map((feat) => (
+            <div key={feat.id} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-outline-variant bg-surface text-body-sm text-on-surface group">
+              <span className="font-medium">{feat.name}</span>
+              <span className={`text-[10px] px-1.5 py-0.2 rounded font-semibold ${
+                feat.status === 'Available' ? 'bg-tertiary-container/30 text-tertiary' :
+                feat.status === 'Beta' ? 'bg-secondary-container/30 text-secondary' : 'bg-error/10 text-error'
+              }`}>{feat.status}</span>
+
+              {canEdit && (
+                <button onClick={() => setEditFeature(feat)} className="opacity-0 group-hover:opacity-100 p-0.5 hover:text-primary transition-opacity" title="Edit Feature">
+                  <span className="material-symbols-outlined text-[14px]">edit</span>
+                </button>
+              )}
+              {canDelete && (
+                <button onClick={() => setDeleteFeature(feat)} className="opacity-0 group-hover:opacity-100 p-0.5 hover:text-error transition-opacity" title="Delete Feature">
+                  <span className="material-symbols-outlined text-[14px]">delete</span>
+                </button>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+
+      <FeatureFormModal
+        isOpen={isAddFeatureOpen}
+        onClose={() => setIsAddFeatureOpen(false)}
+        onSubmit={handleCreateFeature}
+        title={`Add Feature to ${product.name}`}
+      />
+
+      <FeatureFormModal
+        isOpen={!!editFeature}
+        onClose={() => setEditFeature(null)}
+        onSubmit={handleEditFeature}
+        initialData={editFeature || undefined}
+        title="Edit Feature"
+      />
+
+      <DeleteConfirmModal
+        isOpen={!!deleteFeature}
+        onClose={() => setDeleteFeature(null)}
+        onConfirm={handleDeleteFeature}
+        title="Delete Feature"
+        message={`Are you sure you want to delete feature "${deleteFeature?.name}"?`}
+      />
+    </div>
+  );
+}
+
 export default function CompetitorDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = React.use(params);
+  const { data: session } = useSession();
+  const userRole = (session?.user as any)?.role as string | undefined;
+
+  const canCreate = userRole === "ADMIN" || userRole === "ANALYST";
+  const canEdit = userRole === "ADMIN" || userRole === "ANALYST";
+  const canDelete = userRole === "ADMIN";
+
   const [competitor, setCompetitor] = React.useState<CompetitorDetail | null>(null);
-  const [products, setProducts] = React.useState<{ id: string; name: string }[]>([]);
+  const [products, setProducts] = React.useState<ProductDetail[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    async function loadData() {
+  // Modals for Products
+  const [isAddProductOpen, setIsAddProductOpen] = React.useState(false);
+  const [editProduct, setEditProduct] = React.useState<ProductDetail | null>(null);
+  const [deleteProduct, setDeleteProduct] = React.useState<ProductDetail | null>(null);
+
+  const loadData = React.useCallback(async () => {
+    try {
+      const data = await api.get<CompetitorDetail>(`/competitors/${id}`);
+      setCompetitor(data);
+      
       try {
-        const data = await api.get<CompetitorDetail>(`/competitors/${id}`);
-        setCompetitor(data);
-        
-        try {
-          const productsData = await api.get<{id: string, name: string}[]>(`/products?competitorId=${id}`);
-          setProducts(productsData);
-        } catch (prodErr) {
-          console.error("Failed to load products", prodErr);
-        }
-        
-        setError(null);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('Failed to load competitor details');
-        }
-      } finally {
-        setLoading(false);
+        const productsData = await api.get<ProductDetail[]>(`/products?competitorId=${id}`);
+        setProducts(productsData);
+      } catch (prodErr) {
+        console.error("Failed to load products", prodErr);
       }
+      
+      setError(null);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Failed to load competitor details');
+      }
+    } finally {
+      setLoading(false);
     }
-    loadData();
   }, [id]);
+
+  React.useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleCreateProduct = async (data: { name: string; description?: string }) => {
+    await api.post('/products', { ...data, competitorId: id });
+    await loadData();
+  };
+
+  const handleEditProduct = async (data: { name: string; description?: string }) => {
+    if (!editProduct) return;
+    await api.put(`/products/${editProduct.id}`, data);
+    await loadData();
+  };
+
+  const handleDeleteProduct = async () => {
+    if (!deleteProduct) return;
+    await api.delete(`/products/${deleteProduct.id}`);
+    await loadData();
+  };
 
   if (loading) {
     return (
@@ -113,9 +276,11 @@ export default function CompetitorDetailsPage({ params }: { params: Promise<{ id
           <Button variant="outline" className="text-primary border-outline-variant shadow-none gap-2">
             <span className="material-symbols-outlined">download</span> Report
           </Button>
-          <Button variant="primary" className="gap-2 shadow-sm">
-            <span className="material-symbols-outlined">add</span> Track Feature
-          </Button>
+          {canCreate && (
+            <Button variant="primary" onClick={() => setIsAddProductOpen(true)} className="gap-2 shadow-sm">
+              <span className="material-symbols-outlined">add</span> Add Product
+            </Button>
+          )}
         </div>
       </div>
 
@@ -126,7 +291,7 @@ export default function CompetitorDetailsPage({ params }: { params: Promise<{ id
           value={products.length.toString()}
           icon="inventory_2"
           iconClassName="bg-surface text-secondary"
-          trend={{ value: "N/A", label: "", isNeutral: true }}
+          trend={{ value: "Live products", label: "", isPositive: products.length > 0 }}
           className="border border-surface-container-highest shadow-ambient-1"
         />
         <KPICard 
@@ -155,80 +320,55 @@ export default function CompetitorDetailsPage({ params }: { params: Promise<{ id
         />
       </div>
 
-      {/* Bento Layout Content */}
+      {/* Main Grid Content */}
       <div className="grid grid-cols-12 gap-gutter">
-        {/* Main Tabbed Area */}
         <div className="col-span-12 lg:col-span-8 space-y-6">
-          {/* Tabs */}
-          <div className="border-b border-outline-variant flex gap-6 overflow-x-auto hide-scrollbar">
-            <button className="pb-3 text-primary border-b-2 border-primary font-label-md text-label-md whitespace-nowrap">Overview</button>
-            <button className="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md whitespace-nowrap">Features (Placeholder)</button>
-            <button className="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md whitespace-nowrap">Pricing (Placeholder)</button>
-            <button className="pb-3 text-on-surface-variant hover:text-primary transition-colors font-label-md text-label-md whitespace-nowrap">Reviews (Placeholder)</button>
-          </div>
-
-          {/* AI Insights Overview Card (Placeholder content retained from mock) */}
-          <div className="bg-surface-container-lowest rounded-card p-6 shadow-ambient-1 border border-surface-container-highest relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
-            <div className="flex items-center gap-2 mb-4 relative z-10">
-              <span className="material-symbols-outlined text-primary">auto_awesome</span>
-              <h3 className="text-headline-sm font-headline-sm text-on-surface">Executive Summary (AI Generated Mock)</h3>
-            </div>
-            <p className="text-body-md font-body-md text-on-surface-variant mb-6 relative z-10 leading-relaxed">
-              {competitor.name} continues to dominate their tier. We recommend prioritizing our "One-Click Integration" marketing to capture their dissatisfied mid-market tier. (This is placeholder AI analysis).
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-              <div className="bg-surface p-4 rounded-xl border border-outline-variant">
-                <h4 className="text-label-md font-label-md text-on-surface mb-2 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-tertiary"></span> Strengths (Mock)
-                </h4>
-                <ul className="text-body-sm font-body-sm text-on-surface-variant space-y-2">
-                  <li>Deep enterprise integrations</li>
-                </ul>
+          {/* Products & Features Section */}
+          <DashboardCard
+            title="Products & Tracked Features"
+            action={
+              canCreate ? (
+                <Button variant="outline" size="sm" onClick={() => setIsAddProductOpen(true)} className="h-8 text-xs gap-1">
+                  <span className="material-symbols-outlined text-[14px]">add</span> Add Product
+                </Button>
+              ) : undefined
+            }
+          >
+            {products.length === 0 ? (
+              <div className="py-8 text-center text-on-surface-variant text-body-sm">
+                No products tracked for {competitor.name} yet. Click &quot;Add Product&quot; to begin.
               </div>
-              <div className="bg-surface p-4 rounded-xl border border-outline-variant">
-                <h4 className="text-label-md font-label-md text-on-surface mb-2 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-error"></span> Vulnerabilities (Mock)
-                </h4>
-                <ul className="text-body-sm font-body-sm text-on-surface-variant space-y-2">
-                  <li>High entry price point</li>
-                </ul>
+            ) : (
+              <div className="space-y-4">
+                {products.map((prod) => (
+                  <div key={prod.id} className="relative group">
+                    <ProductFeaturesSection
+                      product={prod}
+                      canEdit={canEdit}
+                      canDelete={canDelete}
+                      onRefresh={loadData}
+                    />
+                    <div className="absolute top-4 right-4 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {canEdit && (
+                        <button onClick={() => setEditProduct(prod)} className="p-1 text-on-surface-variant hover:text-primary" title="Edit Product">
+                          <span className="material-symbols-outlined text-[16px]">edit</span>
+                        </button>
+                      )}
+                      {canDelete && (
+                        <button onClick={() => setDeleteProduct(prod)} className="p-1 text-on-surface-variant hover:text-error" title="Delete Product">
+                          <span className="material-symbols-outlined text-[16px]">delete</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          </div>
-
-          {/* Recent Activity Table (Placeholder content retained) */}
-          <DashboardCard title="Recent Activity (Mock)" className="p-0 border-surface-container-highest shadow-ambient-1 overflow-hidden" action={
-            <button className="text-primary font-label-sm text-label-sm hover:underline">View All</button>
-          }>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-surface/50 border-b border-outline-variant text-label-md font-label-md text-on-surface-variant">
-                    <th className="p-4 font-semibold">Date</th>
-                    <th className="p-4 font-semibold">Event Type</th>
-                    <th className="p-4 font-semibold">Description</th>
-                  </tr>
-                </thead>
-                <tbody className="text-body-sm font-body-sm text-on-surface">
-                  <tr className="border-b border-outline-variant hover:bg-surface/50 transition-colors">
-                    <td className="p-4 whitespace-nowrap">{new Date(competitor.updatedAt).toLocaleDateString()}</td>
-                    <td className="p-4">
-                      <span className="bg-primary/10 text-primary px-2 py-1 rounded-md text-label-sm inline-flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[14px]">update</span> Profile Updated
-                      </span>
-                    </td>
-                    <td className="p-4">Competitor profile data was updated in the system.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            )}
           </DashboardCard>
         </div>
 
         {/* Right Sidebar Panel */}
         <div className="col-span-12 lg:col-span-4 space-y-6">
-          {/* AI Threat Analysis (Placeholder content) */}
           <DashboardCard title="Threat Level (Mock)" titleIcon={<span className="material-symbols-outlined text-error">warning</span>} className="border-surface-container-highest shadow-ambient-1">
             <div className="relative h-4 bg-surface rounded-full overflow-hidden mb-2">
               <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-tertiary via-secondary to-error w-3/4 rounded-full"></div>
@@ -237,21 +377,33 @@ export default function CompetitorDetailsPage({ params }: { params: Promise<{ id
               <span>Low</span>
               <span className="text-error font-bold text-label-md">High (75%)</span>
             </div>
-            <h4 className="text-label-md font-label-md text-on-surface mb-3 border-b border-outline-variant pb-2">Key Opportunities</h4>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <div className="bg-tertiary-container/20 p-1.5 rounded-full text-tertiary mt-0.5">
-                  <span className="material-symbols-outlined text-[16px]">target</span>
-                </div>
-                <div>
-                  <p className="text-label-sm font-label-sm text-on-surface">Target SMB Segment</p>
-                  <p className="text-[12px] text-on-surface-variant">They are ignoring businesses under 50 employees.</p>
-                </div>
-              </li>
-            </ul>
           </DashboardCard>
         </div>
       </div>
+
+      {/* Product Modals */}
+      <ProductFormModal
+        isOpen={isAddProductOpen}
+        onClose={() => setIsAddProductOpen(false)}
+        onSubmit={handleCreateProduct}
+        title={`Add Product for ${competitor.name}`}
+      />
+
+      <ProductFormModal
+        isOpen={!!editProduct}
+        onClose={() => setEditProduct(null)}
+        onSubmit={handleEditProduct}
+        initialData={editProduct || undefined}
+        title="Edit Product"
+      />
+
+      <DeleteConfirmModal
+        isOpen={!!deleteProduct}
+        onClose={() => setDeleteProduct(null)}
+        onConfirm={handleDeleteProduct}
+        title="Delete Product"
+        message={`Are you sure you want to delete product "${deleteProduct?.name}"? All associated features will be permanently removed.`}
+      />
     </>
   );
 }
