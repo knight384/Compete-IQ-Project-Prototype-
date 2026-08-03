@@ -1,23 +1,26 @@
 import { datasetService } from '@/backend/modules/datasets/dataset.service';
 import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
-import { DatasetNotFoundError, DatasetStateError, DatasetMappingError } from '@/backend/shared/errors/dataset-errors';
 import { toDatasetMetadataDto } from '@/backend/shared/utils/dataset-dtos';
-
-// MOCK_ORG_ID until auth is integrated
-const MOCK_ORG_ID = '11111111-1111-1111-1111-111111111111';
+import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
+import { DatasetNotFoundError, DatasetStateError, DatasetMappingError } from '@/backend/shared/errors/dataset-errors';
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireAuthenticatedContext();
+    if (!auth.success) {
+      return auth.response;
+    }
+
     const { id } = await params;
     const body = await request.json();
     if (!body || !Array.isArray(body.mappings)) {
       return errorResponse('Invalid payload: "mappings" array is required.', 400);
     }
 
-    const dataset = await datasetService.confirmColumnMapping(id, MOCK_ORG_ID, body.mappings);
+    const dataset = await datasetService.confirmColumnMapping(id, auth.context.orgId, body.mappings);
 
     return successResponse(toDatasetMetadataDto(dataset));
   } catch (error: unknown) {

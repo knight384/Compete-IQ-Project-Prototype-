@@ -1,30 +1,33 @@
 import { NextRequest } from 'next/server';
-import { datasetService } from '../../../../../../backend/modules/datasets/dataset.service';
-import { successResponse, errorResponse } from '../../../../../../backend/shared/utils/api-response';
+import { datasetService } from '@/backend/modules/datasets/dataset.service';
+import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
+import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
 import {
   DatasetNotFoundError,
   DatasetStateError,
   DatasetIntegrityError,
-} from '../../../../../../backend/shared/errors/dataset-errors';
-
-// Hardcoded MOCK_ORG_ID as per Milestone 4 specifications
-const MOCK_ORG_ID = '11111111-1111-1111-1111-111111111111';
+} from '@/backend/shared/errors/dataset-errors';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireAuthenticatedContext();
+    if (!auth.success) {
+      return auth.response;
+    }
+
     const { id } = await params;
 
-    const intelligence = await datasetService.getDatasetIntelligence(id, MOCK_ORG_ID);
+    const intelligence = await datasetService.getDatasetIntelligence(id, auth.context.orgId);
 
     return successResponse(intelligence);
   } catch (error: unknown) {
     if (error instanceof DatasetNotFoundError) {
       return errorResponse(error.message, 404);
     }
-    
+
     if (error instanceof DatasetStateError) {
       return errorResponse(error.message, 409);
     }

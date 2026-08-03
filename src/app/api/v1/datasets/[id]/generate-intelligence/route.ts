@@ -1,30 +1,33 @@
 import { NextRequest } from 'next/server';
-import { datasetService } from '../../../../../../backend/modules/datasets/dataset.service';
-import { successResponse, errorResponse } from '../../../../../../backend/shared/utils/api-response';
+import { datasetService } from '@/backend/modules/datasets/dataset.service';
+import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
+import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
 import {
   DatasetNotFoundError,
   DatasetStateError,
   DatasetMappingError,
   DatasetValidationError,
   DatasetFormatError,
-} from '../../../../../../backend/shared/errors/dataset-errors';
+} from '@/backend/shared/errors/dataset-errors';
 import {
   AiConfigurationError,
   AiProviderError,
   AiResponseValidationError,
-} from '../../../../../../backend/shared/errors/ai-errors';
-
-// Hardcoded MOCK_ORG_ID as per Milestone 4 specifications
-const MOCK_ORG_ID = '11111111-1111-1111-1111-111111111111';
+} from '@/backend/shared/errors/ai-errors';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireAuthenticatedContext();
+    if (!auth.success) {
+      return auth.response;
+    }
+
     const { id } = await params;
 
-    const result = await datasetService.generateDatasetIntelligence(id, MOCK_ORG_ID);
+    const result = await datasetService.generateDatasetIntelligence(id, auth.context.orgId);
 
     return successResponse(result, 200, { message: 'Dataset intelligence generated safely' });
   } catch (error: unknown) {

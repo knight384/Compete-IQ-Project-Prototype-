@@ -1,17 +1,20 @@
 import { datasetService } from '@/backend/modules/datasets/dataset.service';
 import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
+import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
 import { DatasetNotFoundError, DatasetStateError } from '@/backend/shared/errors/dataset-errors';
-
-// MOCK_ORG_ID until auth is integrated
-const MOCK_ORG_ID = '11111111-1111-1111-1111-111111111111';
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireAuthenticatedContext();
+    if (!auth.success) {
+      return auth.response;
+    }
+
     const { id } = await params;
-    const suggestions = await datasetService.getMappingSuggestions(id, MOCK_ORG_ID);
+    const suggestions = await datasetService.getMappingSuggestions(id, auth.context.orgId);
 
     return successResponse({
       datasetId: id,

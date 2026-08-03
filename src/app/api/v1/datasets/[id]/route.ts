@@ -1,17 +1,20 @@
-import { NextResponse } from 'next/server';
 import { datasetService } from '@/backend/modules/datasets/dataset.service';
 import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
 import { toDatasetMetadataDto } from '@/backend/shared/utils/dataset-dtos';
-
-const MOCK_ORG_ID = '11111111-1111-1111-1111-111111111111';
+import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireAuthenticatedContext();
+    if (!auth.success) {
+      return auth.response;
+    }
+
     const { id } = await params;
-    const dataset = await datasetService.getDatasetById(id, MOCK_ORG_ID);
+    const dataset = await datasetService.getDatasetById(id, auth.context.orgId);
     return successResponse(toDatasetMetadataDto(dataset));
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
@@ -27,8 +30,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireAuthenticatedContext();
+    if (!auth.success) {
+      return auth.response;
+    }
+
     const { id } = await params;
-    await datasetService.deleteDataset(id, MOCK_ORG_ID);
+    await datasetService.deleteDataset(id, auth.context.orgId);
     return successResponse(null, 204);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
