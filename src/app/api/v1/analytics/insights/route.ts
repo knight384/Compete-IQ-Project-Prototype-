@@ -1,11 +1,15 @@
 import { NextRequest } from 'next/server';
-import { intelligenceAnalyticsService } from '../../../../../backend/modules/analytics/intelligence-analytics.service';
-import { successResponse, errorResponse } from '../../../../../backend/shared/utils/api-response';
-
-const MOCK_ORG_ID = '11111111-1111-1111-1111-111111111111';
+import { intelligenceAnalyticsService } from '@/backend/modules/analytics/intelligence-analytics.service';
+import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
+import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
 
 export async function GET(request: NextRequest) {
   try {
+    const auth = await requireAuthenticatedContext();
+    if (!auth.success) {
+      return auth.response;
+    }
+
     const { searchParams } = new URL(request.url);
     const competitorId = searchParams.get('competitorId') ?? undefined;
     const productId = searchParams.get('productId') ?? undefined;
@@ -15,7 +19,7 @@ export async function GET(request: NextRequest) {
     const limitParam = searchParams.get('limit');
     const limit = limitParam ? parseInt(limitParam, 10) : 20;
 
-    const data = await intelligenceAnalyticsService.getRecentInsights(MOCK_ORG_ID, {
+    const data = await intelligenceAnalyticsService.getRecentInsights(auth.context.orgId, {
       limit: isNaN(limit) ? 20 : limit,
       cursor,
       competitorId,
