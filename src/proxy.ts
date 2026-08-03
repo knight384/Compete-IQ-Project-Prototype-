@@ -26,6 +26,7 @@ export const config = {
     "/competitors/:path*",
     "/reports/:path*",
     "/repository/:path*",
+    "/datasets/:path*",
     "/opportunities/:path*",
     "/sentiment/:path*",
     "/feature-gaps/:path*",
