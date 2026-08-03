@@ -16,6 +16,7 @@ model Organization {
   users       User[]
   competitors Competitor[]
   datasets    Dataset[]
+  reports     Report[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -36,6 +37,8 @@ model User {
 
   orgId        String
   organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  createdReports Report[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -184,3 +187,53 @@ model DatasetInsight {
   @@index([competitorId])
   @@index([productId])
 }
+
+enum ReportSchedule {
+  DAILY
+  WEEKLY
+  MONTHLY
+  ON_DEMAND
+}
+
+enum ExecutionStatus {
+  SUCCESS
+  FAILED
+  RUNNING
+}
+
+model Report {
+  id          String         @id @default(uuid())
+  title       String
+  description String?
+  schedule    ReportSchedule @default(ON_DEMAND)
+  lastRunAt   DateTime?
+
+  orgId        String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  createdById String?
+  createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  executions ReportExecution[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orgId])
+}
+
+model ReportExecution {
+  id        String          @id @default(uuid())
+  reportId  String
+  report    Report          @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  status    ExecutionStatus @default(RUNNING)
+  summary   Json?           // Snapshot of aggregated intelligence metrics
+  errorLog  String?
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([reportId])
+  @@index([startedAt])
+}
+
