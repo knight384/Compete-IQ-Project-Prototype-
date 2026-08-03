@@ -1,3 +1,5 @@
+import { RecentInsightDto } from './intelligence-analytics';
+
 /**
  * Frontend mirror of DashboardAnalyticsDto from the backend analytics module.
  * Used by useDashboardAnalytics hook and dashboard page components.
@@ -27,4 +29,7 @@ export interface DashboardAnalyticsDto {
   readyDatasetCount: number;
   datasetReadinessPercent: number;
   totalProductCount: number;
+  recentInsights?: RecentInsightDto[];
+  insightsByType?: Record<string, number>;
+  insightsByConfidence?: Record<string, number>;
 }

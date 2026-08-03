@@ -1,3 +1,5 @@
+import { RecentInsightDto } from './intelligence-analytics.dto';
+
 /**
  * Top competitor entry within the dashboard analytics response.
  * Sorted deterministically: intelligenceActivityScore DESC, totalInsights DESC, competitorName ASC.
@@ -38,7 +40,7 @@ export interface DashboardAnalyticsDto {
   competitorsWithIntelligenceCount: number;
 
   // --- Insight metrics ---
-  /** Raw total insight count across all competitors (pre-deduplication sum of CompetitorIntelligenceSummaryDto.totalInsights). */
+  /** Raw total insight count across all competitors. */
   totalInsights: number;
   /** Sum of pricingOpportunityCount across all competitors. */
   totalPricingOpportunities: number;
@@ -70,4 +72,12 @@ export interface DashboardAnalyticsDto {
   // --- Product metrics ---
   /** Total number of products across all competitors in this organization. */
   totalProductCount: number;
+
+  // --- Additional Intelligence Highlights (Milestone 5.5) ---
+  /** Recent intelligence insights across READY datasets (up to 5). */
+  recentInsights?: RecentInsightDto[];
+  /** Breakdown of insight counts by InsightType enum string. */
+  insightsByType?: Record<string, number>;
+  /** Breakdown of insight counts by ConfidenceLevel string. */
+  insightsByConfidence?: Record<string, number>;
 }

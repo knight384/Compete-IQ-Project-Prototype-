@@ -1,5 +1,6 @@
 import { prisma } from '../../prisma/client';
 import { CompetitorIntelligenceService } from '../competitors/competitor-intelligence.service';
+import { IntelligenceAnalyticsService } from './intelligence-analytics.service';
 import { DashboardAnalyticsDto, TopCompetitorDto } from './dashboard-analytics.dto';
 
 /**
@@ -7,57 +8,35 @@ import { DashboardAnalyticsDto, TopCompetitorDto } from './dashboard-analytics.d
  *
  * Aggregates organization-level analytics for the primary dashboard and enterprise overview
  * surfaces. Composes CompetitorIntelligenceService (for intelligence scoring) with direct
- * Prisma count queries for datasets and products.
- *
- * IMPORTANT: This service accepts orgId as a parameter and never imports or hardcodes
- * MOCK_ORG_ID. Only the HTTP boundary (route.ts) is responsible for resolving the current
- * tenant context. This ensures the analytics business logic remains auth-agnostic and
- * replaceable when real authentication is introduced.
- *
- * Query strategy (5 queries total, N+1 safe):
- *   Query 1-2: getOrganizationCompetitorSummaries(orgId) [competitor list + bulk insights]
- *   Query 3:   prisma.dataset.count({ where: { orgId } })
- *   Query 4:   prisma.dataset.count({ where: { orgId, status: 'READY' } })
- *   Query 5:   prisma.product.count({ where: { competitor: { orgId } } })
- * Queries 3, 4, 5 run in parallel via Promise.all.
+ * Prisma count queries and IntelligenceAnalyticsService for recent signals & distributions.
  */
 export class DashboardAnalyticsService {
   private readonly intelligenceService: CompetitorIntelligenceService;
+  private readonly analyticsService: IntelligenceAnalyticsService;
 
   constructor() {
     this.intelligenceService = new CompetitorIntelligenceService();
+    this.analyticsService = new IntelligenceAnalyticsService();
   }
 
-  /**
-   * Returns a DashboardAnalyticsDto for the given organization.
-   *
-   * Tenant isolation guarantees:
-   *   - getOrganizationCompetitorSummaries enforces competitor.orgId === orgId AND
-   *     dataset.orgId === orgId AND dataset.status === 'READY'.
-   *   - Dataset counts are filtered by orgId.
-   *   - Product count is filtered via competitor.orgId === orgId (Product has no direct orgId).
-   *     Cross-tenant products are excluded.
-   */
   async getDashboardAnalytics(orgId: string): Promise<DashboardAnalyticsDto> {
     if (!orgId || orgId.trim() === '') {
       throw new Error('Organization ID is required.');
     }
 
-    // Step 1: Get all competitor intelligence summaries (2 queries internally)
+    // Step 1: Get competitor intelligence summaries
     const summaries = await this.intelligenceService.getOrganizationCompetitorSummaries(orgId);
 
-    // Step 2: Run dataset and product counts in parallel (3 queries)
-    const [totalDatasetCount, readyDatasetCount, totalProductCount] = await Promise.all([
-      prisma.dataset.count({ where: { orgId } }),
-      prisma.dataset.count({ where: { orgId, status: 'READY' } }),
-      prisma.product.count({ where: { competitor: { orgId } } }),
-    ]);
+    // Step 2: Fetch dataset/product counts, recent signals, and distributions safely
+    const totalDatasetCount = await prisma.dataset.count({ where: { orgId } });
+    const readyDatasetCount = await prisma.dataset.count({ where: { orgId, status: 'READY' } });
+    const totalProductCount = await prisma.product.count({ where: { competitor: { orgId } } });
+    const recentInsightsRes = await this.analyticsService.getRecentInsights(orgId, { limit: 5 });
+    const distributions = await this.analyticsService.getInsightDistributions(orgId);
 
     // --- Derive aggregate metrics ---
 
     const competitorCount = summaries.length;
-
-    // Only competitors with at least one linked insight contribute to the average
     const summariesWithIntelligence = summaries.filter((s) => s.totalInsights > 0);
     const competitorsWithIntelligenceCount = summariesWithIntelligence.length;
 
@@ -65,7 +44,6 @@ export class DashboardAnalyticsService {
     const totalPricingOpportunities = summaries.reduce((sum, s) => sum + s.pricingOpportunityCount, 0);
     const totalFeatureGaps = summaries.reduce((sum, s) => sum + s.featureGapCount, 0);
 
-    // avgIntelligenceActivityScore: denominator is competitorsWithIntelligenceCount only
     const avgIntelligenceActivityScore =
       competitorsWithIntelligenceCount === 0
         ? 0
@@ -74,25 +52,18 @@ export class DashboardAnalyticsService {
               competitorsWithIntelligenceCount
           );
 
-    // Dataset Readiness: READY / total, 0 if no datasets exist
     const datasetReadinessPercent =
-      totalDatasetCount === 0
-        ? 0
-        : Math.round((readyDatasetCount / totalDatasetCount) * 100);
+      totalDatasetCount === 0 ? 0 : Math.round((readyDatasetCount / totalDatasetCount) * 100);
 
-    // topCompetitors: sorted deterministically, capped at 5
     const topCompetitors: TopCompetitorDto[] = summaries
-      .slice() // avoid mutating original array
+      .slice()
       .sort((a, b) => {
-        // 1. intelligenceActivityScore DESC
         if (b.intelligenceActivityScore !== a.intelligenceActivityScore) {
           return b.intelligenceActivityScore - a.intelligenceActivityScore;
         }
-        // 2. totalInsights DESC
         if (b.totalInsights !== a.totalInsights) {
           return b.totalInsights - a.totalInsights;
         }
-        // 3. competitorName ASC (alphabetical tie-break)
         return a.competitorName.localeCompare(b.competitorName);
       })
       .slice(0, 5)
@@ -118,6 +89,9 @@ export class DashboardAnalyticsService {
       readyDatasetCount,
       datasetReadinessPercent,
       totalProductCount,
+      recentInsights: recentInsightsRes.items,
+      insightsByType: distributions.insightsByType,
+      insightsByConfidence: distributions.insightsByConfidence,
     };
   }
 }

@@ -4,6 +4,7 @@ import * as React from "react"
 import { Button } from "@/components/ui/Button"
 import { PageHeader } from "@/components/shared/PageLayout"
 import { KPICard, DashboardCard } from "@/components/shared/DashboardCards"
+import { Badge } from "@/components/ui/Badge"
 import { useDashboardAnalytics } from "@/lib/hooks/useDashboardAnalytics"
 
 export default function EnterpriseOverviewPage() {
@@ -15,6 +16,9 @@ export default function EnterpriseOverviewPage() {
     <>{data?.avgIntelligenceActivityScore ?? 0}<span className="text-headline-sm font-headline-sm text-outline-variant">/100</span></>;
   const readinessPercent   = loading ? "—" : error ? "!" : `${data?.datasetReadinessPercent ?? 0}%`;
   const productCount       = loading ? "—" : error ? "!" : String(data?.totalProductCount ?? 0);
+
+  const topCompetitors = data?.topCompetitors ?? [];
+  const recentInsights = data?.recentInsights ?? [];
 
   return (
     <>
@@ -38,9 +42,8 @@ export default function EnterpriseOverviewPage() {
         </div>
       )}
 
-      {/* Real KPI Metrics — replaces ENTERPRISE_METRICS mock array */}
+      {/* Real KPI Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter mb-gutter">
-        {/* Competitors Tracked — replaces "Global Market Share" 14.2% hardcoded */}
         <KPICard
           title="Competitors Tracked"
           value={competitorCount}
@@ -55,7 +58,6 @@ export default function EnterpriseOverviewPage() {
           className="shadow-ambient-1 border-surface-container-highest"
         />
 
-        {/* Intelligence Activity — replaces misleading "Threat Index" */}
         <KPICard
           title="Intelligence Activity"
           value={avgActivityScore}
@@ -72,7 +74,6 @@ export default function EnterpriseOverviewPage() {
           className="shadow-ambient-1 border-surface-container-highest"
         />
 
-        {/* Dataset Readiness — replaces "Data Pipeline Health" 99.9% hardcoded */}
         <KPICard
           title="Dataset Readiness"
           value={readinessPercent}
@@ -90,7 +91,6 @@ export default function EnterpriseOverviewPage() {
           className="shadow-ambient-1 border-surface-container-highest"
         />
 
-        {/* Products Monitored — replaces "Active Monitored Entities" 1,428 hardcoded */}
         <KPICard
           title="Products Monitored"
           value={productCount}
@@ -107,41 +107,69 @@ export default function EnterpriseOverviewPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter mb-8">
+        {/* Recent Intelligence Signals Stream */}
         <div className="lg:col-span-8">
-          {/* Global Market Map — placeholder, no fabricated data */}
-          <DashboardCard title="Global Market Map" className="shadow-ambient-1 border-surface-container-highest h-96">
-            <div className="flex flex-col items-center justify-center h-full w-full bg-surface-container-low/50 rounded-lg border border-dashed border-outline-variant gap-3">
-              <span className="material-symbols-outlined text-4xl text-outline-variant">public</span>
-              <span className="text-on-surface-variant font-label-md">
-                Geographic visualization coming in a future update.
-              </span>
-            </div>
-          </DashboardCard>
-        </div>
-        <div className="lg:col-span-4">
-          <DashboardCard title="Intelligence Summary" className="shadow-ambient-1 border-surface-container-highest h-96">
+          <DashboardCard title="Recent Intelligence Signals" className="shadow-ambient-1 border-surface-container-highest min-h-[24rem]">
             {loading && (
               <div className="flex items-center justify-center h-full text-on-surface-variant text-body-sm">
                 Loading…
               </div>
             )}
-            {!loading && !error && (data?.topCompetitors?.length ?? 0) === 0 && (
-              <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
+            {!loading && !error && recentInsights.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-64 gap-3 text-center">
+                <span className="material-symbols-outlined text-4xl text-outline-variant">notifications_off</span>
+                <p className="text-body-sm font-body-sm text-on-surface-variant">
+                  No intelligence signals available yet. Upload datasets to generate signals.
+                </p>
+              </div>
+            )}
+            {!loading && !error && recentInsights.length > 0 && (
+              <div className="space-y-3 overflow-y-auto max-h-96 pr-1">
+                {recentInsights.map((item) => (
+                  <div key={item.id} className="p-3 bg-surface-container-low/50 border border-surface-variant/30 rounded-lg">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="font-label-md text-on-surface font-semibold truncate mr-2">{item.title}</h4>
+                      <Badge variant="default" className="text-[10px] shrink-0">
+                        {item.type}
+                      </Badge>
+                    </div>
+                    <p className="font-body-sm text-on-surface-variant mb-1 line-clamp-2">{item.summary}</p>
+                    <div className="flex items-center gap-2 text-[11px] text-outline">
+                      {item.competitorName && <span>Competitor: <strong>{item.competitorName}</strong></span>}
+                      <span>· {item.datasetFilename}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </DashboardCard>
+        </div>
+
+        {/* Competitor Highlights */}
+        <div className="lg:col-span-4">
+          <DashboardCard title="Intelligence Summary" className="shadow-ambient-1 border-surface-container-highest min-h-[24rem]">
+            {loading && (
+              <div className="flex items-center justify-center h-full text-on-surface-variant text-body-sm">
+                Loading…
+              </div>
+            )}
+            {!loading && !error && topCompetitors.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-64 gap-3 text-center">
                 <span className="material-symbols-outlined text-3xl text-outline-variant">search_off</span>
                 <p className="text-body-sm font-body-sm text-on-surface-variant">
                   No competitor intelligence available yet. Upload datasets to generate insights.
                 </p>
               </div>
             )}
-            {!loading && !error && (data?.topCompetitors?.length ?? 0) > 0 && (
-              <div className="space-y-3 overflow-y-auto h-full pr-1">
-                {data!.topCompetitors.map((comp) => (
+            {!loading && !error && topCompetitors.length > 0 && (
+              <div className="space-y-3 overflow-y-auto max-h-96 pr-1">
+                {topCompetitors.map((comp) => (
                   <div
                     key={comp.competitorId}
                     className="p-3 bg-surface-container-low/50 border border-surface-variant/30 rounded-lg"
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <h4 className="font-label-md text-on-surface truncate mr-2">{comp.competitorName}</h4>
+                      <h4 className="font-label-md text-on-surface truncate mr-2 font-semibold">{comp.competitorName}</h4>
                       <span className={`text-label-sm font-label-sm shrink-0 px-2 py-0.5 rounded-full ${
                         comp.activityLevel === 'INTENSIVE' ? 'bg-error/10 text-error' :
                         comp.activityLevel === 'HIGH'      ? 'bg-tertiary/10 text-tertiary' :
