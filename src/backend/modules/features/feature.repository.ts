@@ -12,18 +12,25 @@ export class FeatureRepository {
   }
 
   /**
-   * Finds a feature by ID.
+   * Finds a feature by ID, strictly scoped to the organization through the
+   * full ownership chain: feature.product.competitor.orgId === orgId.
    */
-  async findById(id: string): Promise<Feature | null> {
-    return prisma.feature.findUnique({
+  async findById(id: string, orgId: string): Promise<Feature | null> {
+    return prisma.feature.findFirst({
       where: {
         id,
+        product: {
+          competitor: {
+            orgId,
+          },
+        },
       },
     });
   }
 
   /**
    * Retrieves all features for a specific product.
+   * Caller must have already verified that productId belongs to orgId.
    */
   async findByProduct(productId: string): Promise<Feature[]> {
     return prisma.feature.findMany({
@@ -37,9 +44,14 @@ export class FeatureRepository {
   }
 
   /**
-   * Updates a feature.
+   * Updates a feature, strictly scoped to the organization through the full
+   * ownership chain. Performs an ownership check before mutating.
    */
-  async update(id: string, data: Prisma.FeatureUpdateInput): Promise<Feature> {
+  async update(id: string, orgId: string, data: Prisma.FeatureUpdateInput): Promise<Feature> {
+    const existing = await this.findById(id, orgId);
+    if (!existing) {
+      throw new Error("Feature not found or access denied.");
+    }
     return prisma.feature.update({
       where: { id },
       data,
@@ -47,9 +59,14 @@ export class FeatureRepository {
   }
 
   /**
-   * Deletes a feature.
+   * Deletes a feature, strictly scoped to the organization through the full
+   * ownership chain. Performs an ownership check before deleting.
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: string, orgId: string): Promise<void> {
+    const existing = await this.findById(id, orgId);
+    if (!existing) {
+      throw new Error("Feature not found or access denied.");
+    }
     await prisma.feature.delete({
       where: { id },
     });

@@ -10,30 +10,30 @@ export class ProductService {
 
   /**
    * Creates a new product for a competitor.
+   * Caller must have already verified that competitorId belongs to auth.context.orgId.
    */
   async createProduct(data: Prisma.ProductUncheckedCreateInput): Promise<Product> {
     if (!data.competitorId) {
       throw new Error("Competitor ID is required to create a product.");
     }
-    
-    // We assume the caller (Route Handler) has verified the user belongs to the org that owns this competitorId.
-    // In a more robust setup, the Service would verify the competitor belongs to the user's org.
     return this.repository.create(data);
   }
 
   /**
-   * Gets a product by ID.
+   * Gets a product by ID, tenant-scoped to orgId through product.competitor.orgId.
+   * Returns null if the product does not exist or belongs to a different organization.
    */
-  async getProduct(id: string): Promise<Product> {
-    const product = await this.repository.findById(id);
+  async getProduct(id: string, orgId: string): Promise<Product> {
+    const product = await this.repository.findById(id, orgId);
     if (!product) {
-      throw new Error("Product not found.");
+      throw new Error("Product not found or access denied.");
     }
     return product;
   }
 
   /**
    * Lists products belonging to a competitor.
+   * Caller must have already verified that competitorId belongs to auth.context.orgId.
    */
   async listProductsByCompetitor(competitorId: string): Promise<Product[]> {
     if (!competitorId) {
@@ -43,26 +43,18 @@ export class ProductService {
   }
 
   /**
-   * Updates an existing product.
+   * Updates an existing product, tenant-scoped to orgId.
+   * Throws if the product does not exist or belongs to a different organization.
    */
-  async updateProduct(id: string, data: Prisma.ProductUpdateInput): Promise<Product> {
-    const existing = await this.repository.findById(id);
-    if (!existing) {
-      throw new Error("Product not found.");
-    }
-    
-    return this.repository.update(id, data);
+  async updateProduct(id: string, orgId: string, data: Prisma.ProductUpdateInput): Promise<Product> {
+    return this.repository.update(id, orgId, data);
   }
 
   /**
-   * Deletes a product.
+   * Deletes a product, tenant-scoped to orgId.
+   * Throws if the product does not exist or belongs to a different organization.
    */
-  async deleteProduct(id: string): Promise<void> {
-    const existing = await this.repository.findById(id);
-    if (!existing) {
-      throw new Error("Product not found.");
-    }
-
-    await this.repository.delete(id);
+  async deleteProduct(id: string, orgId: string): Promise<void> {
+    return this.repository.delete(id, orgId);
   }
 }

@@ -12,18 +12,23 @@ export class ProductRepository {
   }
 
   /**
-   * Finds a product by ID.
+   * Finds a product by ID, strictly scoped to the organization through the
+   * Competitor relationship: product.competitor.orgId === orgId.
    */
-  async findById(id: string): Promise<Product | null> {
-    return prisma.product.findUnique({
+  async findById(id: string, orgId: string): Promise<Product | null> {
+    return prisma.product.findFirst({
       where: {
         id,
+        competitor: {
+          orgId,
+        },
       },
     });
   }
 
   /**
    * Retrieves all products for a specific competitor.
+   * Caller must have already verified that competitorId belongs to orgId.
    */
   async findByCompetitor(competitorId: string): Promise<Product[]> {
     return prisma.product.findMany({
@@ -53,9 +58,14 @@ export class ProductRepository {
   }
 
   /**
-   * Updates a product.
+   * Updates a product, strictly scoped to the organization through the Competitor relationship.
+   * Performs an ownership check before mutating.
    */
-  async update(id: string, data: Prisma.ProductUpdateInput): Promise<Product> {
+  async update(id: string, orgId: string, data: Prisma.ProductUpdateInput): Promise<Product> {
+    const existing = await this.findById(id, orgId);
+    if (!existing) {
+      throw new Error("Product not found or access denied.");
+    }
     return prisma.product.update({
       where: { id },
       data,
@@ -63,9 +73,14 @@ export class ProductRepository {
   }
 
   /**
-   * Deletes a product.
+   * Deletes a product, strictly scoped to the organization through the Competitor relationship.
+   * Performs an ownership check before deleting.
    */
-  async delete(id: string): Promise<void> {
+  async delete(id: string, orgId: string): Promise<void> {
+    const existing = await this.findById(id, orgId);
+    if (!existing) {
+      throw new Error("Product not found or access denied.");
+    }
     await prisma.product.delete({
       where: { id },
     });

@@ -10,6 +10,7 @@ export class FeatureService {
 
   /**
    * Creates a new feature for a product.
+   * Caller must have already verified that productId belongs to auth.context.orgId.
    */
   async createFeature(data: Prisma.FeatureUncheckedCreateInput): Promise<Feature> {
     if (!data.productId) {
@@ -25,18 +26,20 @@ export class FeatureService {
   }
 
   /**
-   * Gets a feature by ID.
+   * Gets a feature by ID, tenant-scoped to orgId through feature.product.competitor.orgId.
+   * Throws if the feature does not exist or belongs to a different organization.
    */
-  async getFeature(id: string): Promise<Feature> {
-    const feature = await this.repository.findById(id);
+  async getFeature(id: string, orgId: string): Promise<Feature> {
+    const feature = await this.repository.findById(id, orgId);
     if (!feature) {
-      throw new Error("Feature not found.");
+      throw new Error("Feature not found or access denied.");
     }
     return feature;
   }
 
   /**
    * Lists features belonging to a product.
+   * Caller must have already verified that productId belongs to auth.context.orgId.
    */
   async listFeaturesByProduct(productId: string): Promise<Feature[]> {
     if (!productId) {
@@ -46,30 +49,22 @@ export class FeatureService {
   }
 
   /**
-   * Updates an existing feature.
+   * Updates an existing feature, tenant-scoped to orgId.
+   * Throws if the feature does not exist or belongs to a different organization.
    */
-  async updateFeature(id: string, data: Prisma.FeatureUpdateInput): Promise<Feature> {
-    const existing = await this.repository.findById(id);
-    if (!existing) {
-      throw new Error("Feature not found.");
-    }
-
+  async updateFeature(id: string, orgId: string, data: Prisma.FeatureUpdateInput): Promise<Feature> {
     if (typeof data.status === 'string' && !['Available', 'Beta', 'Missing'].includes(data.status)) {
        throw new Error("Invalid feature status.");
     }
 
-    return this.repository.update(id, data);
+    return this.repository.update(id, orgId, data);
   }
 
   /**
-   * Deletes a feature.
+   * Deletes a feature, tenant-scoped to orgId.
+   * Throws if the feature does not exist or belongs to a different organization.
    */
-  async deleteFeature(id: string): Promise<void> {
-    const existing = await this.repository.findById(id);
-    if (!existing) {
-      throw new Error("Feature not found.");
-    }
-
-    await this.repository.delete(id);
+  async deleteFeature(id: string, orgId: string): Promise<void> {
+    return this.repository.delete(id, orgId);
   }
 }
