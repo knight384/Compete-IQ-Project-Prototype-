@@ -1,13 +1,19 @@
 import { NextRequest } from 'next/server';
 import { intelligenceAnalyticsService } from '@/backend/modules/analytics/intelligence-analytics.service';
 import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
-import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
+import { requireAuthenticatedContext, requireRole } from '@/backend/shared/utils/auth-context';
+import { Role } from '@prisma/client';
 
 export async function GET(request: NextRequest) {
   try {
     const auth = await requireAuthenticatedContext();
     if (!auth.success) {
       return auth.response;
+    }
+
+    const forbidden = requireRole(auth.context, [Role.ADMIN, Role.ANALYST, Role.VIEWER]);
+    if (forbidden) {
+      return forbidden;
     }
 
     const { searchParams } = new URL(request.url);

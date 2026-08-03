@@ -1,6 +1,7 @@
 import { CompetitorService } from '@/backend/modules/competitors/competitor.service';
 import { successResponse, errorResponse, parseRequestBody } from '@/backend/shared/utils/api-response';
-import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
+import { requireAuthenticatedContext, requireRole } from '@/backend/shared/utils/auth-context';
+import { Role } from '@prisma/client';
 
 const competitorService = new CompetitorService();
 
@@ -9,6 +10,11 @@ export async function GET() {
     const auth = await requireAuthenticatedContext();
     if (!auth.success) {
       return auth.response;
+    }
+
+    const forbidden = requireRole(auth.context, [Role.ADMIN, Role.ANALYST, Role.VIEWER]);
+    if (forbidden) {
+      return forbidden;
     }
 
     const data = await competitorService.listCompetitorsByOrganization(auth.context.orgId);
@@ -23,6 +29,11 @@ export async function POST(req: Request) {
     const auth = await requireAuthenticatedContext();
     if (!auth.success) {
       return auth.response;
+    }
+
+    const forbidden = requireRole(auth.context, [Role.ADMIN, Role.ANALYST]);
+    if (forbidden) {
+      return forbidden;
     }
 
     const body = await parseRequestBody(req);

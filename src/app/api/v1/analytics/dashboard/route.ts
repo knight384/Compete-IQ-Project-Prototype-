@@ -1,6 +1,7 @@
 import { dashboardAnalyticsService } from '@/backend/modules/analytics/dashboard-analytics.service';
 import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
-import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
+import { requireAuthenticatedContext, requireRole } from '@/backend/shared/utils/auth-context';
+import { Role } from '@prisma/client';
 
 /**
  * GET /api/v1/analytics/dashboard
@@ -12,6 +13,11 @@ export async function GET() {
     const auth = await requireAuthenticatedContext();
     if (!auth.success) {
       return auth.response;
+    }
+
+    const forbidden = requireRole(auth.context, [Role.ADMIN, Role.ANALYST, Role.VIEWER]);
+    if (forbidden) {
+      return forbidden;
     }
 
     const data = await dashboardAnalyticsService.getDashboardAnalytics(auth.context.orgId);

@@ -1,6 +1,7 @@
 import { FeatureService } from '@/backend/modules/features/feature.service';
 import { successResponse, errorResponse, parseRequestBody } from '@/backend/shared/utils/api-response';
-import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
+import { requireAuthenticatedContext, requireRole } from '@/backend/shared/utils/auth-context';
+import { Role } from '@prisma/client';
 
 const featureService = new FeatureService();
 
@@ -9,6 +10,11 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     const auth = await requireAuthenticatedContext();
     if (!auth.success) {
       return auth.response;
+    }
+
+    const forbidden = requireRole(auth.context, [Role.ADMIN, Role.ANALYST, Role.VIEWER]);
+    if (forbidden) {
+      return forbidden;
     }
 
     const { id } = await params;
@@ -31,6 +37,11 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       return auth.response;
     }
 
+    const forbidden = requireRole(auth.context, [Role.ADMIN, Role.ANALYST]);
+    if (forbidden) {
+      return forbidden;
+    }
+
     const { id } = await params;
     if (!id || id.trim() === '') {
       return errorResponse("Invalid feature ID.", 400);
@@ -50,6 +61,11 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     const auth = await requireAuthenticatedContext();
     if (!auth.success) {
       return auth.response;
+    }
+
+    const forbidden = requireRole(auth.context, [Role.ADMIN]);
+    if (forbidden) {
+      return forbidden;
     }
 
     const { id } = await params;

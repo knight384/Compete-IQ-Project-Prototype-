@@ -1,7 +1,8 @@
 import { datasetService } from '@/backend/modules/datasets/dataset.service';
 import { successResponse, errorResponse } from '@/backend/shared/utils/api-response';
 import { toDatasetMetadataDto } from '@/backend/shared/utils/dataset-dtos';
-import { requireAuthenticatedContext } from '@/backend/shared/utils/auth-context';
+import { requireAuthenticatedContext, requireRole } from '@/backend/shared/utils/auth-context';
+import { Role } from '@prisma/client';
 import { DatasetNotFoundError, DatasetStateError, DatasetMappingError } from '@/backend/shared/errors/dataset-errors';
 
 export async function POST(
@@ -12,6 +13,11 @@ export async function POST(
     const auth = await requireAuthenticatedContext();
     if (!auth.success) {
       return auth.response;
+    }
+
+    const forbidden = requireRole(auth.context, [Role.ADMIN, Role.ANALYST]);
+    if (forbidden) {
+      return forbidden;
     }
 
     const { id } = await params;
