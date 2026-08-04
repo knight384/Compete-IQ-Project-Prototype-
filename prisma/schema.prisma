@@ -17,6 +17,7 @@ model Organization {
   competitors Competitor[]
   datasets    Dataset[]
   reports     Report[]
+  complaints  Complaint[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -61,6 +62,7 @@ model Competitor {
 
   products        Product[]
   datasetInsights DatasetInsight[]
+  complaints      Complaint[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -79,6 +81,7 @@ model Product {
 
   features        Feature[]
   datasetInsights DatasetInsight[]
+  complaints      Complaint[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -236,4 +239,41 @@ model ReportExecution {
   @@index([reportId])
   @@index([startedAt])
 }
+
+enum ComplaintSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ComplaintTrend {
+  INCREASING
+  STABLE
+  DECREASING
+}
+
+model Complaint {
+  id        String            @id @default(uuid())
+  text      String
+  severity  ComplaintSeverity @default(MEDIUM)
+  frequency Float?            // Persistent numeric percentage (0 - 100)
+  trend     ComplaintTrend    @default(STABLE)
+
+  orgId        String
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  competitorId String?
+  competitor   Competitor? @relation(fields: [competitorId], references: [id], onDelete: SetNull)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orgId])
+  @@index([severity])
+}
+
 
